@@ -34,6 +34,43 @@ git clone https://github.com/FannyDevz/dyskflow.git
    - `public/uploads/`
    - `database/`, jika memakai SQLite
 
+### Di cPanel, dalam `public_html`
+
+Taruh semua file langsung di `public_html`, sehingga `public_html/.htaccess` dan `public_html/public/` ada.
+
+1. Di **File Manager > Settings**, aktifkan **Show Hidden Files**, lalu pastikan `.htaccess` ikut terunggah.
+2. Di **MultiPHP Manager**, pilih PHP 8.3 atau lebih baru. cPanel bisa menambahkan blok `php8x` ke `.htaccess`; biarkan blok itu.
+3. `.htaccess` bawaan sudah meneruskan semua permintaan ke `public`. Setelah SSL terpasang, tambahkan aturan paksa HTTPS, sehingga isinya menjadi seperti ini. `public/.htaccess` tidak perlu diubah.
+
+```apache
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    RewriteCond %{HTTPS} off
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    RewriteRule ^public/ - [L]
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>
+```
+
+4. Saat wizard meminta URL situs, isi `https://domainmu.com`, tanpa `/public`.
+5. Setelah terpasang, buka `https://domainmu.com/.env`. Hasilnya harus 404, bukan isi file.
+
+Untuk addon domain atau subdomain, lebih aman arahkan document root ke folder `public`. `.htaccess` di folder utama tidak lagi dipakai, jadi paksa HTTPS lewat **Force HTTPS Redirect** di menu **Domains**.
+
+Jika muncul masalah:
+
+- **Error 500**: hapus baris `Options -Indexes`, karena sebagian hosting melarangnya di `.htaccess`.
+- **`ERR_TOO_MANY_REDIRECTS`**: biasanya terjadi di balik proxy seperti Cloudflare mode Flexible. Hapus dua baris paksa HTTPS, atau ubah mode SSL Cloudflare ke Full.
+- **Error 403**: kemungkinan `mod_rewrite` tidak aktif. Minta hosting mengaktifkannya.
+
 ### Di komputer sendiri
 
 Jalankan dari folder utama aplikasi:
