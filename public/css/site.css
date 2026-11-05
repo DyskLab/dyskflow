@@ -1,0 +1,47 @@
+/* Default public theme. Landing pages bring their own styles. */
+.site-header { border-bottom: 1px solid var(--border); }
+.site-wrap { width: 100%; max-width: 760px; margin: 0 auto; padding: 0 16px; }
+.site-wrap.wide { max-width: 1040px; }
+.site-bar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; min-height: 60px; padding: 8px 0; }
+.site-name { font-weight: 600; font-size: 16px; text-decoration: none; }
+.site-nav { display: flex; gap: 14px; flex-wrap: wrap; }
+.site-nav a { text-decoration: none; color: var(--muted-foreground); }
+.site-nav a:hover { color: var(--foreground); }
+.site-tools { margin-left: auto; display: flex; align-items: center; gap: 4px; }
+.site-main { padding: 32px 0 56px; display: grid; gap: 28px; }
+.site-title { font-size: 30px; line-height: 1.2; font-weight: 700; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.site-lead { max-width: 56ch; font-size: 17px; }
+.post-list { display: grid; gap: 16px; }
+.post-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: start; padding: 20px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); transition: border-color .15s; }
+.post-item:hover { border-color: color-mix(in oklab, var(--primary) 50%, var(--border)); }
+.post-text { display: grid; gap: 6px; min-width: 0; }
+.post-item h2 { font-size: 20px; font-weight: 600; line-height: 1.3; text-wrap: balance; }
+.post-item h2 a { text-decoration: none; }
+.post-item h2 a:hover { color: var(--primary-text); }
+.post-thumb { display: block; width: 112px; aspect-ratio: 1; overflow: hidden; border-radius: calc(var(--radius) - 2px); background: var(--muted); }
+.post-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 520px) {
+  .post-item { grid-template-columns: minmax(0, 1fr); }
+  .post-thumb { grid-row: 1; width: 100%; aspect-ratio: 16 / 9; }
+}
+.post-cover { width: 100%; height: auto; border-radius: var(--radius); border: 1px solid var(--border); display: block; }
+.post-meta { color: var(--muted-foreground); font-size: 13px; }
+.post-meta a { text-decoration: underline; text-underline-offset: 2px; }
+.prose { line-height: 1.75; font-size: 16px; overflow-wrap: anywhere; }
+.prose > * + * { margin-top: 1em; }
+.prose h2 { font-size: 1.5em; font-weight: 600; line-height: 1.3; margin-top: 1.5em; }
+.prose h3 { font-size: 1.25em; font-weight: 600; margin-top: 1.25em; }
+.prose h4 { font-weight: 600; }
+.prose img { max-width: 100%; height: auto; border-radius: 8px; }
+.prose a { text-decoration: underline; text-underline-offset: 3px; }
+.prose blockquote { margin: 1em 0; padding-left: 14px; border-left: 3px solid var(--border); color: var(--muted-foreground); }
+.prose pre { padding: 12px; border-radius: 8px; background: var(--muted); overflow-x: auto; }
+.prose code { font-family: ui-monospace, Menlo, monospace; font-size: .9em; }
+.prose ul, .prose ol { padding-left: 1.4em; }
+.prose table { width: 100%; border-collapse: collapse; }
+.prose th, .prose td { padding: 6px 10px; border: 1px solid var(--border); }
+.comment { padding: 12px 0; border-bottom: 1px solid var(--border); display: grid; gap: 4px; }
+.comment p { white-space: pre-line; overflow-wrap: anywhere; }
+.site-pagination { display: flex; justify-content: space-between; gap: 8px; }
+.site-footer { border-top: 1px solid var(--border); padding: 20px 0; color: var(--muted-foreground); font-size: 13px; }
+.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }

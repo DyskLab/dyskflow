@@ -1,0 +1,10 @@
+{
+    "name": "Hello Bar",
+    "description": "Example plugin: shows an announcement bar at the top of the site.",
+    "version": "1.0.0",
+    "author": "Template CMS",
+    "settings": [
+        { "name": "message", "label": "Message", "type": "text", "default": "Welcome to our site" },
+        { "name": "link", "label": "Link", "type": "url" }
+    ]
+}

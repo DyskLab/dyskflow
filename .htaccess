@@ -1,0 +1,13 @@
+# For hosting where the document root cannot point at /public.
+# Everything is served from /public, so app code, .env and vendor stay unreachable.
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^public/ - [L]
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>
