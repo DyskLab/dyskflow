@@ -147,6 +147,9 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
 
         Route::middleware('can:settings.manage')->group(function () {
             Route::post('email/test', [Admin\SettingController::class, 'testEmail'])->name('email.test');
+            Route::get('privacy', [Admin\SiteToolsController::class, 'privacy'])->name('privacy.index');
+            Route::post('privacy/draft', [Admin\SiteToolsController::class, 'privacyDraft'])->name('privacy.draft');
+            Route::get('health', [Admin\SiteToolsController::class, 'health'])->name('health.index');
             Route::get('{section}', [Admin\SettingController::class, 'edit'])->name('edit');
             Route::post('{section}', [Admin\SettingController::class, 'update'])->name('update');
         });

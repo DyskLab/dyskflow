@@ -51,10 +51,12 @@ class AdminMenu
 
         $cards = [
             $section('general'), $section('contact'), $section('email'), $section('seo'), $section('media'), $section('comments'), $section('pages'),
+            ['title' => __('Privacy guide'), 'description' => __('See what the site collects and draft a privacy policy.'), 'icon' => 'lock', 'url' => route('admin.settings.privacy.index'), 'can' => 'settings.manage'],
             ['title' => __('Plugins'), 'description' => __('Turn plugins on or off and configure them.'), 'icon' => 'plug', 'url' => route('admin.settings.plugins.index'), 'can' => 'plugins.manage'],
             ['title' => __('Activity log'), 'description' => __('Who changed what, and when.'), 'icon' => 'activity', 'url' => route('admin.settings.logs.index'), 'can' => 'logs.view'],
             ['title' => __('Backup'), 'description' => __('Create, download and restore backups.'), 'icon' => 'backup', 'url' => route('admin.settings.backups.index'), 'can' => 'backups.manage'],
             ['title' => __('Import & Export'), 'description' => __('Move content as a JSON file.'), 'icon' => 'transfer', 'url' => route('admin.settings.tools.index'), 'can' => 'tools.manage'],
+            ['title' => __('Site health'), 'description' => __('Check the server, security and backups.'), 'icon' => 'heart', 'url' => route('admin.settings.health.index'), 'can' => 'settings.manage'],
             ['title' => __('Update'), 'description' => __('Update the CMS from your public repository.'), 'icon' => 'refresh', 'url' => route('admin.settings.update.index'), 'can' => 'updates.manage'],
         ];
 

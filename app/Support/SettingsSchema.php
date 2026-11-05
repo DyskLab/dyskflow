@@ -17,7 +17,7 @@ class SettingsSchema
                     ['name' => 'site_title', 'label' => __('Site title'), 'type' => 'text', 'required' => true],
                     ['name' => 'tagline', 'label' => __('Tagline'), 'type' => 'text'],
                     ['name' => 'tagline_translated', 'label' => __('Tagline in :language', ['language' => Locales::name(Locales::second())]), 'type' => 'text'],
-                    ['name' => 'favicon', 'label' => __('Favicon'), 'type' => 'media'],
+                    ['name' => 'favicon', 'label' => __('Favicon'), 'type' => 'media', 'help' => __('Leave empty to use the DyskFlow logo.')],
                     ['name' => 'site_url', 'label' => __('Site address (URL)'), 'type' => 'url', 'required' => true],
                     ['name' => 'timezone', 'label' => __('Timezone'), 'type' => 'select', 'options' => array_combine(timezone_identifiers_list(), timezone_identifiers_list()), 'default' => 'Asia/Jakarta'],
                     ['name' => 'date_format', 'label' => __('Date format'), 'type' => 'select', 'default' => 'd M Y H:i', 'options' => ['d M Y H:i' => '05 Nov 2026 19:30', 'd/m/Y H:i' => '05/11/2026 19:30', 'Y-m-d H:i' => '2026-11-05 19:30', 'M j, Y g:i a' => 'Nov 5, 2026 7:30 pm']],
@@ -94,9 +94,12 @@ class SettingsSchema
                 'title' => __('Pages'), 'icon' => 'page',
                 'description' => __('Homepage and number of articles per page.'),
                 'fields' => [
-                    ['name' => 'home_type', 'label' => __('Homepage shows'), 'type' => 'select', 'options' => ['posts' => __('Latest articles'), 'page' => __('A page')], 'default' => 'posts'],
-                    ['name' => 'home_page_id', 'label' => __('Homepage page'), 'type' => 'select', 'options' => ['' => '—'] + Post::where('type', 'page')->orderBy('title')->pluck('title', 'id')->all(), 'help' => __('Choose a page that uses a landing page to make it your homepage.')],
+                    ['name' => 'home_type', 'label' => __('Homepage shows'), 'type' => 'select', 'options' => ['landing' => __('Landing page'), 'posts' => __('Latest articles'), 'page' => __('A page')], 'default' => 'landing'],
+                    ['name' => 'home_landing', 'label' => __('Homepage landing page'), 'type' => 'select', 'options' => Landing::options(), 'default' => 'dyskflow', 'help' => __('Landing pages are written as code in the landing folder. Add a folder there to see it in this list.')],
+                    ['name' => 'home_page_id', 'label' => __('Homepage page'), 'type' => 'select', 'options' => ['' => '—'] + Post::where('type', 'page')->orderBy('title')->pluck('title', 'id')->all(), 'help' => __('Used only when the homepage shows a page. It shows that page\'s own content.')],
+                    ['name' => 'privacy_page_id', 'label' => __('Privacy policy page'), 'type' => 'select', 'options' => ['' => '—'] + Post::where('type', 'page')->orderBy('title')->pluck('title', 'id')->all(), 'help' => __('Once published, it is linked in the site footer.')],
                     ['name' => 'posts_per_page', 'label' => __('Articles per page'), 'type' => 'number', 'default' => '10'],
+                    ['name' => 'show_view_count', 'label' => __('Show view count on articles'), 'type' => 'switch', 'default' => '1', 'help' => __('Counts visits by people who are not logged in. Search engine bots are skipped. Visits served from a CDN cache are not counted.')],
                 ],
             ],
             'update' => [

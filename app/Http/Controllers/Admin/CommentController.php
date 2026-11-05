@@ -15,12 +15,15 @@ class CommentController extends Controller
     {
         $statuses = ['pending' => __('Pending'), 'approved' => __('Approved'), 'spam' => __('Spam')];
         $bulk = route('admin.comments.bulk');
+        $inTrash = request()->input('f.status') === 'trash';
+        $trashed = Comment::onlyTrashed()->count();
 
         return view('admin.table', [
             'title' => __('Comments'),
+            'actions' => $trashed && ! $inTrash ? [['label' => __('Trash (:count)', ['count' => $trashed]), 'icon' => 'trash', 'secondary' => true, 'url' => route('admin.comments.index', ['f' => ['status' => 'trash']])]] : [],
             'table' => DataTable::make([
                 'id' => 'comments',
-                'source' => Comment::query()->with('post'),
+                'source' => Comment::query()->with(['post' => fn ($q) => $q->withTrashed()]),
                 'columns' => [
                     ['key' => 'author_name', 'label' => __('Author'), 'sort' => true, 'render' => fn ($c) => new HtmlString('<div style="font-weight:500">'.e($c->author_name).'</div><div class="muted small">'.e((string) $c->author_email).'</div>')],
                     ['key' => 'content', 'label' => __('Comment'), 'render' => fn ($c) => Str::limit($c->content, 120)],
@@ -29,20 +32,31 @@ class CommentController extends Controller
                     ['key' => 'created_at', 'label' => __('Date'), 'sort' => true, 'render' => fn ($c) => cms_date($c->created_at)],
                 ],
                 'search' => ['author_name', 'author_email', 'content'],
-                'filters' => ['status' => ['label' => __('Status'), 'options' => $statuses]],
+                'filters' => ['status' => [
+                    'label' => __('Status'),
+                    'options' => $statuses + ['trash' => __('Trash')],
+                    'apply' => fn ($q, $value) => $value === 'trash' ? $q->onlyTrashed() : $q->where('status', $value),
+                ]],
                 'default_sort' => ['created_at', 'desc'],
+                'empty' => $inTrash ? __('The trash is empty.') : null,
                 'bulk_url' => $bulk,
-                'bulk' => [
+                'bulk' => $inTrash ? [
+                    'restore' => ['label' => __('Restore')],
+                    'force' => ['label' => __('Delete permanently'), 'danger' => true],
+                ] : [
                     'approved' => ['label' => __('Approve')],
                     'pending' => ['label' => __('Mark as pending')],
                     'spam' => ['label' => __('Mark as spam')],
-                    'delete' => ['label' => __('Delete'), 'danger' => true],
+                    'delete' => ['label' => __('Move to trash'), 'danger' => true],
                 ],
-                'row_actions' => fn ($c) => [
+                'row_actions' => fn ($c) => $c->trashed() ? [
+                    ['label' => __('Restore'), 'icon' => 'refresh', 'post' => $bulk, 'fields' => ['ids[]' => [$c->id], 'action' => 'restore']],
+                    ['label' => __('Delete permanently'), 'icon' => 'trash', 'post' => $bulk, 'fields' => ['ids[]' => [$c->id], 'action' => 'force'], 'danger' => true, 'confirm' => __('Delete this comment permanently? This cannot be undone.')],
+                ] : [
                     $c->status !== 'approved' ? ['label' => __('Approve'), 'icon' => 'check', 'post' => $bulk, 'fields' => ['ids[]' => [$c->id], 'action' => 'approved']] : null,
                     $c->status !== 'spam' ? ['label' => __('Mark as spam'), 'icon' => 'ban', 'post' => $bulk, 'fields' => ['ids[]' => [$c->id], 'action' => 'spam']] : null,
                     ['label' => __('Edit'), 'icon' => 'pencil', 'sheet' => route('admin.comments.edit', $c)],
-                    ['label' => __('Delete'), 'icon' => 'trash', 'post' => $bulk, 'fields' => ['ids[]' => [$c->id], 'action' => 'delete'], 'danger' => true, 'confirm' => __('This action cannot be undone.')],
+                    ['label' => __('Move to trash'), 'icon' => 'trash', 'post' => $bulk, 'fields' => ['ids[]' => [$c->id], 'action' => 'delete'], 'danger' => true, 'confirm' => __('Move this comment to the trash?')],
                 ],
             ]),
         ]);
@@ -81,9 +95,14 @@ class CommentController extends Controller
 
     public function bulk(Request $request)
     {
-        $action = $request->validate(['action' => 'required|in:approved,pending,spam,delete'])['action'];
-        $query = Comment::whereIn('id', $this->ids($request));
-        $count = $action === 'delete' ? $query->delete() : $query->update(['status' => $action]);
+        $action = $request->validate(['action' => 'required|in:approved,pending,spam,delete,restore,force'])['action'];
+        $query = (in_array($action, ['restore', 'force'], true) ? Comment::onlyTrashed() : Comment::query())->whereIn('id', $this->ids($request));
+        $count = match ($action) {
+            'delete' => $query->delete(),
+            'restore' => $query->restore(),
+            'force' => $query->forceDelete(),
+            default => $query->update(['status' => $action]),
+        };
         activity("comment.$action", (string) $count);
 
         return back()->with('success', __('Done: :count item(s).', ['count' => $count]));

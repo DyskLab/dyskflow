@@ -32,7 +32,6 @@
 
                 <div class="field">
                     <span class="label">{{ __('Content') }}</span>
-                    @if (! $isArticle)<p class="help">{{ __('Not shown when this page uses a landing page.') }}</p>@endif
                     @include('admin.partials.editor', ['value' => $post->content])
                 </div>
 
@@ -102,18 +101,6 @@
                         </div>
                     </div>
                 @else
-                    <div class="card">
-                        <div class="card-header"><h2 class="card-title">{{ __('Landing page') }}</h2></div>
-                        <div class="card-content stack-sm">
-                            <select class="select" name="landing" aria-label="{{ __('Landing page') }}">
-                                <option value="">{{ __('None: use the content above') }}</option>
-                                @foreach ($landings as $slug => $name)
-                                    <option value="{{ $slug }}" @selected(old('landing', $post->landing) === $slug)>{{ $name }}</option>
-                                @endforeach
-                            </select>
-                            <p class="help">{{ __('Landing pages are coded separately in the landing folder. SEO fields here still apply.') }}</p>
-                        </div>
-                    </div>
                     <div class="card">
                         <div class="card-header"><h2 class="card-title">{{ __('Menu') }}</h2></div>
                         <div class="card-content stack">

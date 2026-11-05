@@ -56,6 +56,8 @@ class Breadcrumbs
             'tools' => __('Import & Export'),
             'update' => __('Update'),
             'notifications' => __('Notifications'),
+            'privacy' => __('Privacy guide'),
+            'health' => __('Site health'),
         ];
     }
 }

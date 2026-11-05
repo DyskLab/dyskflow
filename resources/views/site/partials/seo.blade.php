@@ -16,8 +16,7 @@
 @if (! empty($seo['image']))<meta property="og:image" content="{{ $seo['image'] }}">
 <meta name="twitter:card" content="summary_large_image">
 @endif
-@if (setting('favicon'))<link rel="icon" href="{{ cms_asset_url(setting('favicon')) }}">
-@endif
+{{ cms_favicon() }}
 @if (setting('seo_google_verification'))<meta name="google-site-verification" content="{{ setting('seo_google_verification') }}">
 @endif
 <link rel="alternate" type="application/rss+xml" title="{{ setting('site_title') }}" href="{{ site_route('feed') }}">

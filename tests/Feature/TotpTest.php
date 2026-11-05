@@ -213,12 +213,18 @@ class TotpTest extends TestCase
 
     public function test_the_seeder_fills_every_kind_of_content_and_can_run_twice(): void
     {
+        // The seeder writes under the public folder. Point it elsewhere so a test run never touches this install's uploads.
+        $public = sys_get_temp_dir().'/cms-public-'.bin2hex(random_bytes(4));
+        File::ensureDirectoryExists($public.'/img');
+        File::copy(public_path('img/logo-mark.svg'), $public.'/img/logo-mark.svg');
+        $this->app->usePublicPath($public);
+
         try {
             $this->seed(DatabaseSeeder::class);
             $this->seed(DatabaseSeeder::class);
 
             $this->assertSame(2, Post::where('type', 'article')->count());
-            $this->assertSame(2, Post::where('type', 'page')->count());
+            $this->assertSame(1, Post::where('type', 'page')->count());
             $this->assertSame(2, Term::where('taxonomy', 'category')->count());
             $this->assertSame(2, Term::where('taxonomy', 'tag')->count());
             $this->assertSame(2, Comment::count());
@@ -229,11 +235,42 @@ class TotpTest extends TestCase
             $this->get('/blog/welcome-to-dyskflow')->assertOk();
             $this->get('/id/blog/selamat-datang-di-dyskflow')->assertOk()->assertSee('Selamat datang di DyskFlow');
             $this->get('/category/guides')->assertOk();
-            $this->get('/contact')->assertOk();
-            $this->get('/about-dyskflow')->assertOk()->assertSee('Latest articles')->assertSee(url('blog'), false);
-            $this->get('/id/tentang-dyskflow')->assertOk()->assertSee('Artikel terbaru');
+            $this->get('/kontak')->assertOk();
+
+            // The privacy policy waits as a draft until the owner fills in the brackets.
+            $privacy = Post::where('type', 'page')->sole();
+            $this->assertSame('privacy-policy', $privacy->slug);
+            $this->assertSame('draft', $privacy->status);
+            $this->assertStringContainsString('[', $privacy->content);
+            $this->assertSame((string) $privacy->id, (string) setting('privacy_page_id'));
+            $this->assertSame('draft', $privacy->translations()->where('locale', 'id')->sole()->status);
+            $this->get('/privacy-policy')->assertNotFound();
+            $this->get('/id/kebijakan-privasi')->assertNotFound();
+            $this->get('/blog')->assertDontSee('Privacy Policy');
+            $this->get('/')->assertOk()->assertSee('Latest articles')->assertSee(url('blog'), false);
+            $this->get('/id')->assertOk()->assertSee('Artikel terbaru');
         } finally {
-            File::deleteDirectory(public_path('uploads/sample'));
+            File::deleteDirectory($public);
+        }
+    }
+
+    public function test_the_seeder_keeps_a_privacy_page_that_is_already_set(): void
+    {
+        $public = sys_get_temp_dir().'/cms-public-'.bin2hex(random_bytes(4));
+        File::ensureDirectoryExists($public.'/img');
+        File::copy(public_path('img/logo-mark.svg'), $public.'/img/logo-mark.svg');
+        $this->app->usePublicPath($public);
+
+        try {
+            $mine = Post::create(['user_id' => $this->admin->id, 'type' => 'page', 'title' => 'Mine', 'slug' => 'mine', 'status' => 'published', 'content' => '<p>My policy</p>']);
+            \App\Models\Setting::write(['privacy_page_id' => (string) $mine->id]);
+
+            $this->seed(DatabaseSeeder::class);
+
+            $this->assertSame(1, Post::where('type', 'page')->count());
+            $this->assertSame((string) $mine->id, (string) setting('privacy_page_id'));
+        } finally {
+            File::deleteDirectory($public);
         }
     }
 

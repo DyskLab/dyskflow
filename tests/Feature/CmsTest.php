@@ -217,11 +217,8 @@ class CmsTest extends TestCase
         $this->get('/feed')->assertOk()->assertSee('SEO Post');
     }
 
-    public function test_page_renders_landing_with_page_seo_and_assets_are_contained(): void
+    public function test_landing_assets_are_contained(): void
     {
-        Post::create(['type' => 'page', 'title' => 'Promo', 'slug' => 'promo', 'status' => 'published', 'published_at' => now()->subDay(), 'landing' => 'example', 'meta_title' => 'Promo SEO']);
-
-        $this->get('/promo')->assertOk()->assertSee('<title>Promo SEO</title>', false)->assertSee('_landing/example/assets/style.css', false);
         $this->get('/_landing/example/assets/style.css')->assertOk();
         $this->get('/_landing/example/index.blade.php')->assertNotFound();
         $this->get('/_landing/example/landing.json')->assertNotFound();
@@ -231,10 +228,10 @@ class CmsTest extends TestCase
 
     public function test_page_set_as_homepage_lives_at_root(): void
     {
-        $page = Post::create(['type' => 'page', 'title' => 'Home', 'slug' => 'home', 'status' => 'published', 'published_at' => now()->subDay(), 'landing' => 'example']);
+        $page = Post::create(['type' => 'page', 'title' => 'Home', 'slug' => 'home', 'status' => 'published', 'published_at' => now()->subDay(), 'content' => '<p>Home words</p>']);
         Setting::write(['home_type' => 'page', 'home_page_id' => (string) $page->id]);
 
-        $this->get('/')->assertOk()->assertSee('_landing/example', false);
+        $this->get('/')->assertOk()->assertSee('Home words');
         $this->get('/home')->assertRedirect('/');
     }
 
@@ -324,6 +321,7 @@ class CmsTest extends TestCase
 
     public function test_homepage_has_one_h1_and_sitemap_lists_the_blog(): void
     {
+        Setting::write(['home_type' => 'posts']);
         $response = $this->get('/')->assertOk();
         $this->assertSame(1, substr_count($response->getContent(), '<h1'));
         $response->assertSee('<h1 class="site-title">Test Site</h1>', false);
@@ -332,6 +330,7 @@ class CmsTest extends TestCase
 
     public function test_list_pages_have_their_own_canonical_and_title_and_end_with_404(): void
     {
+        Setting::write(['home_type' => 'posts']);
         Setting::write(['posts_per_page' => '1']);
         $this->article();
         $this->article();
@@ -443,7 +442,7 @@ class CmsTest extends TestCase
         $this->get('/admin/landing')->assertNotFound();
 
         $cards = collect(AdminMenu::settingsCards())->pluck('title')->all();
-        $this->assertSame(['General', 'Contact', 'Email', 'SEO', 'Media', 'Comments', 'Pages', 'Plugins', 'Activity log', 'Backup', 'Import & Export', 'Update'], $cards);
+        $this->assertSame(['General', 'Contact', 'Email', 'SEO', 'Media', 'Comments', 'Pages', 'Privacy guide', 'Plugins', 'Activity log', 'Backup', 'Import & Export', 'Site health', 'Update'], $cards);
         $this->get('/admin/settings')->assertOk()->assertSeeInOrder(['General', 'Contact', 'Email', 'SEO'], false);
     }
 

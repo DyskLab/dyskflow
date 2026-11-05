@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
+    use SoftDeletes;
+
     /** Each language has its own copy of these. Dates, images, terms and comments are shared. */
     public const TRANSLATED = ['title', 'slug', 'excerpt', 'content', 'meta_title', 'meta_description', 'focus_keyword', 'canonical_url', 'noindex'];
 

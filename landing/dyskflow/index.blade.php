@@ -24,23 +24,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#fbf9f7">
     {!! $seo !!}
+    @include('site.partials.theme-script')
+    <link rel="stylesheet" href="{{ asset('css/ui.css') }}?v={{ config('cms.version') }}">
+    <link rel="stylesheet" href="{{ asset('css/site.css') }}?v={{ config('cms.version') }}">
     <link rel="stylesheet" href="{{ landing_asset('assets/style.css') }}">
 </head>
 <body>
     <a class="skip" href="#kelebihan">{{ $t('Lewati ke isi', 'Skip to content') }}</a>
 
-    <header class="bar">
-        <div class="wrap bar-in">
-            <span class="brand"><img src="{{ landing_asset('assets/logo-mark.svg') }}" alt="" width="28" height="28"> DyskFlow</span>
-            <nav aria-label="{{ $t('Menu halaman', 'Page menu') }}">
-                <a href="#kelebihan">{{ $t('Kelebihan', 'Benefits') }}</a>
-                <a href="#pembaruan">{{ $t('Pembaruan', 'Updates') }}</a>
-                <a href="#syarat">{{ $t('Syarat', 'Requirements') }}</a>
-                <a href="{{ site_route('blog') }}">{{ $t('Artikel', 'Articles') }}</a>
-            </nav>
-        </div>
-    </header>
+    @include('site.partials.header')
 
     <main>
         <section class="hero wrap">
@@ -49,8 +43,8 @@
                 <h1>{{ $t('Pasang Laravel di hosting biasa, tanpa membuka terminal.', 'Run Laravel on ordinary hosting, without opening a terminal.') }}</h1>
                 <p class="lead">{{ $t('DyskFlow mengelola artikel, halaman, media, dan SEO seperti CMS yang sudah Anda kenal, sementara landing page tetap bebas Anda koding sendiri.', 'DyskFlow manages articles, pages, media and SEO like the CMS you already know, while your landing pages stay free for you to code.') }}</p>
                 <div class="actions">
-                    <a class="btn btn-main" href="#kelebihan">{{ $t('Lihat kelebihannya', 'See the benefits') }}</a>
-                    @if ($repo)<a class="btn btn-line" href="https://github.com/{{ $repo }}" rel="noopener">GitHub</a>@endif
+                    <a class="cta cta-main" href="#kelebihan">{{ $t('Lihat kelebihannya', 'See the benefits') }}</a>
+                    @if ($repo)<a class="cta cta-line" href="https://github.com/{{ $repo }}" rel="noopener">GitHub</a>@endif
                 </div>
             </div>
             <ol class="steps" aria-label="{{ $t('Cara memasang', 'How to install') }}">
@@ -120,8 +114,12 @@
     <footer class="foot">
         <div class="wrap foot-in">
             <span>{{ setting('site_title', 'DyskFlow') }}</span>
-            @if (setting('contact_email'))<a href="mailto:{{ setting('contact_email') }}">{{ setting('contact_email') }}</a>@endif
+            <span class="foot-links">
+                @if ($privacyPage = cms_privacy_page())<a href="{{ $privacyPage->url() }}">{{ $privacyPage->title }}</a>@endif
+                @if (setting('contact_email'))<a href="mailto:{{ setting('contact_email') }}">{{ setting('contact_email') }}</a>@endif
+            </span>
         </div>
     </footer>
+    <script src="{{ asset('js/site.js') }}?v={{ config('cms.version') }}"></script>
 </body>
 </html>

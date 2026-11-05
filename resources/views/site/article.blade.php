@@ -7,6 +7,7 @@
             <div class="post-meta">
                 {{ cms_date($post->published_at, 'd M Y') }}
                 @if ($post->author) · {{ $post->author->name }}@endif
+                @if (setting('show_view_count', '1')) · {{ __('Views: :count', ['count' => number_format($post->view_count)]) }}@endif
                 @foreach ($post->categories as $category) · <a href="{{ $category->url() }}">{{ $category->name }}</a>@endforeach
             </div>
         </header>
@@ -23,7 +24,7 @@
 
     @if ($comments->isNotEmpty() || $post->commentsOpen())
         <section class="stack" id="comments">
-            <h2 class="card-title" style="font-size:18px">{{ __('Comments') }} ({{ $comments->count() }})</h2>
+            <h2>{{ __('Comments') }} ({{ $comments->count() }})</h2>
             <div>
                 @foreach ($comments as $comment)
                     <div class="comment">
@@ -37,7 +38,7 @@
             </div>
 
             @if ($post->commentsOpen())
-                <form class="stack" method="post" action="{{ site_route('comment', $post->slug) }}#comments">
+                <form class="stack comment-form" method="post" action="{{ site_route('comment', $post->slug) }}#comments">
                     @csrf
                     <div class="hp-field" aria-hidden="true">
                         <label>Website confirm <input type="text" name="website_confirm" tabindex="-1" autocomplete="off"></label>

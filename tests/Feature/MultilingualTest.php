@@ -330,7 +330,7 @@ class MultilingualTest extends TestCase
 
         $json = $this->post('/admin/settings/tools/export', ['include' => ['articles']])->assertOk()->streamedContent();
 
-        $post->delete();
+        $post->forceDelete();
         $term->delete();
         $this->assertSame(0, \App\Models\PostTranslation::count(), 'Deleting a post removes its translations');
 

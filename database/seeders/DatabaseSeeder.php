@@ -5,11 +5,14 @@ namespace Database\Seeders;
 use App\Models\Comment;
 use App\Models\Media;
 use App\Models\Post;
+use App\Models\Setting;
 use App\Models\Term;
 use App\Models\User;
 use App\Support\Locales;
+use App\Support\PrivacyGuide;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 /**
  * Sample content for trying the CMS after installing: php artisan db:seed
@@ -50,22 +53,34 @@ class DatabaseSeeder extends Seeder
         ], $base, $second, ['published_at' => now()->subDay()]);
         $updates->terms()->syncWithoutDetaching([$news->id, $seo->id]);
 
-        $this->post($user, 'page', [
-            'id' => ['Tentang DyskFlow', 'tentang-dyskflow', 'Kenali kelebihan DyskFlow, CMS Laravel yang terpasang tanpa terminal.', null],
-            'en' => ['About DyskFlow', 'about-dyskflow', 'Discover DyskFlow, the Laravel CMS that installs without a terminal.', null],
-        ], $base, $second, ['landing' => 'dyskflow', 'show_in_menu' => true, 'menu_order' => 1, 'published_at' => now()->subDays(3)]);
+        $this->privacyPage($user, $base, $second);
 
-        $this->post($user, 'page', [
-            'id' => ['Kontak', 'kontak', 'Halaman contoh untuk informasi kontak.', '<p>Ini halaman contoh. Tulis cara menghubungi Anda di sini.</p>'],
-            'en' => ['Contact', 'contact', 'A sample page for contact details.', '<p>This is a sample page. Write how to reach you here.</p>'],
-        ], $base, $second, ['show_in_menu' => true, 'menu_order' => 2, 'published_at' => now()->subDays(3)]);
-
-        if (! Comment::where('post_id', $welcome->id)->exists()) {
+        if (! Comment::withTrashed()->where('post_id', $welcome->id)->exists()) {
             $welcome->comments()->create(['author_name' => 'Budi', 'author_email' => 'budi@example.com', 'content' => $text('Artikel yang membantu, terima kasih.', 'A helpful article, thank you.', $base), 'status' => 'approved']);
             $welcome->comments()->create(['author_name' => 'Sari', 'author_email' => 'sari@example.com', 'content' => $text('Komentar ini menunggu persetujuan.', 'This comment is waiting for approval.', $base), 'status' => 'pending']);
         }
 
         $this->command?->info('Sample content is ready.');
+    }
+
+    /** A draft built from what the site really collects. It has words in square brackets for the owner to replace, so it stays unpublished. */
+    private function privacyPage(User $user, string $base, string $second): void
+    {
+        $current = setting('privacy_page_id');
+        if ($current && Post::where('type', 'page')->whereKey($current)->exists()) {
+            return;
+        }
+
+        $version = function (string $locale) {
+            $title = __('Privacy Policy', [], $locale);
+
+            return [$title, Str::slug($title), null, PrivacyGuide::draft($locale)];
+        };
+        $page = $this->post($user, 'page', [$base => $version($base), $second => $version($second)], $base, $second, ['status' => 'draft', 'allow_comments' => false]);
+
+        if (! $page->trashed()) {
+            Setting::write(['privacy_page_id' => (string) $page->id]);
+        }
     }
 
     private function term(string $taxonomy, array $versions, string $base, string $second): Term
@@ -82,13 +97,13 @@ class DatabaseSeeder extends Seeder
     private function post(User $user, string $type, array $versions, string $base, string $second, array $extra): Post
     {
         [$title, $slug, $excerpt, $content] = $versions[$base];
-        $post = Post::firstOrCreate(['type' => $type, 'slug' => $slug], $extra + [
+        $post = Post::withTrashed()->firstOrCreate(['type' => $type, 'slug' => $slug], $extra + [
             'user_id' => $user->id, 'title' => $title, 'excerpt' => $excerpt, 'content' => $content, 'status' => 'published',
         ]);
 
         [$title, $slug, $excerpt, $content] = $versions[$second];
         $post->translations()->firstOrCreate(['locale' => $second], [
-            'type' => $type, 'title' => $title, 'slug' => $slug, 'excerpt' => $excerpt, 'content' => $content, 'status' => 'published',
+            'type' => $type, 'title' => $title, 'slug' => $slug, 'excerpt' => $excerpt, 'content' => $content, 'status' => $extra['status'] ?? 'published',
         ]);
 
         return $post;

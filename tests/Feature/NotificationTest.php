@@ -200,9 +200,7 @@ class NotificationTest extends TestCase
 
     public function test_the_dyskflow_landing_page_renders_without_cookies(): void
     {
-        Post::create(['user_id' => $this->admin->id, 'type' => 'page', 'title' => 'About DyskFlow', 'slug' => 'about-dyskflow', 'status' => 'published', 'landing' => 'dyskflow']);
-
-        $response = $this->get('/about-dyskflow')->assertOk()
+        $response = $this->get('/')->assertOk()
             ->assertSee('What makes it different')
             ->assertSee('<title>', false)
             ->assertSee('_landing/dyskflow/assets/style.css', false);

@@ -3,7 +3,7 @@ document.addEventListener('click', function (e) {
   var dark = document.documentElement.classList.toggle('dark');
   try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch (err) {}
   var themeColor = document.querySelector('meta[name="theme-color"]');
-  if (themeColor) themeColor.content = dark ? '#0a0a0a' : '#ffffff';
+  if (themeColor) themeColor.content = dark ? '#141210' : '#fbf9f7';
 });
 
 /* Runs after load: jumping to #comments would otherwise clear the focus again. */

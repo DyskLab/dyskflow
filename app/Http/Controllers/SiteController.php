@@ -9,7 +9,9 @@ use App\Support\HtmlSanitizer;
 use App\Support\Landing;
 use App\Support\Locales;
 use App\Support\Seo;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class SiteController extends Controller
@@ -59,7 +61,11 @@ class SiteController extends Controller
     public function home()
     {
         $locale = $this->locale();
-        $homeId = setting('home_type', 'posts') === 'page' ? setting('home_page_id') : null;
+        if (($landing = Landing::home()) && ($response = Landing::render($landing, Seo::forLanding(Landing::find($landing))))) {
+            return $response;
+        }
+
+        $homeId = setting('home_type', 'landing') === 'page' ? setting('home_page_id') : null;
         if ($homeId && ($page = Post::where('type', 'page')->liveIn($locale)->find($homeId))) {
             return $this->renderPage($page->localize($locale));
         }
@@ -100,6 +106,7 @@ class SiteController extends Controller
     {
         $post = $this->findPost('article', $slug, ['categories.translations', 'tags.translations', 'author']);
         $this->ensureVisible($post);
+        $this->countView($post);
 
         return view('site.article', [
             'post' => $post,
@@ -111,7 +118,11 @@ class SiteController extends Controller
 
     public function page(string $slug)
     {
-        $post = $this->findPost('page', $slug);
+        try {
+            $post = $this->findPost('page', $slug);
+        } catch (ModelNotFoundException $e) {
+            return $this->landingAt($slug) ?? throw $e;
+        }
         $this->ensureVisible($post);
 
         // One address per page: a page used as the homepage lives at the root of its language.
@@ -122,11 +133,20 @@ class SiteController extends Controller
         return $this->renderPage($post);
     }
 
+    /** A landing page with "public": true in landing.json has its own address, unless a page already uses it. */
+    private function landingAt(string $slug)
+    {
+        if (Landing::home() === $slug) {
+            return redirect(Locales::url('', $this->locale()), 301);
+        }
+        $landing = Landing::find($slug);
+
+        return $landing && $landing['public'] ? Landing::render($slug, Seo::forLanding($landing, $slug)) : null;
+    }
+
     private function renderPage(Post $page)
     {
-        if ($page->landing && ($response = Landing::render($page->landing, $page))) {
-            return $response;
-        }
+        $this->countView($page);
 
         return view('site.page', [
             'post' => $page,
@@ -226,17 +246,21 @@ class SiteController extends Controller
             }
         };
 
-        $home = setting('home_type', 'posts') === 'page' ? Post::where('type', 'page')->live()->with('translations')->find(setting('home_page_id')) : null;
+        $home = setting('home_type', 'landing') === 'page' ? Post::where('type', 'page')->live()->with('translations')->find(setting('home_page_id')) : null;
         if ($home) {
             $add($home->versions());
             // Without a translation of that page, the second language shows its articles there instead.
             if (! $home->translations->contains(fn ($t) => $t->locale === Locales::second() && $t->status === 'published')) {
                 $add(array_intersect_key(Seo::listVersions(), [Locales::second() => true]));
             }
+        } elseif (Landing::home()) {
+            $add(Seo::landingVersions());
         } else {
             $add(Seo::listVersions());
         }
         $add(Seo::listVersions('blog'));
+        Landing::all()->where('public', true)->reject(fn ($l) => $l['slug'] === Landing::home())
+            ->each(fn ($l) => $add(Seo::landingVersions($l['slug'])));
 
         Post::live()->with('translations')->orderByDesc('updated_at')
             ->get(['id', 'type', 'slug', 'status', 'noindex', 'canonical_url', 'published_at', 'updated_at'])
@@ -279,6 +303,26 @@ class SiteController extends Controller
             'Cache-Control' => 'public, max-age=604800',
             'X-Content-Type-Options' => 'nosniff',
         ]);
+    }
+
+    /**
+     * One visit by someone who is not logged in. Bots and link previews do not count.
+     * The query builder keeps updated_at, which the sitemap uses as the last change, and a failure here never stops the page.
+     */
+    private function countView(Post $post): void
+    {
+        $request = request();
+        if (! $request->isMethod('GET') || auth()->check() || ! $post->isLive() || $request->header('Sec-Purpose') || $request->header('Purpose')) {
+            return;
+        }
+        if (preg_match('/bot|crawl|spider|slurp|facebookexternalhit|preview|lighthouse|headless|curl|wget|python/i', $agent = (string) $request->userAgent()) || $agent === '') {
+            return;
+        }
+
+        rescue(function () use ($post) {
+            DB::table('posts')->where('id', $post->id)->increment('view_count');
+            $post->view_count++;
+        }, report: false);
     }
 
     /** Drafts and scheduled posts are visible only to logged-in staff, for previewing. */

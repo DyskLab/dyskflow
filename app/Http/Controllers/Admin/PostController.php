@@ -8,13 +8,11 @@ use App\Models\Term;
 use App\Models\User;
 use App\Support\DataTable;
 use App\Support\HtmlSanitizer;
-use App\Support\Landing;
 use App\Support\Locales;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 /** Articles and pages share this controller. The route supplies the type. */
 class PostController extends Controller
@@ -39,29 +37,37 @@ class PostController extends Controller
         $type = $this->type($request);
         $base = $this->base($type);
         $isArticle = $type === 'article';
+        $inTrash = $request->input('f.status') === 'trash';
 
         $query = Post::query()->where('type', $type)->with($isArticle ? ['author', 'categories', 'translations'] : ['author', 'translations']);
         if (! $this->canManageAll($type)) {
             $query->where('user_id', auth()->id());
         }
 
+        $trashed = (clone $query)->onlyTrashed()->count();
+
         $columns = [
             ['key' => 'title', 'label' => __('Title'), 'sort' => true, 'render' => fn ($p) => new HtmlString(
-                '<a href="'.e(route("$base.edit", $p)).'" style="font-weight:500;text-decoration:none">'.e($p->title).'</a><div class="muted small">/'.($isArticle ? 'blog/' : '').e($p->slug).'</div>'
+                ($p->trashed() ? '<span style="font-weight:500">'.e($p->title).'</span>' : '<a href="'.e(route("$base.edit", $p)).'" style="font-weight:500;text-decoration:none">'.e($p->title).'</a>').'<div class="muted small">/'.($isArticle ? 'blog/' : '').e($p->slug).'</div>'
             )],
             ['key' => 'status', 'label' => __('Status'), 'sort' => true, 'render' => fn ($p) => $this->statusBadge($p)],
             ['key' => 'translation', 'label' => Locales::name(Locales::second()), 'render' => fn ($p) => $this->translationBadge($p)],
         ];
         if ($isArticle) {
             $columns[] = ['key' => 'categories', 'label' => __('Categories'), 'render' => fn ($p) => $p->categories->pluck('name')->join(', ') ?: '—'];
-        } else {
-            $columns[] = ['key' => 'landing', 'label' => __('Landing page'), 'sort' => true, 'render' => fn ($p) => $p->landing ?: '—'];
         }
         $columns[] = ['key' => 'author', 'label' => __('Author'), 'render' => fn ($p) => $p->author?->name ?? '—'];
+        $columns[] = ['key' => 'view_count', 'label' => __('Views'), 'sort' => true, 'render' => fn ($p) => number_format($p->view_count)];
         $columns[] = ['key' => 'published_at', 'label' => __('Published'), 'sort' => true, 'render' => fn ($p) => cms_date($p->published_at) ?: '—'];
-        $columns[] = ['key' => 'updated_at', 'label' => __('Updated'), 'sort' => true, 'render' => fn ($p) => cms_date($p->updated_at)];
+        $columns[] = $inTrash
+            ? ['key' => 'deleted_at', 'label' => __('Deleted'), 'sort' => true, 'render' => fn ($p) => cms_date($p->deleted_at)]
+            : ['key' => 'updated_at', 'label' => __('Updated'), 'sort' => true, 'render' => fn ($p) => cms_date($p->updated_at)];
 
-        $filters = ['status' => ['label' => __('Status'), 'options' => ['published' => __('Published'), 'draft' => __('Draft')]]];
+        $filters = ['status' => [
+            'label' => __('Status'),
+            'options' => ['published' => __('Published'), 'draft' => __('Draft'), 'trash' => __('Trash')],
+            'apply' => fn ($q, $value) => $value === 'trash' ? $q->onlyTrashed() : $q->where('status', $value),
+        ]];
         if ($isArticle) {
             $filters['category'] = [
                 'label' => __('Category'),
@@ -75,27 +81,36 @@ class PostController extends Controller
 
         return view('admin.table', [
             'title' => $isArticle ? __('Articles') : __('Pages'),
-            'actions' => [['label' => $isArticle ? __('New article') : __('New page'), 'url' => route("$base.create")]],
+            'actions' => array_filter([
+                $trashed && ! $inTrash ? ['label' => __('Trash (:count)', ['count' => $trashed]), 'icon' => 'trash', 'secondary' => true, 'url' => route("$base.index", ['f' => ['status' => 'trash']])] : null,
+                ['label' => $isArticle ? __('New article') : __('New page'), 'url' => route("$base.create")],
+            ]),
             'table' => DataTable::make([
                 'id' => $type,
                 'source' => $query,
                 'columns' => $columns,
                 'search' => ['title', 'slug'],
                 'filters' => $filters,
-                'default_sort' => ['updated_at', 'desc'],
+                'default_sort' => [$inTrash ? 'deleted_at' : 'updated_at', 'desc'],
                 'bulk_url' => route("$base.bulk"),
-                'bulk' => [
+                'bulk' => $inTrash ? [
+                    'restore' => ['label' => __('Restore')],
+                    'force' => ['label' => __('Delete permanently'), 'danger' => true],
+                ] : [
                     'publish' => ['label' => __('Publish')],
                     'draft' => ['label' => __('Move to draft')],
-                    'delete' => ['label' => __('Delete'), 'danger' => true],
+                    'delete' => ['label' => __('Move to trash'), 'danger' => true],
                 ],
-                'row_actions' => fn ($p) => [
+                'row_actions' => fn ($p) => $p->trashed() ? [
+                    ['label' => __('Restore'), 'icon' => 'refresh', 'post' => route("$base.bulk"), 'fields' => ['ids[]' => [$p->id], 'action' => 'restore']],
+                    ['label' => __('Delete permanently'), 'icon' => 'trash', 'post' => route("$base.bulk"), 'fields' => ['ids[]' => [$p->id], 'action' => 'force'], 'danger' => true, 'confirm' => __('Delete ":title" permanently? Its translations and comments go with it. This cannot be undone.', ['title' => $p->title])],
+                ] : [
                     ['label' => __('Edit'), 'icon' => 'pencil', 'url' => route("$base.edit", $p)],
                     ['label' => __('Translate'), 'icon' => 'languages', 'url' => route("$base.translation", $p)],
                     ['label' => __('View'), 'icon' => 'external', 'url' => $p->url(), 'blank' => true],
-                    ['label' => __('Delete'), 'icon' => 'trash', 'post' => route("$base.bulk"), 'fields' => ['ids[]' => [$p->id], 'action' => 'delete'], 'danger' => true, 'confirm' => __('Delete ":title"? This cannot be undone.', ['title' => $p->title])],
+                    ['label' => __('Move to trash'), 'icon' => 'trash', 'post' => route("$base.bulk"), 'fields' => ['ids[]' => [$p->id], 'action' => 'delete'], 'danger' => true, 'confirm' => __('Move ":title" to the trash?', ['title' => $p->title])],
                 ],
-                'empty' => __('Nothing here yet. Create the first one.'),
+                'empty' => $inTrash ? __('The trash is empty.') : __('Nothing here yet. Create the first one.'),
             ]),
         ]);
     }
@@ -145,7 +160,6 @@ class PostController extends Controller
             'categories' => Term::where('taxonomy', 'category')->orderBy('name')->get(),
             'selectedCategories' => $post->exists ? $post->categories()->pluck('terms.id')->all() : [],
             'tags' => $post->exists ? $post->tags()->pluck('name')->join(', ') : '',
-            'landings' => Landing::options(),
         ]);
     }
 
@@ -179,7 +193,6 @@ class PostController extends Controller
             'focus_keyword' => 'nullable|string|max:190',
             'canonical_url' => 'nullable|url:http,https|max:255',
             'og_image' => 'nullable|string|max:255',
-            'landing' => ['nullable', 'string', Rule::in(array_keys(Landing::options()))],
             'menu_order' => 'nullable|integer',
             'categories' => 'array',
             'categories.*' => 'integer',
@@ -212,7 +225,6 @@ class PostController extends Controller
             'allow_comments' => $request->boolean('allow_comments'),
             'show_in_menu' => $request->boolean('show_in_menu'),
             'menu_order' => (int) ($data['menu_order'] ?? 0),
-            'landing' => $type === 'page' ? ($data['landing'] ?? null) : null,
         ])->save();
 
         if ($type === 'article') {
@@ -236,11 +248,12 @@ class PostController extends Controller
         $post->terms()->sync($categories->merge($tags)->all());
     }
 
+    /** Trashed posts keep their slug, because restoring one must not collide. */
     private function uniqueSlug(string $type, string $source, ?int $ignoreId): string
     {
         $base = Str::slug($source) ?: Str::lower(Str::random(8));
         $slug = $base;
-        for ($i = 2; Post::where('type', $type)->where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists(); $i++) {
+        for ($i = 2; Post::withTrashed()->where('type', $type)->where('slug', $slug)->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))->exists(); $i++) {
             $slug = $base.'-'.$i;
         }
 
@@ -250,20 +263,23 @@ class PostController extends Controller
     public function bulk(Request $request)
     {
         $type = $this->type($request);
-        $request->validate(['action' => 'required|in:publish,draft,delete']);
-        $query = Post::where('type', $type)->whereIn('id', $this->ids($request))
+        $action = $request->validate(['action' => 'required|in:publish,draft,delete,restore,force'])['action'];
+        $query = (in_array($action, ['restore', 'force'], true) ? Post::onlyTrashed() : Post::query())
+            ->where('type', $type)->whereIn('id', $this->ids($request))
             ->when(! $this->canManageAll($type), fn ($q) => $q->where('user_id', auth()->id()));
 
         $count = 0;
         foreach ($query->get() as $post) {
-            match ($request->input('action')) {
+            match ($action) {
                 'publish' => $post->update(['status' => 'published', 'published_at' => $post->published_at ?? now()]),
                 'draft' => $post->update(['status' => 'draft']),
                 'delete' => $post->delete(),
+                'restore' => $post->restore(),
+                'force' => $post->forceDelete(),
             };
             $count++;
         }
-        activity("$type.".$request->input('action'), (string) $count);
+        activity("$type.$action", (string) $count);
 
         return back()->with('success', __('Done: :count item(s).', ['count' => $count]));
     }

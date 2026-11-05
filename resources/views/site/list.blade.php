@@ -1,5 +1,7 @@
 @extends('site.layout')
 
+@section('width', 'wide')
+
 @section('content')
     @if ($heading)
         <div class="stack-sm">

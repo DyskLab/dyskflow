@@ -20,7 +20,7 @@ use Throwable;
 /** Import and export of content as portable JSON. Records match by slug. */
 class ToolController extends Controller
 {
-    private const POST_FIELDS = ['type', 'title', 'slug', 'excerpt', 'content', 'status', 'featured_image', 'landing', 'meta_title', 'meta_description', 'focus_keyword', 'canonical_url', 'og_image', 'noindex', 'allow_comments', 'show_in_menu', 'menu_order', 'published_at'];
+    private const POST_FIELDS = ['type', 'title', 'slug', 'excerpt', 'content', 'status', 'featured_image', 'meta_title', 'meta_description', 'focus_keyword', 'canonical_url', 'og_image', 'noindex', 'allow_comments', 'show_in_menu', 'menu_order', 'published_at'];
 
     public function index()
     {
@@ -122,8 +122,10 @@ class ToolController extends Controller
             $values['content'] = HtmlSanitizer::clean($item['content'] ?? '');
             $values['status'] = ($item['status'] ?? '') === 'published' ? 'published' : 'draft';
             $values['published_at'] = ! empty($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->utc() : null;
-            $post = Post::firstOrNew(['type' => $item['type'], 'slug' => $values['slug']]);
+            // Trashed posts still hold their slug. Importing one brings it back.
+            $post = Post::withTrashed()->firstOrNew(['type' => $item['type'], 'slug' => $values['slug']]);
             $post->fill($values);
+            $post->deleted_at = null;
             $post->user_id ??= auth()->id();
             $post->save();
 
@@ -153,7 +155,7 @@ class ToolController extends Controller
                 continue;
             }
             $status = in_array($item['status'] ?? '', ['pending', 'approved', 'spam'], true) ? $item['status'] : 'pending';
-            Comment::firstOrCreate(
+            Comment::withTrashed()->firstOrCreate(
                 ['post_id' => $post->id, 'author_name' => $item['author_name'], 'content' => $item['content']],
                 ['author_email' => $item['author_email'] ?? null, 'author_url' => $item['author_url'] ?? null, 'status' => $status],
             );

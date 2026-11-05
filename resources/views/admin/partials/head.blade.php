@@ -2,7 +2,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#ffffff">
-<link rel="icon" type="image/svg+xml" href="{{ asset('img/logo-mark.svg') }}">
+{{ cms_favicon() }}
 <title>{{ $title ?? 'CMS' }}</title>
 <script>
 (function () {

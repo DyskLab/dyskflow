@@ -122,6 +122,31 @@ class Seo
     }
 
     /**
+     * A landing page serves every language from one folder, at the same path.
+     *
+     * @return array<string, string>
+     */
+    public static function landingVersions(string $path = ''): array
+    {
+        return [Locales::default() => Locales::url($path), Locales::second() => Locales::url($path, Locales::second())];
+    }
+
+    public static function forLanding(array $landing, string $path = ''): array
+    {
+        $versions = self::landingVersions($path);
+
+        return self::defaults(($path === '' ? [
+            'description' => Locales::text('seo_description') ?: ($landing['description'] ?: Locales::text('tagline')),
+        ] : [
+            'title' => self::formatTitle(__($landing['title'])),
+            'description' => $landing['description'] ? __($landing['description']) : Locales::text('seo_description'),
+        ]) + [
+            'canonical' => $versions[app()->getLocale()] ?? Locales::url($path, app()->getLocale()),
+            'alternates' => $versions,
+        ]);
+    }
+
+    /**
      * The hreflang tags of a page. The set is the same on each version, which makes the tags reciprocal.
      * A page outside its own set (hidden, or with its canonical elsewhere) prints none.
      *

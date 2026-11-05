@@ -5,7 +5,6 @@
 <html lang="{{ app()->getLocale() }}">
 <head>
     @include('admin.partials.head', ['title' => ($title ?? '').' · '.setting('site_title', 'CMS')])
-    @if (setting('favicon'))<link rel="icon" href="{{ cms_asset_url(setting('favicon')) }}">@endif
 </head>
 <body>
 <a class="skip-link" href="#main">{{ __('Skip to content') }}</a>
@@ -41,7 +40,11 @@
             <div class="topbar-actions">
                 @include('admin.partials.notifications')
                 @include('admin.partials.top-controls')
-                <a class="topbar-user muted small truncate" href="{{ route('admin.account.security.index') }}" title="{{ __('Account security') }}">{{ $user->name }}</a>
+                <span class="topbar-sep" aria-hidden="true"></span>
+                <a class="topbar-user" href="{{ route('admin.account.security.index') }}" title="{{ __('Account security') }}">
+                    <span class="topbar-avatar" aria-hidden="true">{{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}</span>
+                    <span class="topbar-user-name truncate">{{ $user->name }}</span>
+                </a>
                 <form method="post" action="{{ route('logout') }}">@csrf
                     <button class="btn btn-ghost btn-icon btn-sm" type="submit" aria-label="{{ __('Log out') }}" title="{{ __('Log out') }}">{{ icon('logout') }}</button>
                 </form>

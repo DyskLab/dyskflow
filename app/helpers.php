@@ -92,9 +92,32 @@ function site_route(string $name, mixed $parameters = []): string
     return route(Locales::isDefault($locale) ? $name : "$locale.$name", $parameters);
 }
 
+/** The published privacy policy in the current language, for footers. */
+function cms_privacy_page(): ?Post
+{
+    $id = setting('privacy_page_id');
+    if (! $id) {
+        return null;
+    }
+
+    $locale = app()->getLocale();
+
+    return Post::where('type', 'page')->whereKey($id)->liveIn($locale)->first()?->localize($locale);
+}
+
 function landing_asset(string $path): string
 {
     return Landing::assetUrl($path);
+}
+
+/** The icon tags for every page: the one chosen in Settings, otherwise the DyskFlow logo. Also runs on the install wizard, before the database exists. */
+function cms_favicon(): HtmlString
+{
+    $custom = cms_installed() ? cms_asset_url(setting('favicon')) : null;
+
+    return new HtmlString($custom
+        ? '<link rel="icon" href="'.e($custom).'">'
+        : '<link rel="icon" href="'.e(asset('favicon.ico')).'" sizes="32x32"><link rel="icon" type="image/svg+xml" href="'.e(asset('img/logo-mark.svg')).'">');
 }
 
 function cms_asset_url(?string $path): ?string
@@ -141,6 +164,8 @@ function icon(string $name, int $size = 16): HtmlString
         'panel' => '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/>',
         'bell' => '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.300 21a1.900 1.900 0 0 0 3.400 0"/>',
         'alert' => '<path d="m21.700 18-8-14a2 2 0 0 0-3.500 0l-8 14a2 2 0 0 0 1.800 3h16a2 2 0 0 0 1.700-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+        'lock' => '<rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+        'heart' => '<path d="M19 14c1.500-1.500 3-3.200 3-5.500A5.500 5.500 0 0 0 16.500 3c-1.800 0-3 .5-4.500 2-1.500-1.500-2.700-2-4.500-2A5.500 5.500 0 0 0 2 8.500c0 2.300 1.500 4 3 5.500l7 7Z"/>',
         'shield' => '<path d="M20 13c0 5-3.500 7.500-8 9-4.500-1.500-8-4-8-9V5l8-3 8 3Z"/>',
         'menu' => '<path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>',
         'x' => '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
