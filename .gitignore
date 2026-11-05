@@ -34,3 +34,5 @@ Thumbs.db
 /.claude/
 /.agents/
 /skills-lock.json
+/CLAUDE.md
+/AGENTS.md
