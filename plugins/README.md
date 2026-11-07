@@ -1,6 +1,6 @@
 # Plugins
 
-Each plugin is a folder: `plugins/<slug>/`. Updates never overwrite this folder.
+Each plugin is a folder: `plugins/<slug>/`. Updates never overwrite this folder. AI tools should read [docs/AI-GUIDE.md](../docs/AI-GUIDE.md) for the full details.
 
 ```
 plugins/my-plugin/

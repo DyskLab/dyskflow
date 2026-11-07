@@ -1,7 +1,7 @@
 # Landing pages
 
 Landing pages are coded here, separately from the CMS, by hand or with AI.
-Updates never overwrite this folder.
+Updates never overwrite this folder. AI tools should read [docs/AI-GUIDE.md](../docs/AI-GUIDE.md) for the full details.
 
 ## Create one
 
@@ -45,4 +45,4 @@ One folder serves both languages, at `/` and `/en`, or `/slug` and `/en/slug`, a
 
 ## Prompt for your AI tool
 
-> Build a landing page in `landing/<slug>/` following `landing/README.md`. Self-contained, responsive, no build step. Do not edit files outside that folder.
+> Build a landing page in `landing/<slug>/` following `docs/AI-GUIDE.md`. Self-contained, responsive, no build step. Do not edit files outside that folder.
