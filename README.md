@@ -1,71 +1,80 @@
-# DyskFlow
+<p align="center">
+  <img src="public/img/logo-mark.svg" width="88" alt="DyskFlow">
+</p>
 
-CMS berbasis Laravel, mirip WordPress, tetapi landing page dikoding terpisah (manual atau dengan AI). Tidak perlu build: tanpa Node, tanpa Vite, dan hosting tidak perlu Composer.
+<h1 align="center">DyskFlow</h1>
 
-**Dukung proyek ini:** [Buy Me a Coffee](https://buymeacoffee.com/fannydevz)
+<p align="center">CMS Laravel yang dipasang tanpa terminal dan tanpa build step: unggah file, buka situsnya, ikuti wizard.</p>
 
-**Butuh:** PHP 8.3+, ekstensi `pdo_mysql` atau `pdo_sqlite`, `mbstring`, `openssl`, `fileinfo`, `dom`, `zip`. Opsional: `gd`, `curl`.
+<p align="center">
+  <a href="https://github.com/DyskLab/dyskflow/releases/latest"><img src="https://img.shields.io/github/v/release/DyskLab/dyskflow?label=rilis" alt="Rilis terbaru"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/DyskLab/dyskflow?label=lisensi" alt="Lisensi MIT"></a>
+  <a href="https://www.fanny.dev/dysklab"><img src="https://img.shields.io/badge/bagian%20dari-DyskLab-EE4433" alt="Bagian dari DyskLab"></a>
+  <a href="https://buymeacoffee.com/fannydevz"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-dukung-FFDD00?logo=buymeacoffee&logoColor=000" alt="Buy Me a Coffee"></a>
+</p>
 
-**Mulai memasang:** ikuti [SETUP.md](SETUP.md).
+![Dasbor DyskFlow](docs/screenshots/02-dasbor.png)
 
-## Fitur
+## Kenapa DyskFlow
 
-- Install wizard, termasuk pemasangan `vendor` tanpa terminal
-- Artikel dan halaman dengan SEO: meta, canonical, Open Graph, JSON-LD, pratinjau hasil pencarian, daftar periksa
-- Kategori, tag, komentar dengan moderasi, media
-- Konten dua bahasa (Indonesia dan Inggris): artikel, halaman, kategori, dan tag punya URL per bahasa seperti `/en/blog/slug`, dengan `hreflang` dan sitemap. Bahasa default tetap memakai URL tanpa awalan. Halaman tanpa terjemahan tidak punya URL di bahasa itu
-- `sitemap.xml`, `robots.txt`, RSS per bahasa (`/feed`, `/en/feed`)
-- Landing page dan halaman khusus sebagai kode Blade di folder `landing/`, misalnya beranda DyskFlow dan `/kontak`. Beranda dipilih di Pengaturan, dari landing page, daftar artikel, atau halaman biasa
-- Dasbor berisi hal yang perlu ditangani, ringkasan angka, komentar terbaru, jadwal terbit, dan status situs, sesuai izin tiap pengguna
-- Plugin di folder `plugins/`, dengan hook dan halaman pengaturan otomatis
-- Pengguna dan Peran di sidebar
-- Pengaturan: Umum, Kontak, Email, SEO, Media, Komentar, Halaman, Plugin, Log Aktivitas, Backup, Impor & Ekspor, Pembaruan
-- Pencarian global di header (`⌘K` atau `Ctrl+K`), sidebar bisa diperkecil, breadcrumb di semua halaman admin
-- Verifikasi dua langkah (TOTP) dengan kode pemulihan, plus peringatan di admin bagi yang belum mengaktifkannya
-- Sampah untuk artikel, halaman, dan komentar: hapus masih bisa dipulihkan
-- Jumlah views artikel dan halaman, tanpa cookie
-- Panduan Privasi (data yang benar-benar dikumpulkan situs dan draf kebijakan) dan Kesehatan Situs di Pengaturan
-- Notifikasi di header untuk komentar baru, versi baru, dan error, dengan halaman daftar sendiri
-- Tampilan token shadcn netral dengan warna utama DyskFlow, sebagai CSS biasa, mode gelap, bahasa Indonesia dan Inggris
-
-## Rilis pertama (sekali saja)
-
-Situs mengunduh `vendor` dari GitHub Release, jadi repo publik harus punya rilis lebih dulu.
-
-1. Isi `"repo"` di `cms.json`, contoh `DyskLab/dyskflow`.
-2. Push ke GitHub, lalu buat tag yang sama dengan isi file `VERSION`:
-
-```bash
-git tag v0.1.0
-```
-
-```bash
-git push origin main --tags
-```
-
-GitHub Actions membuat rilis berisi `vendor.zip` secara otomatis ([release.yml](.github/workflows/release.yml)).
+- **Tanpa build:** tidak butuh Node atau Vite, dan hosting tidak perlu Composer. `vendor` dipasang dari halaman web.
+- **Pembaruan satu tombol:** backup dibuat lebih dulu, lalu kode diambil dari rilis terbaru di GitHub.
+- **Landing page bebas:** ditulis sebagai kode Blade terpisah, manual atau dengan AI.
 
 ## Pasang
 
-Langkah lengkap, untuk hosting maupun komputer sendiri, ada di [SETUP.md](SETUP.md). Ringkasnya: unggah file tanpa `vendor`, buka situsnya, tekan **Pasang sekarang**, lalu ikuti wizard.
+**Butuh:** PHP 8.3+ dengan ekstensi `pdo_mysql` atau `pdo_sqlite`, `mbstring`, `openssl`, `fileinfo`, `dom`, dan `zip`. Opsional: `gd` dan `curl`.
 
-## Merilis pembaruan
+1. [Unduh kode sumber](https://github.com/DyskLab/dyskflow/releases/latest), lalu unggah ke hosting tanpa folder `vendor`.
+2. Buka situsnya dan tekan **Pasang sekarang**.
+3. Ikuti wizard untuk mengisi database dan akun admin.
 
-1. Ubah `VERSION`, misalnya `0.2.0`.
-2. Commit, buat tag `v0.2.0`, lalu push tag-nya.
-3. Di situs, notifikasi muncul dalam 12 jam setelah admin membuka halaman admin. Lalu buka **Pengaturan > Pembaruan > Periksa pembaruan > Perbarui sekarang**.
+Langkah lengkap, termasuk cPanel dan komputer sendiri, ada di [SETUP.md](SETUP.md).
 
-Yang terjadi saat memperbarui:
+## Tampilan
+
+| Landing page | Daftar artikel |
+| --- | --- |
+| ![Landing page DyskFlow](docs/screenshots/01-landing.png) | ![Daftar artikel](docs/screenshots/03-artikel.png) |
+| **Editor artikel** | **Pengaturan** |
+| ![Editor artikel](docs/screenshots/04-editor.png) | ![Pengaturan](docs/screenshots/05-pengaturan.png) |
+
+## Fitur
+
+**Konten**
+- Artikel dan halaman, kategori, tag, media, serta komentar dengan moderasi
+- Sampah untuk artikel, halaman, dan komentar, sehingga yang terhapus masih bisa dipulihkan
+- Jumlah views artikel dan halaman, tanpa cookie
+- Dua bahasa (Indonesia dan Inggris) dengan URL per bahasa seperti `/en/blog/slug`. Halaman tanpa terjemahan tidak punya URL di bahasa itu
+
+**SEO**
+- Meta, canonical, Open Graph, JSON-LD, `hreflang`, pratinjau hasil pencarian, dan daftar periksa
+- `sitemap.xml`, `robots.txt`, dan RSS per bahasa (`/feed`, `/en/feed`)
+
+**Admin**
+- Dasbor berisi hal yang perlu ditangani, ringkasan angka, komentar terbaru, jadwal terbit, dan status situs, sesuai izin tiap pengguna
+- Pengguna dan peran, log aktivitas, backup, impor dan ekspor
+- Pencarian global (`⌘K` atau `Ctrl+K`) dan notifikasi untuk komentar baru, versi baru, serta error
+- Verifikasi dua langkah (TOTP) dengan kode pemulihan
+- Panduan Privasi dan Kesehatan Situs
+- Mode gelap, dengan antarmuka bahasa Indonesia dan Inggris
+
+**Pengembangan**
+- [Landing page](landing/README.md) sebagai kode Blade di folder `landing/`. Beranda dipilih di Pengaturan, dari landing page, daftar artikel, atau halaman biasa
+- [Plugin](plugins/README.md) di folder `plugins/`, dengan hook dan halaman pengaturan otomatis
+
+## Memperbarui situs
+
+Buka **Pengaturan > Pembaruan > Periksa pembaruan > Perbarui sekarang**. Notifikasi muncul dalam 12 jam setelah admin membuka halaman admin.
 
 - Backup database dibuat lebih dulu.
-- Kode diambil dari rilis terbaru.
-- `vendor` hanya diganti jika `composer.lock` berubah.
+- Kode diambil dari rilis terbaru, dan `vendor` hanya diganti jika `composer.lock` berubah.
 - Migrasi database dijalankan.
 - `.env`, `storage`, `landing`, `plugins`, `public/uploads`, dan `cms.json` tidak pernah ditimpa.
 
 ## Data contoh
 
-Setelah wizard selesai, isi situs dengan kategori, tag, artikel, komentar, dan media contoh, serta draf Kebijakan Privasi yang tinggal dilengkapi dan diterbitkan. Landing page DyskFlow sudah menjadi beranda tanpa seeder, dan halaman kontak ada di `/kontak` (`landing/kontak/`). Aman dijalankan ulang:
+Setelah wizard selesai, perintah ini mengisi situs dengan kategori, tag, artikel, komentar, media contoh, dan draf Kebijakan Privasi. Perintah ini aman dijalankan ulang.
 
 ```bash
 php artisan db:seed
@@ -79,13 +88,7 @@ Pakai kode pemulihan saat login. Admin lain bisa memakai **Pengguna > Reset TOTP
 php artisan cms:totp-reset email@contoh.com
 ```
 
-## Dokumentasi lain
-
-- [Setup](SETUP.md)
-- [Landing page](landing/README.md)
-- [Plugin](plugins/README.md)
-
-## Pengembangan lokal
+## Pengembangan
 
 ```bash
 composer install
@@ -99,13 +102,28 @@ php artisan serve
 php artisan test
 ```
 
-Atau tanpa Composer, ikuti [SETUP.md](SETUP.md).
+### Merilis versi baru
 
-## Aturan UI
+1. Ubah isi `VERSION`, misalnya menjadi `0.3.0`, lalu commit.
+2. Buat tag yang sama dan push:
 
-- Tabel selalu memakai `App\Support\DataTable`, sehingga selalu punya checkbox, pagination, sorting, dan filter.
-- Form memakai right sheet. Konfirmasi seperti hapus memakai modal.
-- Semua teks ditulis dengan `__('English text')`, dan terjemahannya ada di `lang/id.json`.
+```bash
+git tag v0.3.0
+```
+
+```bash
+git push origin main --tags
+```
+
+GitHub Actions membuat rilis berisi `vendor.zip` ([release.yml](.github/workflows/release.yml)). Fork perlu mengganti `"repo"` di `cms.json` dengan repo miliknya.
+
+## Dukung proyek ini
+
+DyskFlow gratis dan open source. Kalau bermanfaat, kamu bisa [mentraktir kopi di Buy Me a Coffee](https://buymeacoffee.com/fannydevz).
+
+## Bagian dari DyskLab
+
+DyskFlow adalah bagian dari [DyskLab](https://www.fanny.dev/dysklab), bersama [DyskFiles](https://github.com/DyskLab/dyskfiles), [DyskFocus](https://github.com/DyskLab/dyskfocus), dan DyskLink untuk [Mac](https://github.com/DyskLab/dysklink-mac) dan [Android](https://github.com/DyskLab/dysklink-android).
 
 ## Lisensi
 

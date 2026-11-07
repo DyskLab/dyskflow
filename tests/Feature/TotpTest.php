@@ -206,9 +206,9 @@ class TotpTest extends TestCase
         $this->artisan('cms:totp-reset', ['email' => 'nobody@example.test'])->assertExitCode(1);
     }
 
-    public function test_the_admin_footer_links_to_dysklabs(): void
+    public function test_the_admin_footer_links_to_dysklab(): void
     {
-        $this->actingAs($this->admin)->get('/admin')->assertSee('https://www.fanny.dev/dysklabs', false);
+        $this->actingAs($this->admin)->get('/admin')->assertSee('https://www.fanny.dev/dysklab', false);
     }
 
     public function test_the_seeder_fills_every_kind_of_content_and_can_run_twice(): void
