@@ -67,7 +67,7 @@
         </main>
         <footer class="admin-footer">
             <span>DyskFlow {{ config('cms.version') }}</span>
-            <span>{{ __('Built by') }} <a href="https://www.fanny.dev/dysklabs" target="_blank" rel="noopener">Dysklabs</a></span>
+            <span>{{ __('Built by') }} <a href="https://www.fanny.dev/dysklabs" target="_blank" rel="noopener">Dysklabs</a> · <a href="https://buymeacoffee.com/fannydevz" target="_blank" rel="noopener">{{ __('Support DyskFlow') }}</a></span>
         </footer>
     </div>
 </div>

@@ -14,11 +14,11 @@ Panduan memasang DyskFlow dari nol. Tidak perlu Node atau build. Composer juga t
 
 Pilih salah satu:
 
-- Unduh ZIP dari <https://github.com/FannyDevz/dyskflow> (**Code > Download ZIP**), lalu ekstrak.
+- Unduh ZIP dari <https://github.com/DyskLab/dyskflow> (**Code > Download ZIP**), lalu ekstrak.
 - Clone repo:
 
 ```bash
-git clone https://github.com/FannyDevz/dyskflow.git
+git clone https://github.com/DyskLab/dyskflow.git
 ```
 
 ## 2. Siapkan folder
@@ -111,7 +111,7 @@ php artisan db:seed
 
 ### Server tidak bisa mengunduh
 
-Unduh `vendor.zip` dari [halaman rilis](https://github.com/FannyDevz/dyskflow/releases/latest), taruh di folder utama aplikasi, muat ulang halaman, lalu tekan **Pasang sekarang**. File itu terhapus sendiri setelah diekstrak.
+Unduh `vendor.zip` dari [halaman rilis](https://github.com/DyskLab/dyskflow/releases/latest), taruh di folder utama aplikasi, muat ulang halaman, lalu tekan **Pasang sekarang**. File itu terhapus sendiri setelah diekstrak.
 
 ### Pesan lainnya
 

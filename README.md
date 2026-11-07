@@ -2,6 +2,8 @@
 
 CMS berbasis Laravel, mirip WordPress, tetapi landing page dikoding terpisah (manual atau dengan AI). Tidak perlu build: tanpa Node, tanpa Vite, dan hosting tidak perlu Composer.
 
+**Dukung proyek ini:** [Buy Me a Coffee](https://buymeacoffee.com/fannydevz)
+
 **Butuh:** PHP 8.3+, ekstensi `pdo_mysql` atau `pdo_sqlite`, `mbstring`, `openssl`, `fileinfo`, `dom`, `zip`. Opsional: `gd`, `curl`.
 
 **Mulai memasang:** ikuti [SETUP.md](SETUP.md).
@@ -30,7 +32,7 @@ CMS berbasis Laravel, mirip WordPress, tetapi landing page dikoding terpisah (ma
 
 Situs mengunduh `vendor` dari GitHub Release, jadi repo publik harus punya rilis lebih dulu.
 
-1. Isi `"repo"` di `cms.json`, contoh `FannyDevz/dyskflow`.
+1. Isi `"repo"` di `cms.json`, contoh `DyskLab/dyskflow`.
 2. Push ke GitHub, lalu buat tag yang sama dengan isi file `VERSION`:
 
 ```bash
