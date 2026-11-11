@@ -126,6 +126,16 @@ class DesignToolsTest extends TestCase
         $this->post('/admin/design/theme/override', ['path' => '../.env'])->assertNotFound();
     }
 
+    public function test_colors_and_fonts_lights_only_its_own_sidebar_item(): void
+    {
+        $settings = 'class="nav-item active" href="'.route('admin.settings.index').'"';
+
+        $this->actingAs($this->admin)->get(route('admin.settings.edit', 'design'))->assertOk()
+            ->assertSee('class="nav-item active" href="'.route('admin.settings.edit', 'design').'"', false)
+            ->assertDontSee($settings, false);
+        $this->get(route('admin.settings.edit', 'general'))->assertOk()->assertSee($settings, false);
+    }
+
     public function test_global_colors_and_fonts_reach_every_public_page(): void
     {
         $this->get('/')->assertOk()->assertDontSee('cms-brand', false);

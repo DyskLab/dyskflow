@@ -15,11 +15,14 @@
             @include('admin.partials.logo')
         </a>
         <nav class="nav" aria-label="{{ __('Main menu') }}">
+            {{-- A settings page with its own sidebar item (Colors & fonts) lights that item, not Settings too. --}}
+            @php $menuMatched = false; @endphp
             @foreach (\App\Support\AdminMenu::groups() as $groupLabel => $items)
                 <div class="nav-group">
                     @if ($groupLabel !== '')<div class="nav-label">{{ $groupLabel }}</div>@endif
                     @foreach ($items as $item)
-                        <a class="nav-item {{ request()->is(...(array) ($item['match'] ?? '')) ? 'active' : '' }}" href="{{ $item['url'] }}" title="{{ $item['label'] }}" @if (request()->is(...(array) ($item['match'] ?? ''))) aria-current="page" @endif>
+                        @php $itemActive = request()->is(...(array) ($item['match'] ?? '')); $menuMatched = $menuMatched || $itemActive; @endphp
+                        <a class="nav-item {{ $itemActive ? 'active' : '' }}" href="{{ $item['url'] }}" title="{{ $item['label'] }}" @if ($itemActive) aria-current="page" @endif>
                             {{ icon($item['icon'] ?? 'plug') }} <span class="nav-text">{{ $item['label'] }}</span>
                             @if (! empty($item['count']))<span class="nav-count">{{ $item['count'] }}</span>@endif
                         </a>
@@ -29,7 +32,7 @@
         </nav>
         <div class="sidebar-foot">
             <nav class="nav" style="padding:0" aria-label="{{ __('System') }}">
-                <a class="nav-item {{ request()->is('admin/settings*') ? 'active' : '' }}" href="{{ route('admin.settings.index') }}" title="{{ __('Settings') }}">{{ icon('settings') }} <span class="nav-text">{{ __('Settings') }}</span></a>
+                <a class="nav-item {{ request()->is('admin/settings*') && ! $menuMatched ? 'active' : '' }}" href="{{ route('admin.settings.index') }}" title="{{ __('Settings') }}" @if (request()->is('admin/settings*') && ! $menuMatched) aria-current="page" @endif>{{ icon('settings') }} <span class="nav-text">{{ __('Settings') }}</span></a>
                 <a class="nav-item" href="{{ url('/') }}" target="_blank" rel="noopener" title="{{ __('View site') }}">{{ icon('external') }} <span class="nav-text">{{ __('View site') }}</span></a>
             </nav>
         </div>
