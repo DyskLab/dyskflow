@@ -68,7 +68,9 @@ class Plugins
                 continue;
             }
             try {
-                View::addNamespace($slug, $directory.'/views');
+                if (is_dir($directory.'/views')) {
+                    View::addNamespace($slug, $directory.'/views');
+                }
                 // The plugin's own translations, kept in its folder so updates never lose them.
                 if (is_dir($directory.'/lang')) {
                     Translations::add($directory.'/lang');

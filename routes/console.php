@@ -14,6 +14,15 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// Plugins add their routes on every request, and only while they are on, so a route cache would
+// lose them. route:cache (also run by optimize) clears an old cache instead of writing one.
+Artisan::command('route:cache', function () {
+    $this->callSilent('route:clear');
+    $this->info('Routes are not cached: plugins add theirs while the site runs. Any old route cache was removed.');
+
+    return 0;
+})->purpose('Remove the route cache (routes are not cached in this CMS)');
+
 Artisan::command('cms:totp-reset {email}', function (string $email) {
     $user = User::where('email', $email)->first();
     if (! $user) {

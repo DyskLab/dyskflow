@@ -614,4 +614,18 @@ class CmsTest extends TestCase
         }
         $this->withSession(['locale' => 'id'])->get('/admin/articles')->assertSee('Artikel baru');
     }
+
+    public function test_optimize_works_with_plugins_and_keeps_their_routes(): void
+    {
+        // A plugin without views/ registers no view namespace, so view:cache has no missing folder to fail on.
+        \App\Support\Plugins::setActive('hello-bar', true);
+        \App\Support\Plugins::boot();
+        $this->assertArrayNotHasKey('hello-bar', view()->getFinder()->getHints());
+
+        // route:cache would drop the routes plugins add at runtime, so it removes an old cache instead.
+        $cache = app()->getCachedRoutesPath();
+        file_put_contents($cache, '<?php return [];');
+        $this->artisan('route:cache')->assertSuccessful();
+        $this->assertFileDoesNotExist($cache);
+    }
 }

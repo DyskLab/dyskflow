@@ -130,7 +130,8 @@ class UpdateService
     public static function finish(): void
     {
         Artisan::call('migrate', ['--force' => true]);
-        Artisan::call('view:clear');
+        // Cached config, routes or views from the old version would hide the new code.
+        Artisan::call('optimize:clear');
     }
 
     private static function vendorChanged(string $newLock): bool
