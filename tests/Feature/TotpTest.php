@@ -208,7 +208,7 @@ class TotpTest extends TestCase
 
     public function test_the_admin_footer_links_to_dysklab(): void
     {
-        $this->actingAs($this->admin)->get('/admin')->assertSee('https://www.fanny.dev/dysklab', false);
+        $this->actingAs($this->admin)->get('/admin')->assertSee('https://dysklab.fanny.dev', false);
     }
 
     public function test_the_seeder_fills_every_kind_of_content_and_can_run_twice(): void

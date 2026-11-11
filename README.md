@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/DyskLab/dyskflow/releases/latest"><img src="https://img.shields.io/github/v/release/DyskLab/dyskflow" alt="Latest release"></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/DyskLab/dyskflow" alt="MIT License"></a>
-  <a href="https://www.fanny.dev/dysklab"><img src="https://img.shields.io/badge/part%20of-DyskLab-EE4433" alt="Part of DyskLab"></a>
+  <a href="https://dysklab.fanny.dev"><img src="https://img.shields.io/badge/part%20of-DyskLab-EE4433" alt="Part of DyskLab"></a>
   <a href="https://buymeacoffee.com/fannydevz"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=000" alt="Buy Me a Coffee"></a>
 </p>
 
@@ -137,7 +137,7 @@ DyskFlow is free and open source. If it helps you, you can [buy me a coffee](htt
 
 ## Part of DyskLab
 
-DyskFlow is part of [DyskLab](https://www.fanny.dev/dysklab), alongside [DyskFiles](https://github.com/DyskLab/dyskfiles), [DyskFocus](https://github.com/DyskLab/dyskfocus), and DyskLink for [Mac](https://github.com/DyskLab/dysklink-mac) and [Android](https://github.com/DyskLab/dysklink-android).
+DyskFlow is part of [DyskLab](https://dysklab.fanny.dev), alongside [DyskFiles](https://github.com/DyskLab/dyskfiles), [DyskFocus](https://github.com/DyskLab/dyskfocus), and DyskLink for [Mac](https://github.com/DyskLab/dysklink-mac) and [Android](https://github.com/DyskLab/dysklink-android).
 
 ## License
 
