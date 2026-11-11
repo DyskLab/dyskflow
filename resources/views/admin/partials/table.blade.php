@@ -6,7 +6,8 @@
 @endphp
 <div class="dt" data-table>
     <form class="dt-toolbar" method="get" action="{{ url()->current() }}">
-        @if (request('sort'))
+        @if (request()->has('view'))<input type="hidden" name="view" value="{{ $t->view }}">@endif
+        @if (request('sort') && $t->view === 'list')
             <input type="hidden" name="sort" value="{{ request('sort') }}">
             <input type="hidden" name="dir" value="{{ request('dir') }}">
         @endif
@@ -21,8 +22,26 @@
                 @endforeach
             </select>
         @endforeach
+        @if ($t->view === 'grid' && $t->sortable())
+            {{-- The gallery has no column headers, so sorting is a menu. --}}
+            <select class="select" name="sort" aria-label="{{ __('Sort by') }}" data-auto-submit>
+                @foreach ($t->sortable() as $column)
+                    <option value="{{ $column['key'] }}" @selected($t->sort === $column['key'])>{{ __('Sort by') }}: {{ $column['label'] }}</option>
+                @endforeach
+            </select>
+            <select class="select" name="dir" aria-label="{{ __('Order') }}" data-auto-submit>
+                <option value="desc" @selected($t->dir === 'desc')>{{ __('Descending') }}</option>
+                <option value="asc" @selected($t->dir === 'asc')>{{ __('Ascending') }}</option>
+            </select>
+        @endif
         <button class="btn btn-outline" type="submit">{{ __('Filter') }}</button>
-        @if ($hasFilters)<a class="btn btn-ghost" href="{{ url()->current() }}">{{ __('Reset') }}</a>@endif
+        @if ($hasFilters)<a class="btn btn-ghost" href="{{ url()->current() }}{{ request()->has('view') ? '?view='.$t->view : '' }}">{{ __('Reset') }}</a>@endif
+        @isset($config['grid'])
+            <span class="dt-views" role="group" aria-label="{{ __('View') }}">
+                <a class="btn btn-sm btn-icon {{ $t->view === 'grid' ? 'btn-outline' : 'btn-ghost' }}" href="{{ $t->viewUrl('grid') }}" @if ($t->view === 'grid') aria-current="true" @endif title="{{ __('Gallery') }}" aria-label="{{ __('Gallery') }}">{{ icon('dashboard') }}</a>
+                <a class="btn btn-sm btn-icon {{ $t->view === 'list' ? 'btn-outline' : 'btn-ghost' }}" href="{{ $t->viewUrl('list') }}" @if ($t->view === 'list') aria-current="true" @endif title="{{ __('List') }}" aria-label="{{ __('List') }}">{{ icon('list') }}</a>
+            </span>
+        @endisset
     </form>
 
     <form method="post" action="{{ $config['bulk_url'] }}" id="bulk-{{ $config['id'] }}">
@@ -35,6 +54,22 @@
             @endforeach
         </div>
 
+        @if ($t->view === 'grid')
+            <label class="dt-grid-all"><input class="checkbox" type="checkbox" data-check-all> {{ __('Select all') }}</label>
+            <div class="dt-grid">
+                @forelse ($rows as $row)
+                    <div class="dt-tile">
+                        <input class="checkbox dt-tile-check" type="checkbox" name="ids[]" value="{{ $t->rowId($row) }}" data-row-check aria-label="{{ __('Select row') }}">
+                        {{ $config['grid']($row) }}
+                        @isset($config['row_actions'])
+                            <div class="dt-tile-actions">@include('admin.partials.row-actions', ['actions' => $config['row_actions']($row)])</div>
+                        @endisset
+                    </div>
+                @empty
+                    <p class="dt-empty">{{ $config['empty'] ?? __('No data yet.') }}</p>
+                @endforelse
+            </div>
+        @else
         <div class="dt-wrap">
             <table class="table">
                 <thead>
@@ -76,6 +111,7 @@
                 </tbody>
             </table>
         </div>
+        @endif
     </form>
 
     <div class="dt-footer">

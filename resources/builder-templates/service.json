@@ -1,0 +1,377 @@
+{
+  "$schema": "../../docs/builder.schema.json",
+  "template": {
+    "title": "Service business",
+    "description": "For a local business or agency: services, reasons to choose you, testimonials, contact details and FAQ."
+  },
+  "version": 1,
+  "layout": "site",
+  "sections": [
+    {
+      "id": "st035",
+      "type": "section",
+      "style": {
+        "padding": {
+          "base": "xl",
+          "mobile": "lg"
+        },
+        "text": "center",
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "ct034",
+          "widgets": [
+            {
+              "id": "wt031",
+              "type": "heading",
+              "tag": "h1",
+              "size": "2xl",
+              "kicker": {
+                "id": "Jasa profesional",
+                "en": "Professional services"
+              },
+              "text": {
+                "id": "Kami bantu urusan Anda selesai dengan rapi.",
+                "en": "We get your job done properly."
+              }
+            },
+            {
+              "id": "wt032",
+              "type": "text",
+              "size": "lg",
+              "html": {
+                "id": "<p>Ceritakan singkat layanan Anda, area yang dilayani, dan kenapa pelanggan bisa percaya.</p>",
+                "en": "<p>Briefly describe your service, the area you cover, and why customers can trust you.</p>"
+              }
+            },
+            {
+              "id": "wt033",
+              "type": "button",
+              "buttons": [
+                {
+                  "label": {
+                    "id": "Konsultasi gratis",
+                    "en": "Free consultation"
+                  },
+                  "url": "#kontak"
+                },
+                {
+                  "label": {
+                    "id": "Lihat layanan",
+                    "en": "See services"
+                  },
+                  "url": "#layanan",
+                  "variant": "outline"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st039",
+      "type": "section",
+      "anchor": "layanan",
+      "style": {
+        "background": "muted",
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "ct038",
+          "widgets": [
+            {
+              "id": "wt036",
+              "type": "heading",
+              "text": {
+                "id": "Layanan kami",
+                "en": "Our services"
+              }
+            },
+            {
+              "id": "wt037",
+              "type": "card",
+              "margin": "md",
+              "columns": {
+                "base": "3",
+                "tablet": "2",
+                "mobile": "1"
+              },
+              "cards": [
+                {
+                  "title": {
+                    "id": "Konsultasi",
+                    "en": "Consulting"
+                  },
+                  "text": {
+                    "id": "Kami pelajari kebutuhan Anda lebih dulu.",
+                    "en": "We learn what you need first."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Pengerjaan",
+                    "en": "Delivery"
+                  },
+                  "text": {
+                    "id": "Dikerjakan tim berpengalaman, tepat waktu.",
+                    "en": "Done by an experienced team, on time."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Perawatan",
+                    "en": "Maintenance"
+                  },
+                  "text": {
+                    "id": "Kami tetap mendampingi setelah selesai.",
+                    "en": "We stay with you after it is done."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st044",
+      "type": "section",
+      "columns": [
+        {
+          "id": "ct041",
+          "width": {
+            "base": 5,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wt040",
+              "type": "heading",
+              "text": {
+                "id": "Kenapa memilih kami",
+                "en": "Why choose us"
+              }
+            }
+          ]
+        },
+        {
+          "id": "ct043",
+          "width": {
+            "base": 7,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wt042",
+              "type": "icon-list",
+              "items": [
+                {
+                  "title": {
+                    "id": "Berpengalaman",
+                    "en": "Experienced"
+                  },
+                  "text": {
+                    "id": "Lebih dari 10 tahun melayani pelanggan.",
+                    "en": "More than 10 years serving customers."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Harga transparan",
+                    "en": "Transparent prices"
+                  },
+                  "text": {
+                    "id": "Penawaran tertulis sebelum mulai.",
+                    "en": "A written quote before we start."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Bergaransi",
+                    "en": "Guaranteed"
+                  },
+                  "text": {
+                    "id": "Kami perbaiki tanpa biaya bila ada masalah.",
+                    "en": "We fix any problem at no cost."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st047",
+      "type": "section",
+      "style": {
+        "background": "primary",
+        "padding": "lg",
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "ct046",
+          "widgets": [
+            {
+              "id": "wt045",
+              "type": "stats",
+              "columns": "3",
+              "items": [
+                {
+                  "value": "10+",
+                  "label": {
+                    "id": "Tahun pengalaman",
+                    "en": "Years of experience"
+                  }
+                },
+                {
+                  "value": "1.200+",
+                  "label": {
+                    "id": "Proyek selesai",
+                    "en": "Projects done"
+                  }
+                },
+                {
+                  "value": "98%",
+                  "label": {
+                    "id": "Pelanggan puas",
+                    "en": "Happy customers"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st051",
+      "type": "section",
+      "style": {
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "ct050",
+          "widgets": [
+            {
+              "id": "wt048",
+              "type": "heading",
+              "text": {
+                "id": "Kata pelanggan",
+                "en": "What customers say"
+              }
+            },
+            {
+              "id": "wt049",
+              "type": "testimonials",
+              "margin": "md",
+              "columns": {
+                "base": "2",
+                "mobile": "1"
+              },
+              "items": [
+                {
+                  "quote": {
+                    "id": "Rapi, cepat, dan komunikatif.",
+                    "en": "Neat, fast and easy to talk to."
+                  },
+                  "name": "Budi",
+                  "role": "Jakarta"
+                },
+                {
+                  "quote": {
+                    "id": "Harga sesuai penawaran, tidak ada biaya tersembunyi.",
+                    "en": "The price matched the quote, no hidden costs."
+                  },
+                  "name": "Dewi",
+                  "role": "Bandung"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st058",
+      "type": "section",
+      "anchor": "kontak",
+      "style": {
+        "background": "muted"
+      },
+      "columns": [
+        {
+          "id": "ct054",
+          "width": {
+            "base": 7,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wt052",
+              "type": "heading",
+              "text": {
+                "id": "Hubungi kami",
+                "en": "Contact us"
+              }
+            },
+            {
+              "id": "wt053",
+              "type": "contact",
+              "layout": "cards"
+            }
+          ]
+        },
+        {
+          "id": "ct057",
+          "width": {
+            "base": 5,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wt055",
+              "type": "heading",
+              "size": "md",
+              "text": {
+                "id": "Pertanyaan umum",
+                "en": "Frequently asked questions"
+              }
+            },
+            {
+              "id": "wt056",
+              "type": "faq",
+              "items": [
+                {
+                  "question": {
+                    "id": "Berapa lama pengerjaannya?",
+                    "en": "How long does it take?"
+                  },
+                  "answer": {
+                    "id": "Tergantung pekerjaan; kami beri jadwal di penawaran.",
+                    "en": "It depends on the job; the quote includes a schedule."
+                  }
+                },
+                {
+                  "question": {
+                    "id": "Apakah melayani luar kota?",
+                    "en": "Do you work outside the city?"
+                  },
+                  "answer": {
+                    "id": "Ya, dengan biaya transport sesuai jarak.",
+                    "en": "Yes, with a travel fee based on distance."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

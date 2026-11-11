@@ -122,6 +122,25 @@
 .sort-link:hover { color: var(--muted-foreground); }
 .sort-idle { opacity: .4; }
 .row-actions { display: inline-flex; gap: 2px; }
+/* Gallery view of a DataTable (Media). */
+.dt-views { display: inline-flex; gap: 2px; margin-left: auto; }
+.dt-grid-all { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted-foreground); margin-bottom: 8px; }
+.dt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.dt-grid > .dt-empty { grid-column: 1 / -1; border: 1px solid var(--border); border-radius: var(--radius); }
+.dt-tile { position: relative; display: grid; align-content: start; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); overflow: hidden; }
+.dt-tile:hover, .dt-tile:focus-within { border-color: color-mix(in oklab, var(--foreground) 30%, transparent); }
+.dt-tile.selected { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+.dt-tile-check { position: absolute; top: 8px; left: 8px; z-index: 2; background: var(--background); }
+.dt-tile-media { width: 100%; border: 0; padding: 0; font: inherit; cursor: pointer; display: grid; place-items: center; aspect-ratio: 1; background: var(--muted); color: var(--muted-foreground); overflow: hidden; }
+.dt-tile-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dt-tile-media .dt-tile-ext { font: 600 13px/1 ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; display: grid; gap: 8px; justify-items: center; }
+.dt-tile-text { padding: 8px 10px 4px; min-width: 0; }
+.dt-tile-title { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dt-tile-actions { display: flex; justify-content: flex-end; padding: 0 4px 4px; }
+@media (hover: hover) {
+  .dt-tile-check:not(:checked) { opacity: 0; }
+  .dt-tile:hover .dt-tile-check, .dt-tile:focus-within .dt-tile-check, .dt-grid:has(.dt-tile-check:checked) .dt-tile-check { opacity: 1; }
+}
 .dt-empty { padding: 40px 12px !important; text-align: center; color: var(--muted-foreground); }
 .dt-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .pagination { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
@@ -238,3 +257,77 @@
   .content { padding: 16px; }
   .dt-search { max-width: none; flex-basis: 100%; }
 }
+
+/* Design > Files */
+.file-path { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; font-size: 13px; }
+.file-path a { color: var(--muted-foreground); text-decoration: none; }
+.file-path a:hover { color: var(--foreground); text-decoration: underline; }
+.file-name { display: inline-flex; align-items: center; gap: 8px; }
+.file-name svg { color: var(--muted-foreground); }
+.file-name a { text-decoration: none; }
+.file-name a:hover { text-decoration: underline; }
+.revision-content { margin: 0; padding: 12px; background: var(--muted); border-radius: calc(var(--radius) - 2px); white-space: pre-wrap; word-break: break-word; font-size: 12px; max-height: 70vh; overflow: auto; }
+/* Logos and icons (SVG) stay whole on a tile instead of being cropped like photos. */
+.dt-tile-media img[src$=".svg"] { object-fit: contain; padding: 18%; }
+
+/* ---------- Uploads: drop zone and one row per file ---------- */
+.dropzone { display: grid; justify-items: center; gap: 6px; padding: 28px 16px; text-align: center; border: 1.5px dashed var(--border); border-radius: var(--radius); color: var(--muted-foreground); cursor: pointer; transition: border-color .12s, background .12s; }
+.dropzone strong { color: var(--foreground); font-weight: 500; }
+.dropzone:hover, .dropzone:focus-within, [data-uploader].is-dragging .dropzone { border-color: var(--primary); background: color-mix(in oklab, var(--primary) 6%, transparent); }
+.upload-list { display: grid; gap: 8px; }
+.upload-list:empty { display: none; }
+.upload-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 13px; }
+.upload-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.upload-state { color: var(--muted-foreground); font-size: 12px; white-space: nowrap; }
+.upload-bar { grid-column: 1 / -1; height: 4px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.upload-bar span { display: block; height: 100%; width: 0; background: var(--primary); transition: width .15s; }
+.upload-error { grid-column: 1 / -1; color: var(--destructive); font-size: 12.5px; line-height: 1.45; }
+.upload-error:empty { display: none; }
+.upload-row[data-state="done"] { border-color: color-mix(in oklab, var(--success, #16a34a) 45%, var(--border)); }
+.upload-row[data-state="done"] .upload-state { color: var(--success, #16a34a); }
+.upload-row[data-state="done"] .upload-bar span { background: var(--success, #16a34a); width: 100%; }
+.upload-row[data-state="error"] { border-color: color-mix(in oklab, var(--destructive) 50%, var(--border)); background: color-mix(in oklab, var(--destructive) 5%, transparent); }
+.upload-row[data-state="error"] .upload-state { color: var(--destructive); }
+.upload-row[data-state="error"] .upload-bar { display: none; }
+
+/* ---------- Image picker ---------- */
+.picker { position: relative; display: grid; gap: 14px; align-content: start; }
+.picker-tools { display: flex; gap: 8px; }
+.picker-tools .input { flex: 1; min-width: 0; }
+.picker-upload { position: relative; flex-shrink: 0; cursor: pointer; }
+.picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 12px; min-height: 160px; align-content: start; }
+.picker-item { display: grid; gap: 2px; padding: 0 0 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); color: inherit; font: inherit; text-align: left; cursor: pointer; overflow: hidden; transition: border-color .12s, box-shadow .12s, transform .12s; }
+.picker-item:hover { border-color: color-mix(in oklab, var(--foreground) 30%, transparent); transform: translateY(-1px); }
+.picker-item:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.picker-item.is-current { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+.picker-item.is-new { animation: picker-in .3s ease-out; }
+@keyframes picker-in { from { opacity: 0; transform: scale(.96); } }
+.picker-thumb { display: block; aspect-ratio: 1; background: var(--muted); margin-bottom: 6px; overflow: hidden; }
+.picker-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.picker-thumb img.is-svg, .picker-thumb img[src$=".svg"] { object-fit: contain; padding: 18%; }
+.picker-name { padding: 0 10px; font-size: 12.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.picker-meta { padding: 0 10px; font-size: 11.5px; color: var(--muted-foreground); min-height: 1em; }
+.picker-empty { grid-column: 1 / -1; display: grid; justify-items: center; gap: 6px; padding: 40px 16px; border: 1.5px dashed var(--border); border-radius: var(--radius); color: var(--muted-foreground); text-align: center; }
+.picker-empty strong { color: var(--foreground); font-weight: 500; }
+.picker-drop-hint { position: absolute; inset: 0; display: none; place-content: center; justify-items: center; gap: 8px; border: 2px dashed var(--primary); border-radius: var(--radius); background: color-mix(in oklab, var(--background) 82%, transparent); color: var(--primary); pointer-events: none; z-index: 2; }
+.picker.is-dragging .picker-drop-hint { display: grid; }
+@media (prefers-reduced-motion: reduce) { .picker-item, .picker-item.is-new { transition: none; animation: none; transform: none; } }
+
+/* "New builder page": starting points as cards with a live thumbnail (a 1280px page drawn at a quarter). */
+.starter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
+.starter { position: relative; display: grid; grid-template-rows: auto 1fr; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); overflow: hidden; cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.starter:hover { border-color: color-mix(in srgb, var(--primary) 50%, var(--border)); }
+.starter:has(input:checked) { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+.starter:has(input:focus-visible) { outline: 2px solid var(--ring, var(--primary)); outline-offset: 2px; }
+.starter input { position: absolute; top: 10px; left: 10px; z-index: 2; width: 18px; height: 18px; accent-color: var(--primary); }
+.starter-thumb { position: relative; display: block; aspect-ratio: 4 / 3; overflow: hidden; border-bottom: 1px solid var(--border); background: var(--muted); }
+.starter-thumb iframe { position: absolute; top: 0; left: 0; width: 1280px; height: 960px; border: 0; transform: scale(var(--starter-scale, .1640625)); transform-origin: 0 0; pointer-events: none; background: #fff; }
+.starter-text { display: grid; gap: 2px; padding: 10px 12px 34px; font-size: 13px; }
+.starter-text span { color: var(--muted-foreground); font-size: 12px; line-height: 1.4; }
+.starter-open { position: absolute; left: 12px; bottom: 10px; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted-foreground); text-decoration: none; }
+.starter-open:hover { color: var(--foreground); text-decoration: underline; }
+
+/* Content > Forms: one message in the sheet. */
+.submission { display: grid; gap: 14px; margin: 0; }
+.submission dt { color: var(--muted-foreground); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.submission dd { margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; }

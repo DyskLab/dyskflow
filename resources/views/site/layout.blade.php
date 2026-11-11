@@ -9,9 +9,11 @@
     <meta name="theme-color" content="#fbf9f7">
     @include('site.partials.seo')
     @include('site.partials.theme-script')
-    <link rel="stylesheet" href="{{ asset('css/ui.css') }}?v={{ config('cms.version') }}">
-    <link rel="stylesheet" href="{{ asset('css/site.css') }}?v={{ config('cms.version') }}">
+    <link rel="stylesheet" href="{{ theme_asset('css/ui.css') }}">
+    <link rel="stylesheet" href="{{ theme_asset('css/site.css') }}">
+    @if (\App\Support\Builder\Templates::hasParts()){!! \App\Support\Builder\Templates::linkCss() !!}@endif
     @include('site.partials.head-hooks')
+    {!! \App\Support\Theme::customTag('css') !!}
 </head>
 <body>
 <a class="skip-link" href="#main">{{ __('Skip to content') }}</a>
@@ -21,8 +23,9 @@
     @if (session('success'))<div class="alert" role="status">{{ session('success') }}</div>@endif
     @yield('content')
 </main>
-@include('site.partials.footer')
+@include('site.partials.footer', ['customJsLater' => true])
 @php do_action('cms.footer'); @endphp
-<script src="{{ asset('js/site.js') }}?v={{ config('cms.version') }}"></script>
+<script src="{{ theme_asset('js/site.js') }}"></script>
+{!! \App\Support\Theme::customTag('js') !!}
 </body>
 </html>

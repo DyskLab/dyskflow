@@ -12,7 +12,11 @@ use App\Models\User;
 use App\Support\AdminMenu;
 use App\Support\BackupService;
 use App\Support\HtmlSanitizer;
+use App\Support\Translations;
+use Illuminate\Foundation\Http\Kernel;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -243,15 +247,80 @@ class CmsTest extends TestCase
         foreach (['shell.php' => '<?php echo 1;', 'x.svg' => '<svg onload="x()"/>', 'x.html' => '<script>1</script>'] as $name => $body) {
             $path = $this->storage.'/'.$name;
             file_put_contents($path, $body);
-            $file = new \Illuminate\Http\UploadedFile($path, $name, null, null, true);
+            $file = new UploadedFile($path, $name, null, null, true);
             $this->post('/admin/media', ['files' => [$file]])->assertSessionHas('error');
         }
         // A script disguised with an image extension is rejected by its content.
         $path = $this->storage.'/fake.jpg';
         file_put_contents($path, '<?php echo 1;');
-        $this->post('/admin/media', ['files' => [new \Illuminate\Http\UploadedFile($path, 'fake.jpg', null, null, true)]])->assertSessionHas('error');
+        $this->post('/admin/media', ['files' => [new UploadedFile($path, 'fake.jpg', null, null, true)]])->assertSessionHas('error');
 
         $this->assertDatabaseCount('media', 0);
+    }
+
+    public function test_each_uploaded_file_succeeds_or_fails_on_its_own_with_a_reason(): void
+    {
+        $this->actingAs($this->admin);
+        $png = $this->storage.'/ok.png';
+        imagepng(imagecreatetruecolor(4, 3), $png);
+        $bad = $this->storage.'/notes.exe';
+        file_put_contents($bad, 'MZ');
+        $broken = new UploadedFile($this->storage.'/missing.png', 'huge.png', 'image/png', UPLOAD_ERR_INI_SIZE, true);
+
+        $response = $this->postJson('/admin/media', ['files' => [
+            new UploadedFile($png, 'ok.png', 'image/png', null, true),
+            new UploadedFile($bad, 'notes.exe', null, null, true),
+            $broken,
+        ]])->assertOk();
+
+        $this->assertCount(1, $response->json('saved'));
+        $this->assertSame('4', (string) $response->json('saved.0.width'));
+        $this->assertSame($response->json('saved.0.path'), $response->json('path'), 'the picker reads the first file at the top');
+        $this->assertSame(['notes.exe', 'huge.png'], array_column($response->json('errors'), 'name'));
+        $this->assertStringContainsString('exe', $response->json('errors.0.message'));
+        $this->assertStringContainsString('upload_max_filesize', $response->json('errors.1.message'));
+        $this->assertDatabaseCount('media', 1);
+
+        // Nothing saved: a 422 with the reason; nothing sent at all: the hosting limit is named.
+        $this->postJson('/admin/media', ['files' => [new UploadedFile($bad, 'notes.exe', null, null, true)]])->assertStatus(422)->assertJsonPath('saved', []);
+        $this->postJson('/admin/media', [])->assertStatus(422)->assertJsonFragment(['saved' => []]);
+
+        // The sheet and the picker show the limits.
+        $this->get('/admin/media/upload')->assertOk()->assertSee('data-max="', false)->assertSee('data-dropzone', false);
+        $this->get('/admin/media/picker')->assertOk()->assertSee('data-picker', false)->assertSee('data-picker-filter', false);
+        foreach (Media::all() as $media) {
+            @unlink(public_path($media->path));
+        }
+    }
+
+    public function test_uploaded_photos_become_webp_when_the_setting_is_on(): void
+    {
+        $this->actingAs($this->admin);
+        // A noisy photo, so WebP is clearly smaller than the PNG.
+        $image = imagecreatetruecolor(320, 200);
+        for ($x = 0; $x < 320; $x += 2) {
+            for ($y = 0; $y < 200; $y += 2) {
+                imagesetpixel($image, $x, $y, random_int(0, 0xFFFFFF));
+            }
+        }
+        $png = $this->storage.'/photo.png';
+        imagepng($image, $png);
+
+        $this->postJson('/admin/media', ['files' => [new UploadedFile($png, 'Foto Pantai.png', 'image/png', null, true)]])->assertOk()
+            ->assertJsonPath('mime', 'image/png');
+
+        Setting::write(['media_webp' => '1', 'media_webp_quality' => '80']);
+        imagepng($image, $png);
+        $response = $this->postJson('/admin/media', ['files' => [new UploadedFile($png, 'Foto Pantai.png', 'image/png', null, true)]])->assertOk();
+        $this->assertSame('image/webp', $response->json('mime'));
+        $this->assertMatchesRegularExpression('#/foto-pantai(-\d+)?\.webp$#', $response->json('path'));
+        $this->assertFileExists(public_path($response->json('path')));
+        $this->assertFileDoesNotExist(public_path(substr($response->json('path'), 0, -5).'.png'), 'the PNG is replaced');
+        $this->assertSame('320', (string) $response->json('width'));
+
+        foreach (Media::all() as $media) {
+            @unlink(public_path($media->path));
+        }
     }
 
     public function test_settings_encrypt_mail_password_and_keep_it_when_left_empty(): void
@@ -301,7 +370,7 @@ class CmsTest extends TestCase
 
         $path = $this->storage.'/import.json';
         file_put_contents($path, $json);
-        $file = new \Illuminate\Http\UploadedFile($path, 'import.json', 'application/json', null, true);
+        $file = new UploadedFile($path, 'import.json', 'application/json', null, true);
         $this->post('/admin/settings/tools/import', ['file' => $file])->assertSessionHas('success');
 
         $restored = Post::where('slug', 'portable')->firstOrFail();
@@ -310,8 +379,8 @@ class CmsTest extends TestCase
 
     public function test_csrf_is_enforced_on_real_requests(): void
     {
-        $middleware = app(\Illuminate\Foundation\Http\Kernel::class)->getMiddlewareGroups()['web'];
-        $this->assertContains(\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class, $middleware);
+        $middleware = app(Kernel::class)->getMiddlewareGroups()['web'];
+        $this->assertContains(PreventRequestForgery::class, $middleware);
     }
 
     public function test_robots_is_not_hidden_by_a_static_file(): void
@@ -375,6 +444,43 @@ class CmsTest extends TestCase
             ->assertSee('fetchpriority="high"  width="800" height="600"', false);
     }
 
+    public function test_landing_pages_and_the_theme_keep_their_own_translations(): void
+    {
+        $root = sys_get_temp_dir().'/cms-lang-'.bin2hex(random_bytes(4));
+        File::ensureDirectoryExists($root.'/landing/promo/lang');
+        File::ensureDirectoryExists($root.'/theme/lang');
+        file_put_contents($root.'/landing/promo/lang/id.json', json_encode(['Spring sale' => 'Promo musim semi', 'Articles' => 'Tulisan']));
+        file_put_contents($root.'/theme/lang/id.json', json_encode(['Made with care' => 'Dibuat dengan cermat']));
+        config(['cms.design_roots' => ['landing' => $root.'/landing', 'theme' => $root.'/theme', 'plugins' => base_path('plugins')]]);
+
+        try {
+            Translations::register();
+            app('translator')->setLoaded([]);
+            app()->setLocale('id');
+
+            $this->assertSame('Promo musim semi', __('Spring sale'));
+            $this->assertSame('Dibuat dengan cermat', __('Made with care'));
+            $this->assertSame('Artikel', __('Articles'), 'the core translation wins');
+        } finally {
+            File::deleteDirectory($root);
+        }
+    }
+
+    public function test_the_media_library_is_a_table(): void
+    {
+        $image = Media::create(['path' => 'uploads/2026/11/a.jpg', 'filename' => 'a.jpg', 'title' => 'Foto pantai', 'mime' => 'image/jpeg', 'size' => 2048, 'width' => 800, 'height' => 600, 'alt' => 'Pantai']);
+        Media::create(['path' => 'uploads/2026/11/b.pdf', 'filename' => 'b.pdf', 'title' => 'Brosur', 'mime' => 'application/pdf', 'size' => 4096]);
+        $this->actingAs($this->admin);
+
+        $this->get('/admin/media')->assertOk()
+            ->assertSee('<table class="table">', false)
+            ->assertSee('name="ids[]" value="'.$image->id.'"', false)
+            ->assertDontSee('class="dt-grid"', false)
+            ->assertDontSee('dt-views', false);
+        $this->get('/admin/media?f[kind]=image')->assertOk()->assertSee('Foto pantai')->assertDontSee('Brosur');
+        $this->get('/admin/media?sort=size&dir=desc')->assertOk()->assertSeeInOrder(['Brosur', 'Foto pantai']);
+    }
+
     public function test_new_visitors_get_no_cookies_unless_the_page_has_a_form(): void
     {
         $this->article(['slug' => 'closed', 'allow_comments' => false]);
@@ -400,7 +506,7 @@ class CmsTest extends TestCase
 
     public function test_language_switch_needs_no_token_and_crawlers_get_the_site_language(): void
     {
-        $middleware = app(\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class);
+        $middleware = app(PreventRequestForgery::class);
         $this->assertContains('locale/*', $middleware->getExcludedPaths());
 
         Setting::write(['locale' => 'id']);

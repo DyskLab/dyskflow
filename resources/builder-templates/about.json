@@ -1,0 +1,338 @@
+{
+  "$schema": "../../docs/builder.schema.json",
+  "template": {
+    "title": "About us",
+    "description": "Your story, numbers, values, what customers say and an invitation to get in touch."
+  },
+  "version": 1,
+  "layout": "site",
+  "sections": [
+    {
+      "id": "sx003",
+      "type": "section",
+      "style": {
+        "padding": {
+          "base": "xl",
+          "mobile": "lg"
+        },
+        "text": "center",
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "cx004",
+          "widgets": [
+            {
+              "id": "wh001",
+              "type": "heading",
+              "text": {
+                "id": "Kami membangun usaha ini dengan sepenuh hati.",
+                "en": "We built this business with care."
+              },
+              "tag": "h1",
+              "size": "2xl",
+              "kicker": {
+                "id": "Tentang kami",
+                "en": "About us"
+              }
+            },
+            {
+              "id": "wt002",
+              "type": "text",
+              "html": {
+                "id": "<p>Ceritakan awal mula usaha Anda, siapa yang Anda layani, dan apa yang membuat Anda berbeda.</p>",
+                "en": "<p>Tell how your business started, who you serve and what makes you different.</p>"
+              },
+              "size": "lg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx006",
+      "type": "section",
+      "style": {
+        "background": "muted",
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "cx007",
+          "widgets": [
+            {
+              "id": "wc005",
+              "type": "counter",
+              "columns": "4",
+              "items": [
+                {
+                  "number": 10,
+                  "suffix": "+",
+                  "label": {
+                    "id": "Tahun pengalaman",
+                    "en": "Years of experience"
+                  }
+                },
+                {
+                  "number": 1200,
+                  "suffix": "+",
+                  "label": {
+                    "id": "Pelanggan",
+                    "en": "Customers"
+                  }
+                },
+                {
+                  "number": 25,
+                  "label": {
+                    "id": "Anggota tim",
+                    "en": "Team members"
+                  }
+                },
+                {
+                  "number": 98,
+                  "suffix": "%",
+                  "label": {
+                    "id": "Pelanggan puas",
+                    "en": "Happy customers"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx011",
+      "type": "section",
+      "style": {
+        "valign": "center"
+      },
+      "columns": [
+        {
+          "id": "cx012",
+          "width": {
+            "base": 6,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wh008",
+              "type": "heading",
+              "text": {
+                "id": "Cerita kami",
+                "en": "Our story"
+              }
+            },
+            {
+              "id": "wt009",
+              "type": "text",
+              "html": {
+                "id": "<p>Tulis dua atau tiga paragraf tentang perjalanan usaha Anda: masalah yang ingin Anda selesaikan, langkah pertama, dan pencapaian yang Anda banggakan.</p>",
+                "en": "<p>Write two or three paragraphs about your journey: the problem you set out to solve, the first steps, and what you are proud of.</p>"
+              }
+            }
+          ]
+        },
+        {
+          "id": "cx013",
+          "width": {
+            "base": 6,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wb010",
+              "type": "blockquote",
+              "quote": {
+                "id": "Kami percaya pekerjaan yang baik dimulai dari mendengarkan.",
+                "en": "We believe good work starts with listening."
+              },
+              "author": "Nama pendiri",
+              "role": {
+                "id": "Pendiri",
+                "en": "Founder"
+              },
+              "variant": "line"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx016",
+      "type": "section",
+      "style": {
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "cx017",
+          "widgets": [
+            {
+              "id": "wh014",
+              "type": "heading",
+              "text": {
+                "id": "Nilai yang kami pegang",
+                "en": "What we stand for"
+              }
+            },
+            {
+              "id": "wi015",
+              "type": "icon-box",
+              "columns": "3",
+              "variant": "filled",
+              "items": [
+                {
+                  "icon": "heart",
+                  "title": {
+                    "id": "Peduli",
+                    "en": "Care"
+                  },
+                  "text": {
+                    "id": "Kami memperlakukan setiap pelanggan seperti keluarga.",
+                    "en": "We treat every customer like family."
+                  }
+                },
+                {
+                  "icon": "shield",
+                  "title": {
+                    "id": "Jujur",
+                    "en": "Honest"
+                  },
+                  "text": {
+                    "id": "Harga jelas, tanpa biaya tersembunyi.",
+                    "en": "Clear prices, no hidden fees."
+                  }
+                },
+                {
+                  "icon": "trending-up",
+                  "title": {
+                    "id": "Terus belajar",
+                    "en": "Always learning"
+                  },
+                  "text": {
+                    "id": "Kami terus memperbaiki cara kerja kami.",
+                    "en": "We keep improving how we work."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx020",
+      "type": "section",
+      "style": {
+        "background": "muted",
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "cx021",
+          "widgets": [
+            {
+              "id": "wh018",
+              "type": "heading",
+              "text": {
+                "id": "Kata mereka",
+                "en": "What they say"
+              }
+            },
+            {
+              "id": "wr019",
+              "type": "reviews",
+              "per_view": "2",
+              "items": [
+                {
+                  "text": {
+                    "id": "Pelayanannya ramah dan hasilnya rapi.",
+                    "en": "Friendly service and tidy results."
+                  },
+                  "name": "Sari",
+                  "role": {
+                    "id": "Pelanggan",
+                    "en": "Customer"
+                  },
+                  "rating": "5"
+                },
+                {
+                  "text": {
+                    "id": "Selalu tepat waktu dan mudah dihubungi.",
+                    "en": "Always on time and easy to reach."
+                  },
+                  "name": "Budi",
+                  "role": {
+                    "id": "Pelanggan",
+                    "en": "Customer"
+                  },
+                  "rating": "5"
+                },
+                {
+                  "text": {
+                    "id": "Saya sudah merekomendasikan ke teman-teman.",
+                    "en": "I have recommended them to my friends."
+                  },
+                  "name": "Ani",
+                  "role": {
+                    "id": "Pelanggan",
+                    "en": "Customer"
+                  },
+                  "rating": "5"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx025",
+      "type": "section",
+      "style": {
+        "background": "primary",
+        "text": "center",
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "cx026",
+          "widgets": [
+            {
+              "id": "wh022",
+              "type": "heading",
+              "text": {
+                "id": "Mari bekerja sama",
+                "en": "Let us work together"
+              }
+            },
+            {
+              "id": "wt023",
+              "type": "text",
+              "html": {
+                "id": "<p>Punya pertanyaan atau ingin memulai? Kami senang mendengar dari Anda.</p>",
+                "en": "<p>Have a question or ready to start? We would love to hear from you.</p>"
+              }
+            },
+            {
+              "id": "wb024",
+              "type": "button",
+              "buttons": [
+                {
+                  "label": {
+                    "id": "Hubungi kami",
+                    "en": "Contact us"
+                  },
+                  "url": "/kontak"
+                }
+              ],
+              "size": "lg"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

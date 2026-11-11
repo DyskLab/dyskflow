@@ -1,0 +1,8 @@
+{
+  "label": "Pagination",
+  "icon": "right",
+  "group": "template",
+  "context": "archive",
+  "description": "Links to newer and older pages of the list. Nothing when there is one page.",
+  "fields": []
+}

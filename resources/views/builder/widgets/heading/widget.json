@@ -1,0 +1,12 @@
+{
+  "label": "Heading",
+  "icon": "heading",
+  "group": "basic",
+  "description": "A title. Use one h1 per page.",
+  "fields": [
+    { "key": "text", "type": "text", "label": "Text", "translatable": true, "required": true },
+    { "key": "tag", "type": "select", "label": "Level", "options": ["h1", "h2", "h3", "h4"], "default": "h2" },
+    { "key": "size", "type": "select", "label": "Size", "options": ["sm", "md", "lg", "xl", "2xl"], "default": "lg", "responsive": true },
+    { "key": "kicker", "type": "text", "label": "Small text above", "translatable": true }
+  ]
+}

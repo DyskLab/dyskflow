@@ -1,0 +1,11 @@
+{
+  "label": "Article title",
+  "icon": "heading",
+  "group": "template",
+  "context": "single",
+  "description": "The title of the article being shown.",
+  "fields": [
+    { "key": "tag", "type": "select", "label": "Level", "options": ["h1", "h2"], "default": "h1" },
+    { "key": "size", "type": "select", "label": "Size", "options": ["md", "lg", "xl", "2xl"], "default": "xl", "responsive": true }
+  ]
+}

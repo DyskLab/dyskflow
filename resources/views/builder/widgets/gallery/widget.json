@@ -1,0 +1,16 @@
+{
+  "label": "Gallery",
+  "icon": "image",
+  "group": "media",
+  "description": "Images in a grid, each with an optional caption. Pressing an image can open it full size.",
+  "fields": [
+    { "key": "images", "type": "repeater", "label": "Images", "min_items": 1, "max_items": 40, "fields": [
+      { "key": "src", "type": "image", "label": "Image", "required": true },
+      { "key": "alt", "type": "text", "label": "Description for screen readers", "translatable": true },
+      { "key": "caption", "type": "text", "label": "Caption", "translatable": true }
+    ] },
+    { "key": "columns", "type": "select", "label": "Per row", "options": ["2", "3", "4"], "default": "3", "responsive": true },
+    { "key": "ratio", "type": "select", "label": "Shape", "options": ["auto", "1:1", "4:3", "16:9", "3:4"], "default": "1:1" },
+    { "key": "open", "type": "toggle", "label": "Open the full image when pressed", "default": false }
+  ]
+}

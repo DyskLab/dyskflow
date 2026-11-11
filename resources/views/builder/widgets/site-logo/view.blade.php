@@ -1,0 +1,1 @@
+<a class="site-name b-site-logo" href="{{ site_route('home') }}"><img src="{{ cms_asset_url(setting('favicon')) ?: asset('img/logo-mark.svg') }}" alt="{{ $w['show_title'] ? '' : setting('site_title') }}" width="{{ $w['size'] }}" height="{{ $w['size'] }}">@if ($w['show_title']) {{ setting('site_title') }}@endif</a>

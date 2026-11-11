@@ -1,0 +1,13 @@
+{
+  "label": "Article list",
+  "icon": "posts",
+  "group": "template",
+  "context": "archive",
+  "description": "The articles of the list being shown, one page of them. Add Pagination below it.",
+  "fields": [
+    { "key": "columns", "type": "select", "label": "Per row", "options": ["1", "2", "3", "4"], "default": "3", "responsive": true },
+    { "key": "image", "type": "toggle", "label": "Show the image", "default": true },
+    { "key": "excerpt", "type": "toggle", "label": "Show the summary", "default": true },
+    { "key": "meta", "type": "toggle", "label": "Show the date and categories", "default": true }
+  ]
+}

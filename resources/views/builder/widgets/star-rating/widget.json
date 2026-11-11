@@ -1,0 +1,49 @@
+{
+  "label": "Star rating",
+  "icon": "star",
+  "group": "basic",
+  "description": "Stars out of five, such as 4.5 from 120 reviews.",
+  "fields": [
+    {
+      "key": "rating",
+      "type": "select",
+      "label": "Rating",
+      "options": [
+        "0.5",
+        "1",
+        "1.5",
+        "2",
+        "2.5",
+        "3",
+        "3.5",
+        "4",
+        "4.5",
+        "5"
+      ],
+      "default": "5"
+    },
+    {
+      "key": "label",
+      "type": "text",
+      "label": "Text beside the stars",
+      "translatable": true
+    },
+    {
+      "key": "show_number",
+      "type": "toggle",
+      "label": "Show the number",
+      "default": true
+    },
+    {
+      "key": "size",
+      "type": "select",
+      "label": "Size",
+      "options": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    }
+  ]
+}

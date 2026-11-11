@@ -1,0 +1,13 @@
+{
+  "label": "Numbers",
+  "icon": "activity",
+  "group": "content",
+  "description": "Big numbers with a short label, such as 10,000+ users.",
+  "fields": [
+    { "key": "columns", "type": "select", "label": "Per row", "options": ["2", "3", "4"], "default": "4", "responsive": true },
+    { "key": "items", "type": "repeater", "label": "Numbers", "min_items": 1, "max_items": 8, "fields": [
+      { "key": "value", "type": "text", "label": "Number", "translatable": true, "required": true },
+      { "key": "label", "type": "text", "label": "Label", "translatable": true }
+    ] }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "label": "Related articles",
+  "icon": "posts",
+  "group": "template",
+  "context": "single",
+  "description": "Other articles in the same categories, newest first.",
+  "fields": [
+    { "key": "count", "type": "number", "label": "How many", "min": 1, "max": 12, "default": 3 },
+    { "key": "columns", "type": "select", "label": "Per row", "options": ["1", "2", "3"], "default": "3", "responsive": true },
+    { "key": "show_excerpt", "type": "toggle", "label": "Show the summary", "default": false }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "label": "Divider",
+  "icon": "divider",
+  "group": "layout",
+  "description": "A horizontal line.",
+  "fields": [
+    { "key": "line", "type": "select", "label": "Line", "options": ["solid", "dashed"], "default": "solid" }
+  ]
+}

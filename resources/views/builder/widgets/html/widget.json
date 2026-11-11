@@ -1,0 +1,9 @@
+{
+  "label": "HTML",
+  "icon": "code",
+  "group": "advanced",
+  "description": "Your own HTML. It goes through the same cleaner as articles, so scripts, styles and forms are removed. For anything more, write a custom widget.",
+  "fields": [
+    { "key": "html", "type": "richtext", "label": "HTML", "translatable": true, "required": true }
+  ]
+}

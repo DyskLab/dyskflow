@@ -16,7 +16,7 @@ class BackupController extends Controller
     {
         return view('admin.table', [
             'title' => __('Backup'),
-            'description' => __('Backups contain the database and, for full backups, uploaded files.'),
+            'description' => __('Backups contain the database. Full backups also contain uploaded files and the theme/ and landing/ folders.'),
             'actions' => [
                 ['label' => __('Database backup'), 'icon' => 'backup', 'secondary' => true, 'post' => route('admin.settings.backups.store'), 'fields' => ['kind' => 'db']],
                 ['label' => __('Full backup'), 'icon' => 'backup', 'post' => route('admin.settings.backups.store'), 'fields' => ['kind' => 'full']],

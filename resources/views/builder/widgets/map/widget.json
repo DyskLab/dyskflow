@@ -1,0 +1,12 @@
+{
+  "label": "Map",
+  "icon": "globe",
+  "group": "media",
+  "description": "A Google map of an address. It loads only after the visitor presses the button, so the page sets no third-party cookies.",
+  "fields": [
+    { "key": "address", "type": "text", "label": "Address or place", "help": "Leave empty to use the address in Settings > Contact." },
+    { "key": "zoom", "type": "number", "label": "Zoom (1 to 20)", "min": 1, "max": 20, "default": 15 },
+    { "key": "height", "type": "select", "label": "Height", "options": ["sm", "md", "lg"], "default": "md" },
+    { "key": "title", "type": "text", "label": "Title for screen readers", "translatable": true }
+  ]
+}

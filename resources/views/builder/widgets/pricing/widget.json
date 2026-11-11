@@ -1,0 +1,20 @@
+{
+  "label": "Pricing",
+  "icon": "card",
+  "group": "content",
+  "description": "Plans side by side, each with a price, features and a button.",
+  "fields": [
+    { "key": "columns", "type": "select", "label": "Per row", "options": ["1", "2", "3", "4"], "default": "3", "responsive": true },
+    { "key": "plans", "type": "repeater", "label": "Plans", "min_items": 1, "max_items": 6, "fields": [
+      { "key": "name", "type": "text", "label": "Name", "translatable": true, "required": true },
+      { "key": "price", "type": "text", "label": "Price", "translatable": true },
+      { "key": "period", "type": "text", "label": "Period, such as /month", "translatable": true },
+      { "key": "description", "type": "textarea", "label": "Description", "translatable": true },
+      { "key": "features", "type": "textarea", "label": "Features, one per line", "translatable": true },
+      { "key": "button_label", "type": "text", "label": "Button label", "translatable": true },
+      { "key": "url", "type": "url", "label": "Button link", "translatable": true },
+      { "key": "featured", "type": "toggle", "label": "Highlight this plan", "default": false },
+      { "key": "badge", "type": "text", "label": "Badge, such as Popular", "translatable": true }
+    ] }
+  ]
+}

@@ -69,6 +69,10 @@ class Plugins
             }
             try {
                 View::addNamespace($slug, $directory.'/views');
+                // The plugin's own translations, kept in its folder so updates never lose them.
+                if (is_dir($directory.'/lang')) {
+                    Translations::add($directory.'/lang');
+                }
                 require_once $directory.'/plugin.php';
             } catch (Throwable $e) {
                 Log::error("Plugin [$slug] disabled after an error: ".$e->getMessage());

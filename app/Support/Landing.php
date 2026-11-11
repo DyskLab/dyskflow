@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Post;
+use App\Support\Builder\Templates;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Landing pages are coded outside the CMS (by hand or with AI) in landing/<slug>/.
  * Each folder holds index.blade.php or index.html, landing.json, and optional assets.
+ * Pages made with the visual builder are not landing pages: they are pages (see App\Support\Builder\Builder).
  * One can be the homepage. Others get their own address when landing.json says "public": true.
  */
 class Landing
@@ -104,6 +106,8 @@ class Landing
         if (! $directory) {
             return null;
         }
+        // Header and footer templates can be limited to this landing page.
+        Templates::where([...Templates::tags(), 'landing:'.$slug]);
 
         self::$current = $slug;
         $tags = view('site.partials.seo', ['seo' => $seo])->render();
@@ -120,6 +124,22 @@ class Landing
             return null;
         }
 
-        return response($html);
+        return response(self::withCustomAssets($html));
+    }
+
+    /**
+     * The site's custom CSS before </head> and JavaScript before </body>, on every landing page,
+     * whatever it includes. Each prints nothing when the shared header or footer already did.
+     */
+    private static function withCustomAssets(string $html): string
+    {
+        foreach (['css' => '</head>', 'js' => '</body>'] as $kind => $tag) {
+            $at = strripos($html, $tag);
+            if ($at !== false && ($asset = Theme::customTag($kind)) !== '') {
+                $html = substr_replace($html, $asset, $at, 0);
+            }
+        }
+
+        return $html;
     }
 }

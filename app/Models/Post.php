@@ -29,6 +29,7 @@ class Post extends Model
             'noindex' => 'boolean',
             'allow_comments' => 'boolean',
             'show_in_menu' => 'boolean',
+            'conditions' => 'array',
         ];
     }
 
@@ -100,6 +101,24 @@ class Post extends Model
         }
 
         return $this;
+    }
+
+    /**
+     * A builder page keeps its layout as JSON in "builder" (see App\Support\Builder\Builder); others use the classic editor.
+     * Templates (Design > Templates) and saved blocks (Design > Blocks) are builder layouts too.
+     */
+    public function isBuilder(): bool
+    {
+        return in_array($this->type, ['page', 'template', 'block'], true) && $this->builder !== null;
+    }
+
+    /** The published layout, or with $draft the unpublished changes when there are any. */
+    public function builderSpec(bool $draft = false): ?array
+    {
+        $json = $draft && $this->builder_draft !== null ? $this->builder_draft : $this->builder;
+        $spec = is_string($json) ? json_decode($json, true) : null;
+
+        return is_array($spec) ? $spec : null;
     }
 
     public function isLive(): bool

@@ -1,0 +1,91 @@
+{
+  "label": "Icon",
+  "icon": "star",
+  "group": "basic",
+  "description": "One icon, optionally a link.",
+  "fields": [
+    {
+      "key": "icon",
+      "type": "select",
+      "label": "Icon",
+      "options": [
+        "check",
+        "star",
+        "heart",
+        "zap",
+        "rocket",
+        "shield",
+        "lock",
+        "users",
+        "user",
+        "phone",
+        "mail",
+        "chat",
+        "globe",
+        "map-pin",
+        "clock",
+        "calendar",
+        "truck",
+        "award",
+        "gift",
+        "credit-card",
+        "cart",
+        "home",
+        "briefcase",
+        "book",
+        "coffee",
+        "smile",
+        "target",
+        "trending-up",
+        "image",
+        "video",
+        "play",
+        "code",
+        "settings",
+        "search",
+        "bell",
+        "download",
+        "link",
+        "thumbs-up",
+        "leaf",
+        "sun"
+      ],
+      "default": "star"
+    },
+    {
+      "key": "size",
+      "type": "select",
+      "label": "Size",
+      "options": [
+        "sm",
+        "md",
+        "lg",
+        "xl"
+      ],
+      "default": "md"
+    },
+    {
+      "key": "variant",
+      "type": "select",
+      "label": "Style",
+      "options": [
+        "plain",
+        "filled",
+        "outline"
+      ],
+      "default": "filled"
+    },
+    {
+      "key": "label",
+      "type": "text",
+      "label": "Label for screen readers",
+      "translatable": true
+    },
+    {
+      "key": "url",
+      "type": "url",
+      "label": "Link",
+      "translatable": true
+    }
+  ]
+}

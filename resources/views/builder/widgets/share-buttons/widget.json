@@ -1,0 +1,43 @@
+{
+  "label": "Share buttons",
+  "icon": "external",
+  "group": "content",
+  "description": "Buttons to share the page on WhatsApp, social media or by email. Plain links: no tracking scripts.",
+  "fields": [
+    {
+      "key": "networks",
+      "type": "select",
+      "label": "Networks",
+      "options": [
+        "all",
+        "messaging",
+        "social"
+      ],
+      "default": "all",
+      "help": "Messaging: WhatsApp, Telegram, email and copy link. Social media: Facebook, X and LinkedIn."
+    },
+    {
+      "key": "labels",
+      "type": "toggle",
+      "label": "Show names",
+      "default": true
+    },
+    {
+      "key": "variant",
+      "type": "select",
+      "label": "Style",
+      "options": [
+        "filled",
+        "outline",
+        "icon"
+      ],
+      "default": "filled"
+    },
+    {
+      "key": "title",
+      "type": "text",
+      "label": "Text before the buttons",
+      "translatable": true
+    }
+  ]
+}

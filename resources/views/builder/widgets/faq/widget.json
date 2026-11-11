@@ -1,0 +1,14 @@
+{
+  "label": "FAQ",
+  "icon": "list",
+  "group": "content",
+  "description": "Questions that open to show their answers. Can also tell search engines they are an FAQ.",
+  "fields": [
+    { "key": "items", "type": "repeater", "label": "Questions", "min_items": 1, "max_items": 30, "fields": [
+      { "key": "question", "type": "text", "label": "Question", "translatable": true, "required": true },
+      { "key": "answer", "type": "textarea", "label": "Answer", "translatable": true, "required": true }
+    ] },
+    { "key": "open_first", "type": "toggle", "label": "Open the first question", "default": false },
+    { "key": "schema", "type": "toggle", "label": "Add FAQ structured data for search engines", "default": false }
+  ]
+}

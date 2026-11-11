@@ -1,0 +1,48 @@
+{
+  "label": "Code",
+  "icon": "code",
+  "group": "advanced",
+  "description": "A block of code shown as text, with line numbers and a copy button. It is never run.",
+  "fields": [
+    {
+      "key": "code",
+      "type": "textarea",
+      "label": "Code",
+      "required": true
+    },
+    {
+      "key": "language",
+      "type": "text",
+      "label": "Language label",
+      "help": "Shown above the code, such as PHP or Bash."
+    },
+    {
+      "key": "line_numbers",
+      "type": "toggle",
+      "label": "Line numbers",
+      "default": true
+    },
+    {
+      "key": "copy",
+      "type": "toggle",
+      "label": "Copy button",
+      "default": true
+    },
+    {
+      "key": "theme",
+      "type": "select",
+      "label": "Colors",
+      "options": [
+        "dark",
+        "light"
+      ],
+      "default": "dark"
+    },
+    {
+      "key": "wrap",
+      "type": "toggle",
+      "label": "Wrap long lines",
+      "default": false
+    }
+  ]
+}

@@ -1,0 +1,363 @@
+{
+  "$schema": "../../docs/builder.schema.json",
+  "template": {
+    "title": "Event or webinar",
+    "description": "Date and place, what attendees learn, the agenda, speakers, FAQ and a sign-up button."
+  },
+  "version": 1,
+  "layout": "site",
+  "sections": [
+    {
+      "id": "st063",
+      "type": "section",
+      "style": {
+        "padding": {
+          "base": "2xl",
+          "mobile": "xl"
+        },
+        "text": "center",
+        "width": "narrow",
+        "background": "dark"
+      },
+      "columns": [
+        {
+          "id": "ct062",
+          "widgets": [
+            {
+              "id": "wt059",
+              "type": "heading",
+              "tag": "h1",
+              "size": "2xl",
+              "kicker": {
+                "id": "Webinar gratis · Sabtu, 12 Desember · 19.00 WIB",
+                "en": "Free webinar · Saturday, 12 December · 7 PM WIB"
+              },
+              "text": {
+                "id": "Judul acara Anda di sini",
+                "en": "Your event title here"
+              }
+            },
+            {
+              "id": "wt060",
+              "type": "text",
+              "size": "lg",
+              "html": {
+                "id": "<p>Satu kalimat tentang apa yang akan peserta dapatkan.</p>",
+                "en": "<p>One sentence about what attendees will get.</p>"
+              }
+            },
+            {
+              "id": "wt061",
+              "type": "button",
+              "buttons": [
+                {
+                  "label": {
+                    "id": "Daftar sekarang",
+                    "en": "Register now"
+                  },
+                  "url": "#daftar"
+                },
+                {
+                  "label": {
+                    "id": "Lihat agenda",
+                    "en": "See the agenda"
+                  },
+                  "url": "#agenda",
+                  "variant": "outline"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st070",
+      "type": "section",
+      "columns": [
+        {
+          "id": "ct066",
+          "width": {
+            "base": 6,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wt064",
+              "type": "heading",
+              "text": {
+                "id": "Yang akan Anda pelajari",
+                "en": "What you will learn"
+              }
+            },
+            {
+              "id": "wt065",
+              "type": "icon-list",
+              "margin": "md",
+              "items": [
+                {
+                  "title": {
+                    "id": "Dasar-dasarnya",
+                    "en": "The basics"
+                  },
+                  "text": {
+                    "id": "Konsep penting tanpa istilah rumit.",
+                    "en": "Key ideas without jargon."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Contoh nyata",
+                    "en": "Real examples"
+                  },
+                  "text": {
+                    "id": "Studi kasus yang bisa langsung dicoba.",
+                    "en": "Case studies you can try right away."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Tanya jawab",
+                    "en": "Questions and answers"
+                  },
+                  "text": {
+                    "id": "Tanyakan langsung kepada pembicara.",
+                    "en": "Ask the speakers directly."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ct069",
+          "width": {
+            "base": 6,
+            "tablet": 12
+          },
+          "anchor": "agenda",
+          "widgets": [
+            {
+              "id": "wt067",
+              "type": "heading",
+              "text": {
+                "id": "Agenda",
+                "en": "Agenda"
+              }
+            },
+            {
+              "id": "wt068",
+              "type": "icon-list",
+              "margin": "md",
+              "marker": "number",
+              "items": [
+                {
+                  "title": "19.00",
+                  "text": {
+                    "id": "Pembukaan",
+                    "en": "Opening"
+                  }
+                },
+                {
+                  "title": "19.15",
+                  "text": {
+                    "id": "Materi utama",
+                    "en": "Main session"
+                  }
+                },
+                {
+                  "title": "20.15",
+                  "text": {
+                    "id": "Tanya jawab",
+                    "en": "Questions and answers"
+                  }
+                },
+                {
+                  "title": "20.45",
+                  "text": {
+                    "id": "Penutup",
+                    "en": "Closing"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st074",
+      "type": "section",
+      "style": {
+        "background": "muted",
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "ct073",
+          "widgets": [
+            {
+              "id": "wt071",
+              "type": "heading",
+              "text": {
+                "id": "Pembicara",
+                "en": "Speakers"
+              }
+            },
+            {
+              "id": "wt072",
+              "type": "card",
+              "margin": "md",
+              "columns": {
+                "base": "3",
+                "tablet": "3",
+                "mobile": "1"
+              },
+              "cards": [
+                {
+                  "title": {
+                    "id": "Nama pembicara",
+                    "en": "Speaker name"
+                  },
+                  "kicker": {
+                    "id": "Jabatan",
+                    "en": "Role"
+                  },
+                  "text": {
+                    "id": "Satu kalimat tentang keahliannya.",
+                    "en": "One sentence about their expertise."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Nama pembicara",
+                    "en": "Speaker name"
+                  },
+                  "kicker": {
+                    "id": "Jabatan",
+                    "en": "Role"
+                  },
+                  "text": {
+                    "id": "Satu kalimat tentang keahliannya.",
+                    "en": "One sentence about their expertise."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Moderator",
+                    "en": "Host"
+                  },
+                  "kicker": {
+                    "id": "Jabatan",
+                    "en": "Role"
+                  },
+                  "text": {
+                    "id": "Satu kalimat tentang keahliannya.",
+                    "en": "One sentence about their expertise."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st078",
+      "type": "section",
+      "style": {
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "ct077",
+          "widgets": [
+            {
+              "id": "wt075",
+              "type": "heading",
+              "text": {
+                "id": "Pertanyaan umum",
+                "en": "Frequently asked questions"
+              }
+            },
+            {
+              "id": "wt076",
+              "type": "faq",
+              "margin": "md",
+              "schema": true,
+              "items": [
+                {
+                  "question": {
+                    "id": "Apakah gratis?",
+                    "en": "Is it free?"
+                  },
+                  "answer": {
+                    "id": "Ya, cukup daftar dengan email.",
+                    "en": "Yes, just register with your email."
+                  }
+                },
+                {
+                  "question": {
+                    "id": "Apakah ada rekaman?",
+                    "en": "Will there be a recording?"
+                  },
+                  "answer": {
+                    "id": "Rekaman dikirim ke semua pendaftar.",
+                    "en": "The recording is sent to everyone who registered."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st083",
+      "type": "section",
+      "anchor": "daftar",
+      "style": {
+        "background": "primary",
+        "text": "center",
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "ct082",
+          "widgets": [
+            {
+              "id": "wt079",
+              "type": "heading",
+              "text": {
+                "id": "Amankan tempat Anda",
+                "en": "Save your seat"
+              }
+            },
+            {
+              "id": "wt080",
+              "type": "text",
+              "html": {
+                "id": "<p>Kuota terbatas.</p>",
+                "en": "<p>Seats are limited.</p>"
+              }
+            },
+            {
+              "id": "wt081",
+              "type": "button",
+              "margin": "sm",
+              "buttons": [
+                {
+                  "label": {
+                    "id": "Daftar sekarang",
+                    "en": "Register now"
+                  },
+                  "url": "#"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

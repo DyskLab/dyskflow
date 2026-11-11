@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Support\Notifier;
 use App\Support\Plugins;
 use App\Support\SettingsSchema;
+use App\Support\Theme;
+use App\Support\Translations;
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -23,6 +25,12 @@ class AppServiceProvider extends ServiceProvider
         if (! cms_installed()) {
             return;
         }
+
+        // site.* views in theme/views win over the core ones, so edits survive an update.
+        Theme::apply();
+
+        // Translations of landing pages and the theme, kept in their own lang/ folders.
+        Translations::register();
 
         Event::listen(MessageLogged::class, [Notifier::class, 'logged']);
 

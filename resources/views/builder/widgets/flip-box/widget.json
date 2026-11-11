@@ -1,0 +1,120 @@
+{
+  "label": "Flip box",
+  "icon": "copy",
+  "group": "content",
+  "description": "A card that turns over on hover or tap to show more, such as a service and its details.",
+  "fields": [
+    {
+      "key": "icon",
+      "type": "select",
+      "label": "Front icon",
+      "options": [
+        "check",
+        "star",
+        "heart",
+        "zap",
+        "rocket",
+        "shield",
+        "lock",
+        "users",
+        "user",
+        "phone",
+        "mail",
+        "chat",
+        "globe",
+        "map-pin",
+        "clock",
+        "calendar",
+        "truck",
+        "award",
+        "gift",
+        "credit-card",
+        "cart",
+        "home",
+        "briefcase",
+        "book",
+        "coffee",
+        "smile",
+        "target",
+        "trending-up",
+        "image",
+        "video",
+        "play",
+        "code",
+        "settings",
+        "search",
+        "bell",
+        "download",
+        "link",
+        "thumbs-up",
+        "leaf",
+        "sun"
+      ],
+      "default": "zap"
+    },
+    {
+      "key": "front_title",
+      "type": "text",
+      "label": "Front title",
+      "translatable": true,
+      "required": true
+    },
+    {
+      "key": "front_text",
+      "type": "textarea",
+      "label": "Front text",
+      "translatable": true
+    },
+    {
+      "key": "front_image",
+      "type": "image",
+      "label": "Front background image"
+    },
+    {
+      "key": "back_title",
+      "type": "text",
+      "label": "Back title",
+      "translatable": true
+    },
+    {
+      "key": "back_text",
+      "type": "textarea",
+      "label": "Back text",
+      "translatable": true
+    },
+    {
+      "key": "button_label",
+      "type": "text",
+      "label": "Back button label",
+      "translatable": true
+    },
+    {
+      "key": "url",
+      "type": "url",
+      "label": "Back button link",
+      "translatable": true
+    },
+    {
+      "key": "effect",
+      "type": "select",
+      "label": "Effect",
+      "options": [
+        "flip",
+        "fade",
+        "slide"
+      ],
+      "default": "flip"
+    },
+    {
+      "key": "height",
+      "type": "select",
+      "label": "Height",
+      "options": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    }
+  ]
+}

@@ -21,7 +21,22 @@ class SettingsSchema
                     ['name' => 'site_url', 'label' => __('Site address (URL)'), 'type' => 'url', 'required' => true],
                     ['name' => 'timezone', 'label' => __('Timezone'), 'type' => 'select', 'options' => array_combine(timezone_identifiers_list(), timezone_identifiers_list()), 'default' => 'Asia/Jakarta'],
                     ['name' => 'date_format', 'label' => __('Date format'), 'type' => 'select', 'default' => 'd M Y H:i', 'options' => ['d M Y H:i' => '05 Nov 2026 19:30', 'd/m/Y H:i' => '05/11/2026 19:30', 'Y-m-d H:i' => '2026-11-05 19:30', 'M j, Y g:i a' => 'Nov 5, 2026 7:30 pm']],
+                    ['name' => 'developer_menu', 'label' => __('Show the developer menu'), 'type' => 'switch', 'default' => '0', 'help' => __('The Explorer: landing pages, the theme, plugins, and the custom CSS and JavaScript. Hidden by default, since pages, templates and blocks are made in the builder. Its address keeps working.')],
                     ['name' => 'locale', 'label' => __('Default language'), 'type' => 'select', 'options' => Locales::ALL, 'default' => 'id', 'help' => __('Content you write first is in this language and keeps its URLs without a prefix. Translations use the other language, such as /en/blog/slug. Changing this later hides existing translations.')],
+                ],
+            ],
+            'design' => [
+                'title' => __('Colors & fonts'), 'icon' => 'palette',
+                'description' => __('Brand colors, fonts and corner roundness for the whole site and every builder page.'),
+                'saved' => fn () => Brand::installFonts(),
+                'fields' => [
+                    ['name' => 'brand_primary', 'label' => __('Primary color'), 'type' => 'color', 'placeholder' => '#d9381e', 'help' => __('Buttons, links and highlights. Text on it turns white or black by itself, whichever reads better. Empty: the DyskFlow orange-red.')],
+                    ['name' => 'brand_secondary', 'label' => __('Secondary color'), 'type' => 'color', 'placeholder' => '#1f4e8c', 'help' => __('A second brand color, offered in the builder\'s color choices.')],
+                    ['name' => 'brand_accent', 'label' => __('Accent color'), 'type' => 'color', 'placeholder' => '#f2b705', 'help' => __('For small highlights such as badges and ratings.')],
+                    ['name' => 'brand_font_heading', 'label' => __('Heading font'), 'type' => 'select', 'options' => Brand::fontOptions(), 'default' => ''],
+                    ['name' => 'brand_font_body', 'label' => __('Body font'), 'type' => 'select', 'options' => Brand::fontOptions(), 'default' => '', 'help' => __('Google Fonts are downloaded to this site when you save, so visitors never contact Google.')],
+                    ['name' => 'brand_font_size', 'label' => __('Body text size (px)'), 'type' => 'number', 'default' => '', 'placeholder' => '17', 'help' => __('Between 13 and 22. Empty: 17.')],
+                    ['name' => 'brand_radius', 'label' => __('Corner roundness'), 'type' => 'select', 'default' => '', 'options' => ['' => __('Theme default'), '0' => __('Square'), 'sm' => __('Slightly rounded'), 'md' => __('Rounded'), 'lg' => __('More rounded'), 'xl' => __('Very rounded')]],
                 ],
             ],
             'contact' => [
@@ -75,6 +90,10 @@ class SettingsSchema
                 'fields' => [
                     ['name' => 'media_max_mb', 'label' => __('Maximum upload (MB)'), 'type' => 'number', 'default' => '10', 'help' => __('Server limit: :limit', ['limit' => ini_get('upload_max_filesize')])],
                     ['name' => 'media_image_max_width', 'label' => __('Maximum image width (px)'), 'type' => 'number', 'default' => '2000', 'help' => __('Larger images are resized. Use 0 to keep the original.')],
+                    ['name' => 'media_webp', 'label' => __('Convert uploaded images to WebP'), 'type' => 'switch', 'default' => '0', 'help' => MediaUploader::canWebp()
+                        ? __('JPEG and PNG become WebP, usually 25–35% smaller, so pages load faster. The original is kept when WebP would not be smaller. GIFs keep their animation.')
+                        : __('Not available: this server\'s PHP GD extension has no WebP support. Ask your host to enable it.')],
+                    ['name' => 'media_webp_quality', 'label' => __('WebP quality (1–100)'), 'type' => 'number', 'default' => '82', 'help' => __('Lower is smaller but less sharp. 75–85 suits photos.')],
                     ['name' => 'media_allowed', 'label' => __('Allowed file types'), 'type' => 'checkboxes', 'options' => array_combine(config('cms.upload_choices'), config('cms.upload_choices')), 'default' => 'jpg,jpeg,png,webp,gif,pdf'],
                 ],
             ],

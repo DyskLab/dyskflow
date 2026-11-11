@@ -1,0 +1,8 @@
+{
+  "label": "Comments",
+  "icon": "comment",
+  "group": "template",
+  "context": "single",
+  "description": "Approved comments and the comment form, when comments are open.",
+  "fields": []
+}

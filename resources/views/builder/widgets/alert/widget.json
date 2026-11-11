@@ -1,0 +1,38 @@
+{
+  "label": "Alert",
+  "icon": "alert",
+  "group": "basic",
+  "description": "A colored note: information, success, warning or danger. Visitors can close it if you allow.",
+  "fields": [
+    {
+      "key": "kind",
+      "type": "select",
+      "label": "Type",
+      "options": [
+        "info",
+        "success",
+        "warning",
+        "danger"
+      ],
+      "default": "info"
+    },
+    {
+      "key": "title",
+      "type": "text",
+      "label": "Title",
+      "translatable": true
+    },
+    {
+      "key": "text",
+      "type": "textarea",
+      "label": "Text",
+      "translatable": true
+    },
+    {
+      "key": "dismissible",
+      "type": "toggle",
+      "label": "Visitors can close it",
+      "default": false
+    }
+  ]
+}

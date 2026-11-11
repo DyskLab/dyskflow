@@ -1,0 +1,64 @@
+{
+  "label": "Counter",
+  "icon": "activity",
+  "group": "content",
+  "description": "Numbers that count up when they come into view, such as 1,200+ clients.",
+  "fields": [
+    {
+      "key": "columns",
+      "type": "select",
+      "label": "Per row",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "default": "3",
+      "responsive": true
+    },
+    {
+      "key": "items",
+      "type": "repeater",
+      "label": "Numbers",
+      "min_items": 1,
+      "max_items": 8,
+      "fields": [
+        {
+          "key": "number",
+          "type": "number",
+          "label": "Number",
+          "min": 0,
+          "max": 1000000000,
+          "default": 100
+        },
+        {
+          "key": "prefix",
+          "type": "text",
+          "label": "Before the number",
+          "help": "For example Rp or $"
+        },
+        {
+          "key": "suffix",
+          "type": "text",
+          "label": "After the number",
+          "help": "For example + or %"
+        },
+        {
+          "key": "label",
+          "type": "text",
+          "label": "Label",
+          "translatable": true
+        }
+      ]
+    },
+    {
+      "key": "duration",
+      "type": "number",
+      "label": "Duration (seconds)",
+      "min": 0,
+      "max": 10,
+      "default": 2
+    }
+  ]
+}

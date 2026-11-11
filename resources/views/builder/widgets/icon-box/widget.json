@@ -1,0 +1,124 @@
+{
+  "label": "Icon boxes",
+  "icon": "star",
+  "group": "basic",
+  "description": "Features or services, each with an icon, a title, a short text and an optional link.",
+  "fields": [
+    {
+      "key": "columns",
+      "type": "select",
+      "label": "Per row",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "default": "3",
+      "responsive": true
+    },
+    {
+      "key": "position",
+      "type": "select",
+      "label": "Icon position",
+      "options": [
+        "top",
+        "left"
+      ],
+      "default": "top"
+    },
+    {
+      "key": "variant",
+      "type": "select",
+      "label": "Icon style",
+      "options": [
+        "plain",
+        "filled",
+        "outline"
+      ],
+      "default": "filled"
+    },
+    {
+      "key": "boxed",
+      "type": "toggle",
+      "label": "Show as cards",
+      "default": false
+    },
+    {
+      "key": "items",
+      "type": "repeater",
+      "label": "Boxes",
+      "min_items": 1,
+      "max_items": 12,
+      "fields": [
+        {
+          "key": "icon",
+          "type": "select",
+          "label": "Icon",
+          "options": [
+            "check",
+            "star",
+            "heart",
+            "zap",
+            "rocket",
+            "shield",
+            "lock",
+            "users",
+            "user",
+            "phone",
+            "mail",
+            "chat",
+            "globe",
+            "map-pin",
+            "clock",
+            "calendar",
+            "truck",
+            "award",
+            "gift",
+            "credit-card",
+            "cart",
+            "home",
+            "briefcase",
+            "book",
+            "coffee",
+            "smile",
+            "target",
+            "trending-up",
+            "image",
+            "video",
+            "play",
+            "code",
+            "settings",
+            "search",
+            "bell",
+            "download",
+            "link",
+            "thumbs-up",
+            "leaf",
+            "sun"
+          ],
+          "default": "star"
+        },
+        {
+          "key": "title",
+          "type": "text",
+          "label": "Title",
+          "translatable": true,
+          "required": true
+        },
+        {
+          "key": "text",
+          "type": "textarea",
+          "label": "Text",
+          "translatable": true
+        },
+        {
+          "key": "url",
+          "type": "url",
+          "label": "Link",
+          "translatable": true
+        }
+      ]
+    }
+  ]
+}

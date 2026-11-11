@@ -1,0 +1,10 @@
+{
+  "label": "Copyright and links",
+  "icon": "text",
+  "group": "site",
+  "description": "© year and site title, the tagline, the privacy page and the contact email from the settings.",
+  "fields": [
+    { "key": "tagline", "type": "toggle", "label": "Show the tagline", "default": true },
+    { "key": "links", "type": "toggle", "label": "Show privacy and contact links", "default": true }
+  ]
+}

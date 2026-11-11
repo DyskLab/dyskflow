@@ -1,0 +1,41 @@
+{
+  "label": "Reading progress",
+  "icon": "activity",
+  "group": "site",
+  "description": "A thin bar at the top of the screen that fills as the visitor scrolls down the page.",
+  "fields": [
+    {
+      "key": "position",
+      "type": "select",
+      "label": "Position",
+      "options": [
+        "top",
+        "bottom"
+      ],
+      "default": "top"
+    },
+    {
+      "key": "height",
+      "type": "select",
+      "label": "Thickness",
+      "options": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "sm"
+    },
+    {
+      "key": "color",
+      "type": "select",
+      "label": "Color",
+      "options": [
+        "primary",
+        "brand-secondary",
+        "brand-accent",
+        "foreground"
+      ],
+      "default": "primary"
+    }
+  ]
+}

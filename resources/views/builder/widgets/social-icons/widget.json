@@ -1,0 +1,80 @@
+{
+  "label": "Social icons",
+  "icon": "globe",
+  "group": "basic",
+  "description": "Links to your social media, from Settings > Contact or your own list.",
+  "fields": [
+    {
+      "key": "source",
+      "type": "select",
+      "label": "Links",
+      "options": [
+        "settings",
+        "custom"
+      ],
+      "default": "settings",
+      "help": "From Settings: Instagram, Facebook, X, LinkedIn, WhatsApp and email in Settings > Contact."
+    },
+    {
+      "key": "items",
+      "type": "repeater",
+      "label": "Your own links",
+      "max_items": 12,
+      "fields": [
+        {
+          "key": "network",
+          "type": "select",
+          "label": "Network",
+          "options": [
+            "instagram",
+            "facebook",
+            "x",
+            "linkedin",
+            "youtube",
+            "tiktok",
+            "whatsapp",
+            "telegram",
+            "github",
+            "email",
+            "website"
+          ],
+          "default": "instagram"
+        },
+        {
+          "key": "url",
+          "type": "url",
+          "label": "Link",
+          "required": true
+        }
+      ]
+    },
+    {
+      "key": "variant",
+      "type": "select",
+      "label": "Style",
+      "options": [
+        "plain",
+        "circle",
+        "square"
+      ],
+      "default": "circle"
+    },
+    {
+      "key": "size",
+      "type": "select",
+      "label": "Size",
+      "options": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    },
+    {
+      "key": "brand_colors",
+      "type": "toggle",
+      "label": "Use each network's color",
+      "default": false
+    }
+  ]
+}

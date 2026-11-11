@@ -24,7 +24,7 @@
     </div>
 </div>
 @include('admin.partials.form-errors')
-<script src="{{ asset('js/admin.js') }}?v={{ config('cms.version') }}"></script>
+<script src="{{ asset_v('js/admin.js') }}"></script>
 @stack('scripts')
 </body>
 </html>

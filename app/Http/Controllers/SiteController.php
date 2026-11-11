@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Term;
+use App\Support\Builder\Builder;
+use App\Support\Builder\Templates;
 use App\Support\ContentImages;
 use App\Support\HtmlSanitizer;
 use App\Support\Landing;
 use App\Support\Locales;
 use App\Support\Seo;
+use App\Support\Theme;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +64,7 @@ class SiteController extends Controller
     public function home()
     {
         $locale = $this->locale();
+        Templates::where(['home']);
         if (($landing = Landing::home()) && ($response = Landing::render($landing, Seo::forLanding(Landing::find($landing))))) {
             return $response;
         }
@@ -70,11 +74,12 @@ class SiteController extends Controller
             return $this->renderPage($page->localize($locale));
         }
 
+        Templates::where(['home', 'lists']);
         $posts = $this->listing($this->articles());
         // A list standing in for a page that has no translation is not a version of that page.
         $standsIn = $homeId && Post::where('type', 'page')->live()->whereKey($homeId)->exists();
 
-        return view('site.list', [
+        return $this->listView('archive', [
             'posts' => $posts,
             'heading' => setting('site_title', config('app.name')),
             'intro' => Locales::text('tagline'),
@@ -86,11 +91,19 @@ class SiteController extends Controller
         ]);
     }
 
+    /** A list from its Theme Builder template when one is active, or the theme's site.list. */
+    private function listView(string $kind, array $data)
+    {
+        return Templates::render($kind, ['posts' => $data['posts'], 'heading' => $data['heading'], 'intro' => $data['intro'] ?? null, 'term' => $data['term'] ?? null], $data['seo'])
+            ?? view('site.list', $data);
+    }
+
     public function blog()
     {
+        Templates::where(['blog', 'lists']);
         $posts = $this->listing($this->articles());
 
-        return view('site.list', [
+        return $this->listView('archive', [
             'posts' => $posts,
             'heading' => __('Articles'),
             'seo' => Seo::defaults(Seo::paged([
@@ -107,13 +120,16 @@ class SiteController extends Controller
         $post = $this->findPost('article', $slug, ['categories.translations', 'tags.translations', 'author']);
         $this->ensureVisible($post);
         $this->countView($post);
+        Templates::where(['articles', 'post:'.$post->id, ...$post->terms()->get(['terms.id', 'terms.taxonomy'])->map(fn ($t) => $t->taxonomy.':'.$t->id)]);
 
-        return view('site.article', [
+        $data = [
             'post' => $post,
             'seo' => Seo::forPost($post),
             'content' => ContentImages::enhance(HtmlSanitizer::clean(apply_filters('cms.content', (string) $post->content, $post))),
             'comments' => $post->comments()->where('status', 'approved')->oldest()->limit((int) setting('comments_per_page', 50))->get(),
-        ]);
+        ];
+
+        return Templates::render('single', array_diff_key($data, ['seo' => 1]), $data['seo']) ?? view('site.article', $data);
     }
 
     public function page(string $slug)
@@ -147,6 +163,14 @@ class SiteController extends Controller
     private function renderPage(Post $page)
     {
         $this->countView($page);
+        Templates::where([...Templates::tags(), 'pages', 'page:'.$page->id]);
+
+        if ($page->isBuilder()) {
+            $seo = Seo::forPost($page);
+            $tags = view('site.partials.seo', ['seo' => $seo])->render().view('site.partials.head-hooks')->render();
+
+            return response(Builder::render($page->builderSpec() ?? Builder::blank(), $tags, $seo));
+        }
 
         return view('site.page', [
             'post' => $page,
@@ -167,10 +191,12 @@ class SiteController extends Controller
             )
             ->firstOrFail()
             ->localize($locale);
+        Templates::where(['lists', 'taxonomy:'.$taxonomy, $taxonomy.':'.$term->id]);
         $posts = $this->listing($this->articles()->whereHas('terms', fn ($q) => $q->where('terms.id', $term->id)));
 
-        return view('site.list', [
+        return $this->listView('taxonomy', [
             'posts' => $posts,
+            'term' => $term,
             'heading' => $term->name,
             'intro' => $term->description,
             'seo' => Seo::paged(Seo::forTerm($term), $posts),
@@ -183,8 +209,9 @@ class SiteController extends Controller
         $like = '%'.addcslashes($term, '%_\\').'%';
         $matches = fn ($q) => $q->where(fn ($w) => $w->where('title', 'like', $like)->orWhere('content', 'like', $like));
         $locale = $this->locale();
+        Templates::where(['search', 'lists']);
 
-        return view('site.list', [
+        return $this->listView('archive', [
             'posts' => $this->listing($this->articles()
                 ->when(
                     $term !== '',
@@ -286,6 +313,11 @@ class SiteController extends Controller
     public function feed()
     {
         return response()->view('site.feed', ['posts' => $this->articles()->limit(20)->get()->each->localize($this->locale())], 200, ['Content-Type' => 'application/rss+xml; charset=UTF-8']);
+    }
+
+    public function themeAsset(string $path)
+    {
+        return Theme::assetResponse($path);
     }
 
     public function landingAsset(string $slug, string $path)

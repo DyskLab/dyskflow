@@ -1,0 +1,11 @@
+{
+  "label": "List title",
+  "icon": "heading",
+  "group": "template",
+  "context": "archive",
+  "description": "The title of the list: Articles, the category or tag name, or the search.",
+  "fields": [
+    { "key": "intro", "type": "toggle", "label": "Show the description", "default": true },
+    { "key": "size", "type": "select", "label": "Size", "options": ["md", "lg", "xl", "2xl"], "default": "xl", "responsive": true }
+  ]
+}

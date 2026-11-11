@@ -10,7 +10,10 @@ use RecursiveIteratorIterator;
 use RuntimeException;
 use ZipArchive;
 
-/** Backups are zip files holding database.json (portable across MySQL and SQLite) plus uploads. */
+/**
+ * Backups are zip files holding database.json (portable across MySQL and SQLite).
+ * Full backups also hold uploads/ and the design folders theme/ and landing/ under design/.
+ */
 class BackupService
 {
     public static function directory(): string
@@ -66,6 +69,9 @@ class BackupService
                 }
             }
         }
+        if ($withUploads) {
+            self::addDesignFiles($zip);
+        }
         $zip->close();
 
         return $name;
@@ -100,7 +106,69 @@ class BackupService
         });
 
         self::restoreUploads($zip);
+        self::restoreDesignFiles($zip);
         $zip->close();
+    }
+
+    /** Folders from config('cms.design_roots') that a full backup keeps. Plugins come from their own source. */
+    public const DESIGN_FOLDERS = ['theme', 'landing'];
+
+    /** Larger files, such as long videos, are left out so a backup stays small enough to download. */
+    public const DESIGN_MAX_FILE = 20 * 1024 * 1024;
+
+    private static function addDesignFiles(ZipArchive $zip): void
+    {
+        foreach (self::DESIGN_FOLDERS as $folder) {
+            $root = config('cms.design_roots.'.$folder);
+            if (! $root || ! is_dir($root)) {
+                continue;
+            }
+            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, RecursiveDirectoryIterator::SKIP_DOTS));
+            foreach ($files as $file) {
+                $relative = str_replace('\\', '/', substr($file->getPathname(), strlen($root) + 1));
+                if ($file->isFile() && ! $file->isLink() && self::designFileAllowed($relative) && $file->getSize() <= self::DESIGN_MAX_FILE) {
+                    $zip->addFile($file->getPathname(), 'design/'.$folder.'/'.$relative);
+                }
+            }
+        }
+    }
+
+    /** Writes design/theme/* and design/landing/* back. Existing files are replaced; files not in the backup stay. */
+    private static function restoreDesignFiles(ZipArchive $zip): void
+    {
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $name = str_replace('\\', '/', (string) $zip->getNameIndex($i));
+            if (! preg_match('#^design/('.implode('|', self::DESIGN_FOLDERS).')/(.+)$#', $name, $match) || str_ends_with($name, '/')) {
+                continue;
+            }
+            [, $folder, $relative] = $match;
+            $root = config('cms.design_roots.'.$folder);
+            if (! $root || ! self::designFileAllowed($relative)) {
+                continue;
+            }
+            $target = $root.'/'.$relative;
+            if (! is_dir(dirname($target))) {
+                mkdir(dirname($target), 0755, true);
+            }
+            $realRoot = realpath($root);
+            $realParent = realpath(dirname($target));
+            if ($realRoot === false || $realParent === false || ! str_starts_with($realParent.'/', $realRoot.'/') || is_link($target)) {
+                continue;
+            }
+            copy('zip://'.$zip->filename.'#'.$name, $target);
+        }
+    }
+
+    private static function designFileAllowed(string $relative): bool
+    {
+        foreach (explode('/', $relative) as $segment) {
+            if ($segment === '' || $segment === '..' || str_starts_with($segment, '.') || in_array(strtolower($segment), ['vendor', 'node_modules'], true)) {
+                return false;
+            }
+        }
+        $extension = SafeFiles::extension($relative);
+
+        return in_array($extension, SafeFiles::EDITABLE, true) || in_array($extension, SafeFiles::UPLOADABLE, true);
     }
 
     private static function restoreUploads(ZipArchive $zip): void

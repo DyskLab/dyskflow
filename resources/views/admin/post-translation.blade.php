@@ -26,10 +26,20 @@
                     <label class="label" for="slug">{{ __('Slug') }}</label>
                     <input class="input" id="slug" name="slug" value="{{ old('slug', $post->slug) }}" data-slug-from="title" autocomplete="off" spellcheck="false">
                 </div>
-                <div class="field">
-                    <span class="label">{{ __('Content') }}</span>
-                    @include('admin.partials.editor', ['value' => $post->content])
-                </div>
+                @if ($original->isBuilder())
+                    <div class="card">
+                        <div class="card-content stack-sm">
+                            <strong>{{ __('This page is designed with the builder') }}</strong>
+                            <p class="muted small">{{ __('Its text in each language is edited in the builder: choose the language at the top of the builder. Set the title, address and SEO for this language here.') }}</p>
+                            <div class="row"><a class="btn btn-outline" href="{{ route('admin.pages.builder.edit', $original) }}">{{ icon('landing') }} {{ __('Edit with the builder') }}</a></div>
+                        </div>
+                    </div>
+                @else
+                    <div class="field">
+                        <span class="label">{{ __('Content') }}</span>
+                        @include('admin.partials.editor', ['value' => $post->content])
+                    </div>
+                @endif
                 <div class="field">
                     <label class="label" for="excerpt">{{ __('Excerpt') }}</label>
                     <textarea class="textarea" id="excerpt" name="excerpt" rows="2">{{ old('excerpt', $post->excerpt) }}</textarea>

@@ -1,0 +1,62 @@
+{
+  "label": "Animated headline",
+  "icon": "heading",
+  "group": "basic",
+  "description": "A title whose key word changes, types itself or gets underlined.",
+  "fields": [
+    {
+      "key": "before",
+      "type": "text",
+      "label": "Text before",
+      "translatable": true
+    },
+    {
+      "key": "words",
+      "type": "textarea",
+      "label": "Changing words, one per line",
+      "translatable": true,
+      "required": true
+    },
+    {
+      "key": "after",
+      "type": "text",
+      "label": "Text after",
+      "translatable": true
+    },
+    {
+      "key": "effect",
+      "type": "select",
+      "label": "Effect",
+      "options": [
+        "rotate",
+        "typing",
+        "highlight"
+      ],
+      "default": "rotate"
+    },
+    {
+      "key": "tag",
+      "type": "select",
+      "label": "Level",
+      "options": [
+        "h1",
+        "h2",
+        "h3"
+      ],
+      "default": "h2"
+    },
+    {
+      "key": "size",
+      "type": "select",
+      "label": "Size",
+      "options": [
+        "md",
+        "lg",
+        "xl",
+        "2xl"
+      ],
+      "default": "xl",
+      "responsive": true
+    }
+  ]
+}

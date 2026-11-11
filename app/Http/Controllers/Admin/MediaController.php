@@ -50,40 +50,59 @@ class MediaController extends Controller
 
     public function uploadForm()
     {
-        return view('admin.media-upload', ['allowed' => MediaUploader::allowedExtensions()]);
+        return view('admin.media-upload', ['allowed' => MediaUploader::allowedExtensions(), 'maxBytes' => MediaUploader::maxBytes(), 'limitedByHost' => MediaUploader::limitedByHost()]);
     }
 
     public function picker(Request $request)
     {
-        $items = Media::query()->where('mime', 'like', 'image/%')->latest('id')->limit(120)->get();
+        $items = Media::query()->where('mime', 'like', 'image/%')->latest('id')->limit(300)->get();
+        $images = array_values(array_intersect(MediaUploader::allowedExtensions(), ['jpg', 'jpeg', 'png', 'webp', 'gif', 'avif']));
 
-        return view('admin.media-picker', ['items' => $items, 'allowed' => MediaUploader::allowedExtensions()]);
+        return view('admin.media-picker', ['items' => $items, 'allowed' => $images, 'maxBytes' => MediaUploader::maxBytes(), 'current' => (string) $request->query('current', '')]);
     }
 
+    /**
+     * Each file is stored on its own: one that fails does not stop the others, and the answer says
+     * which failed and why. The first saved file is also at the top level, for the image picker.
+     */
     public function store(Request $request)
     {
-        $request->validate(['files' => 'required|array', 'files.*' => 'file']);
-        $saved = [];
-        try {
-            foreach ($request->file('files') as $file) {
-                $saved[] = MediaUploader::store($file);
-                activity('media.uploaded', end($saved)->filename);
-            }
-        } catch (RuntimeException $e) {
-            if ($request->expectsJson()) {
-                return response()->json(['message' => $e->getMessage()], 422);
-            }
+        $files = array_values(array_filter((array) $request->file('files', [])));
+        if (! $files) {
+            $message = __('No file was received. It may be larger than this hosting accepts (:max).', ['max' => Number::fileSize(MediaUploader::maxBytes())]);
 
-            return back()->with('error', $e->getMessage());
+            return $request->expectsJson() ? response()->json(['message' => $message, 'saved' => [], 'errors' => []], 422) : back()->with('error', $message);
+        }
+
+        $saved = [];
+        $errors = [];
+        foreach ($files as $file) {
+            try {
+                $media = MediaUploader::store($file);
+                activity('media.uploaded', $media->filename);
+                $saved[] = ['id' => $media->id, 'path' => $media->path, 'url' => $media->url(), 'alt' => (string) $media->alt, 'title' => (string) $media->title, 'width' => $media->width, 'height' => $media->height, 'mime' => $media->mime];
+            } catch (RuntimeException $e) {
+                $errors[] = ['name' => $file->getClientOriginalName(), 'message' => $e->getMessage()];
+            }
         }
 
         if ($request->expectsJson()) {
-            $first = $saved[0];
-
-            return response()->json(['path' => $first->path, 'url' => $first->url(), 'alt' => (string) $first->alt]);
+            return response()->json(($saved[0] ?? []) + [
+                'saved' => $saved,
+                'errors' => $errors,
+                'message' => $saved ? __('Uploaded :count file(s).', ['count' => count($saved)]) : ($errors[0]['message'] ?? __('Upload failed.')),
+            ], $saved ? 200 : 422);
         }
 
-        return back()->with('success', __('Uploaded :count file(s).', ['count' => count($saved)]));
+        $redirect = back();
+        if ($saved) {
+            $redirect->with('success', __('Uploaded :count file(s).', ['count' => count($saved)]));
+        }
+        if ($errors) {
+            $redirect->with('error', implode(' ', array_map(fn ($e) => $e['name'].': '.$e['message'], $errors)));
+        }
+
+        return $redirect;
     }
 
     public function edit(Media $media)

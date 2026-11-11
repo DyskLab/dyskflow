@@ -1,4 +1,9 @@
-{{-- The one site header, shared by the default theme and landing pages. Needs $languageLink. --}}
+{{-- The one site header, shared by the default theme and landing pages. Needs $languageLink. A Header template (Design > Templates) replaces it. --}}
+{{-- The site's custom CSS for landing pages, which load their own <head>; layouts print it there first. --}}
+{!! \App\Support\Theme::customTag('css') !!}
+@if ($headerTemplate = \App\Support\Builder\Templates::part('header', $languageLink ?? null))
+{{ $headerTemplate }}
+@else
 @php
     $locale = app()->getLocale();
     $menu = \App\Models\Post::where('type', 'page')->liveIn($locale)->where('show_in_menu', true)->orderBy('menu_order')->orderBy('title')->get()->each->localize($locale);
@@ -25,3 +30,4 @@
         </div>
     </div>
 </header>
+@endif

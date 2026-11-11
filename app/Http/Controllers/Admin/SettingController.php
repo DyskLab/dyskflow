@@ -55,8 +55,10 @@ class SettingController extends Controller
 
         Setting::write($values);
         activity('settings.updated', $section);
+        // A section can act on its new values, such as downloading the chosen fonts.
+        $problems = isset($schema['saved']) ? (array) ($schema['saved'])() : [];
 
-        return back()->with('success', __('Saved.'));
+        return back()->with('success', __('Saved.'))->with('error', $problems ? implode(' ', $problems) : null);
     }
 
     public function testEmail(Request $request)
@@ -94,6 +96,7 @@ class SettingController extends Controller
                 'select' => [$presence, Rule::in(array_map('strval', array_keys($field['options'])))],
                 'checkboxes' => ['nullable', 'array'],
                 'switch' => ['nullable', 'in:0,1'],
+                'color' => [$presence, 'regex:/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/'],
                 'textarea' => [$presence, 'string', 'max:10000'],
                 default => [$presence, 'string', 'max:500'],
             };

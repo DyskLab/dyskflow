@@ -1,0 +1,10 @@
+{
+  "label": "Text",
+  "icon": "text",
+  "group": "basic",
+  "description": "Paragraphs with bold, italic, links and lists. HTML is cleaned before it is shown.",
+  "fields": [
+    { "key": "html", "type": "richtext", "label": "Text", "translatable": true, "required": true },
+    { "key": "size", "type": "select", "label": "Size", "options": ["sm", "md", "lg"], "default": "md" }
+  ]
+}

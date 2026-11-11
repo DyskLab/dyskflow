@@ -27,8 +27,8 @@
     <meta name="theme-color" content="#fbf9f7">
     {!! $seo !!}
     @include('site.partials.theme-script')
-    <link rel="stylesheet" href="{{ asset('css/ui.css') }}?v={{ config('cms.version') }}">
-    <link rel="stylesheet" href="{{ asset('css/site.css') }}?v={{ config('cms.version') }}">
+    <link rel="stylesheet" href="{{ asset_v('css/ui.css') }}">
+    <link rel="stylesheet" href="{{ asset_v('css/site.css') }}">
     <link rel="stylesheet" href="{{ landing_asset('assets/style.css') }}">
 </head>
 <body>
@@ -120,6 +120,6 @@
             </span>
         </div>
     </footer>
-    <script src="{{ asset('js/site.js') }}?v={{ config('cms.version') }}"></script>
+    <script src="{{ asset_v('js/site.js') }}"></script>
 </body>
 </html>

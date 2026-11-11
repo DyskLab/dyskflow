@@ -1,0 +1,11 @@
+{
+  "label": "Search and switches",
+  "icon": "search",
+  "group": "site",
+  "description": "Search box, language switch and dark mode button, as in the theme header.",
+  "fields": [
+    { "key": "search", "type": "toggle", "label": "Search box", "default": true },
+    { "key": "language", "type": "toggle", "label": "Language switch", "default": true },
+    { "key": "theme", "type": "toggle", "label": "Dark mode button", "default": true }
+  ]
+}

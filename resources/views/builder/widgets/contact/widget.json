@@ -1,0 +1,13 @@
+{
+  "label": "Contact details",
+  "icon": "mail",
+  "group": "content",
+  "description": "WhatsApp, email, phone and address from Settings > Contact, so they stay the same everywhere.",
+  "fields": [
+    { "key": "show_whatsapp", "type": "toggle", "label": "WhatsApp", "default": true },
+    { "key": "show_email", "type": "toggle", "label": "Email", "default": true },
+    { "key": "show_phone", "type": "toggle", "label": "Phone", "default": true },
+    { "key": "show_address", "type": "toggle", "label": "Address", "default": true },
+    { "key": "layout", "type": "select", "label": "Layout", "options": ["list", "cards"], "default": "list" }
+  ]
+}

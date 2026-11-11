@@ -6,7 +6,8 @@
 <head>
     @include('admin.partials.head', ['title' => ($title ?? '').' · '.setting('site_title', 'CMS')])
 </head>
-<body>
+{{-- A page can ask for a body class, such as the full-screen builder: @section('body_class', 'bld-full') --}}
+<body class="@yield('body_class')">
 <a class="skip-link" href="#main">{{ __('Skip to content') }}</a>
 <div class="shell">
     <aside class="sidebar">
@@ -18,7 +19,7 @@
                 <div class="nav-group">
                     @if ($groupLabel !== '')<div class="nav-label">{{ $groupLabel }}</div>@endif
                     @foreach ($items as $item)
-                        <a class="nav-item {{ request()->is($item['match'] ?? '') ? 'active' : '' }}" href="{{ $item['url'] }}" title="{{ $item['label'] }}" @if (request()->is($item['match'] ?? '')) aria-current="page" @endif>
+                        <a class="nav-item {{ request()->is(...(array) ($item['match'] ?? '')) ? 'active' : '' }}" href="{{ $item['url'] }}" title="{{ $item['label'] }}" @if (request()->is(...(array) ($item['match'] ?? ''))) aria-current="page" @endif>
                             {{ icon($item['icon'] ?? 'plug') }} <span class="nav-text">{{ $item['label'] }}</span>
                             @if (! empty($item['count']))<span class="nav-count">{{ $item['count'] }}</span>@endif
                         </a>
@@ -98,11 +99,16 @@
 </div>
 
 <script>
-window.CMS_I18N = {!! json_encode(['loading' => __('Loading…'), 'loadFailed' => __('Could not load. Please try again.'), 'uploading' => __('Uploading…'), 'noResults' => __('No results.')], JSON_HEX_TAG) !!};
+window.CMS_I18N = {!! json_encode(['loading' => __('Loading…'), 'loadFailed' => __('Could not load. Please try again.'), 'uploading' => __('Uploading…'), 'noResults' => __('No results.'),
+    'uploaded' => __('Uploaded'), 'failed' => __('Failed'), 'processing' => __('Processing…'), 'uploadFailed' => __('Upload failed.'),
+    'typeNotAllowed' => __('File type :type is not allowed. Allowed: :types.'), 'tooLarge' => __('This file is :size, larger than the :max limit.'),
+    'tooLargeHost' => __('This upload is larger than this hosting accepts. Upload a smaller file, or ask your host to raise post_max_size.'),
+    'sessionExpired' => __('Your session expired. Reload the page and try again.'), 'noPermission' => __('You do not have permission to upload files.'),
+    'serverError' => __('The server could not process this file. Check the error log, or try a smaller file.'), 'network' => __('The connection was lost. Check your internet and try again.')], JSON_HEX_TAG) !!};
 window.CMS_MEDIA_PICKER = @json($user->can('media.manage') ? route('admin.media.picker') : null);
 </script>
 @stack('scripts')
 @include('admin.partials.form-errors')
-<script src="{{ asset('js/admin.js') }}?v={{ config('cms.version') }}"></script>
+<script src="{{ asset_v('js/admin.js') }}"></script>
 </body>
 </html>

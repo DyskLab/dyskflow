@@ -49,7 +49,7 @@ class RoleController extends Controller
             'values' => ['name' => $role->name, 'capabilities' => $role->capabilities],
             'fields' => [
                 ['name' => 'name', 'label' => __('Name'), 'required' => true],
-                ['name' => 'capabilities', 'label' => __('Permissions'), 'type' => 'checkboxes', 'options' => $this->capabilityOptions()],
+                ['name' => 'capabilities', 'label' => __('Permissions'), 'type' => 'checkboxes', 'groups' => $this->capabilityGroups()],
             ],
         ]);
     }
@@ -86,6 +86,42 @@ class RoleController extends Controller
         return back()->with('success', __('Done: :count item(s). Roles still in use were kept.', ['count' => $count]));
     }
 
+    /** The permissions in groups, with what each allows, for the role form. */
+    private function capabilityGroups(): array
+    {
+        $held = $this->capabilityOptions();
+        $about = [
+            'articles.write' => __('Create articles and edit their own. Publishing others\' articles needs the next one.'),
+            'articles.manage' => __('Edit, publish and delete every article.'),
+            'pages.manage' => __('Pages, builder pages and saved blocks.'),
+            'terms.manage' => __('Create, rename and delete categories and tags.'),
+            'comments.manage' => __('Approve, mark as spam and delete comments.'),
+            'forms.manage' => __('Read, export and delete messages sent with forms. They can hold personal data.'),
+            'media.manage' => __('Upload, edit and delete images and files.'),
+            'appearance.manage' => __('Templates, blocks and the Explorer: theme, landing pages and custom CSS/JS.'),
+            'code.manage' => __('PHP, Blade and HTML widgets: the same access as the server itself. Only for people you trust.'),
+            'settings.manage' => __('Site settings, SEO, email and the homepage.'),
+            'users.manage' => __('Add users, change their role and roles themselves.'),
+            'logs.view' => __('See who did what and when.'),
+            'backups.manage' => __('Create, download and restore backups.'),
+            'tools.manage' => __('Import and export content.'),
+            'updates.manage' => __('Install new versions of DyskFlow.'),
+            'plugins.manage' => __('Turn plugins on and off and change their settings.'),
+        ];
+        $groups = [
+            __('Content') => ['articles.write', 'articles.manage', 'pages.manage', 'terms.manage', 'comments.manage', 'forms.manage', 'media.manage'],
+            __('Design') => ['appearance.manage', 'code.manage'],
+            __('System') => ['settings.manage', 'users.manage', 'logs.view', 'backups.manage', 'tools.manage', 'updates.manage', 'plugins.manage'],
+        ];
+
+        return collect($groups)->map(fn (array $keys, string $label) => [
+            'label' => $label,
+            'options' => collect($keys)->filter(fn ($key) => isset($held[$key]))->mapWithKeys(fn ($key) => [$key => [
+                'label' => $held[$key], 'description' => $about[$key] ?? null, 'danger' => in_array($key, ['code.manage', 'users.manage'], true),
+            ]])->all(),
+        ])->filter(fn ($group) => $group['options'])->values()->all();
+    }
+
     /** Lists only what the current user holds, so a role cannot grant more than its creator has. */
     private function capabilityOptions(): array
     {
@@ -96,6 +132,7 @@ class RoleController extends Controller
             'settings.manage' => __('Change settings'), 'users.manage' => __('Manage users and roles'),
             'logs.view' => __('View activity log'), 'backups.manage' => __('Manage backups'),
             'tools.manage' => __('Import and export'), 'updates.manage' => __('Run updates'), 'plugins.manage' => __('Manage plugins'),
+            'appearance.manage' => __('Edit design and files'), 'code.manage' => __('Edit code (PHP and Blade)'),
         ];
 
         return array_filter($labels, fn ($capability) => auth()->user()->hasCapability($capability), ARRAY_FILTER_USE_KEY);

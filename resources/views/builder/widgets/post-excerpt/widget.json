@@ -1,0 +1,28 @@
+{
+  "label": "Article summary",
+  "icon": "text",
+  "group": "template",
+  "context": "single",
+  "description": "The article's summary, or the start of its text.",
+  "fields": [
+    {
+      "key": "length",
+      "type": "number",
+      "label": "Characters when there is no summary",
+      "min": 40,
+      "max": 600,
+      "default": 200
+    },
+    {
+      "key": "size",
+      "type": "select",
+      "label": "Text size",
+      "options": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "lg"
+    }
+  ]
+}

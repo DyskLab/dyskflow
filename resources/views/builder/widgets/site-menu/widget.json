@@ -1,0 +1,9 @@
+{
+  "label": "Site menu",
+  "icon": "list",
+  "group": "site",
+  "description": "The main menu: Articles, pages shown in the menu, and public landing pages.",
+  "fields": [
+    { "key": "show_articles", "type": "toggle", "label": "Show the Articles link", "default": true }
+  ]
+}

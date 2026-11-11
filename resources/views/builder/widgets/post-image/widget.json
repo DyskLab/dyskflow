@@ -1,0 +1,10 @@
+{
+  "label": "Featured image",
+  "icon": "image",
+  "group": "template",
+  "context": "single",
+  "description": "The featured image of the article. Nothing when it has none.",
+  "fields": [
+    { "key": "ratio", "type": "select", "label": "Shape", "options": ["original", "16:9", "4:3", "1:1"], "default": "original" }
+  ]
+}

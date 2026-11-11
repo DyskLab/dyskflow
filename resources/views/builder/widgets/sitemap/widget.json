@@ -1,0 +1,40 @@
+{
+  "label": "Sitemap",
+  "icon": "list",
+  "group": "site",
+  "description": "A list of the site's pages, categories and newest articles, for visitors.",
+  "fields": [
+    {
+      "key": "pages",
+      "type": "toggle",
+      "label": "Pages",
+      "default": true
+    },
+    {
+      "key": "categories",
+      "type": "toggle",
+      "label": "Categories",
+      "default": true
+    },
+    {
+      "key": "articles",
+      "type": "number",
+      "label": "Newest articles",
+      "min": 0,
+      "max": 50,
+      "default": 10
+    },
+    {
+      "key": "columns",
+      "type": "select",
+      "label": "Columns",
+      "options": [
+        "1",
+        "2",
+        "3"
+      ],
+      "default": "3",
+      "responsive": true
+    }
+  ]
+}

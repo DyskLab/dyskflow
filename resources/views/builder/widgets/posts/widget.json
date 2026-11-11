@@ -1,0 +1,12 @@
+{
+  "label": "Latest articles",
+  "icon": "posts",
+  "group": "content",
+  "description": "The newest published articles in the language of the page.",
+  "fields": [
+    { "key": "count", "type": "number", "label": "How many", "min": 1, "max": 12, "default": 3 },
+    { "key": "category", "type": "category", "label": "Only from category (slug)" },
+    { "key": "columns", "type": "select", "label": "Per row", "options": ["1", "2", "3"], "default": "3", "responsive": true },
+    { "key": "show_excerpt", "type": "toggle", "label": "Show the summary", "default": true }
+  ]
+}

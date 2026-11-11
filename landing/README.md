@@ -6,12 +6,12 @@ Updates never overwrite this folder. AI tools should read [docs/AI-GUIDE.md](../
 ## Create one
 
 1. Make a folder: `landing/<slug>/` (lowercase letters, numbers, `-`, `_`).
-2. Add one entry file: `index.blade.php` or `index.html`.
+2. Add one entry file: `index.blade.php` or `index.html`. To design a page visually from sections and widgets instead, use **Pages > New builder page** in the admin ([docs/BUILDER.md](../docs/BUILDER.md)): builder pages are pages, not folders here.
 3. Add `landing.json`: `{ "title": "...", "description": "..." }`.
 4. Put CSS, JS, images and fonts in `assets/`.
 5. To make it the homepage, choose it in **Settings > Pages**. The default is `dyskflow`.
 6. To give it its own address, such as `/promo`, add `"public": true` to `landing.json`. A page with the same slug takes priority.
-7. To list it in the site menu, also add `"menu": true`. `title` and `description` go through `__()`, so write them in English and add the translation to `lang/id.json`.
+7. To list it in the site menu, also add `"menu": true`. `title` and `description` go through `__()`, so write them in English and put the translation in `landing/<slug>/lang/id.json`, for example `{"Contact us": "Hubungi kami"}`. Do not add it to the core `lang/id.json`: updates replace that file.
 
 `landing/kontak/` is a ready example: a contact page that reads **Settings > Contact**.
 

@@ -1,0 +1,15 @@
+{
+  "label": "Buttons",
+  "icon": "link",
+  "group": "basic",
+  "description": "One or more links that look like buttons.",
+  "fields": [
+    { "key": "buttons", "type": "repeater", "label": "Buttons", "min_items": 1, "max_items": 4, "fields": [
+      { "key": "label", "type": "text", "label": "Label", "translatable": true, "required": true },
+      { "key": "url", "type": "url", "label": "Link", "translatable": true, "required": true },
+      { "key": "variant", "type": "select", "label": "Look", "options": ["primary", "outline", "ghost"], "default": "primary" },
+      { "key": "new_tab", "type": "toggle", "label": "Open in a new tab", "default": false }
+    ] },
+    { "key": "size", "type": "select", "label": "Size", "options": ["md", "lg"], "default": "lg" }
+  ]
+}

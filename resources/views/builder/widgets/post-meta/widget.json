@@ -1,0 +1,13 @@
+{
+  "label": "Article details",
+  "icon": "list",
+  "group": "template",
+  "context": "single",
+  "description": "Date, author, views and categories of the article.",
+  "fields": [
+    { "key": "date", "type": "toggle", "label": "Date", "default": true },
+    { "key": "author", "type": "toggle", "label": "Author", "default": true },
+    { "key": "views", "type": "toggle", "label": "Views (when enabled in the settings)", "default": true },
+    { "key": "categories", "type": "toggle", "label": "Categories", "default": true }
+  ]
+}

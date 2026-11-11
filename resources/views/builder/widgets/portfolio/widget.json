@@ -1,0 +1,57 @@
+{
+  "label": "Portfolio",
+  "icon": "posts",
+  "group": "content",
+  "description": "Articles with their image in a grid, with buttons to filter by category.",
+  "fields": [
+    {
+      "key": "count",
+      "type": "number",
+      "label": "How many",
+      "min": 1,
+      "max": 48,
+      "default": 9
+    },
+    {
+      "key": "category",
+      "type": "category",
+      "label": "Only from this category"
+    },
+    {
+      "key": "filter",
+      "type": "toggle",
+      "label": "Category buttons",
+      "default": true
+    },
+    {
+      "key": "columns",
+      "type": "select",
+      "label": "Per row",
+      "options": [
+        "2",
+        "3",
+        "4"
+      ],
+      "default": "3",
+      "responsive": true
+    },
+    {
+      "key": "ratio",
+      "type": "select",
+      "label": "Image shape",
+      "options": [
+        "1:1",
+        "4:3",
+        "16:9",
+        "3:4"
+      ],
+      "default": "4:3"
+    },
+    {
+      "key": "show_title",
+      "type": "toggle",
+      "label": "Show titles",
+      "default": true
+    }
+  ]
+}

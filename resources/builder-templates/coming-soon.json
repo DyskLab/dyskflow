@@ -1,0 +1,105 @@
+{
+  "$schema": "../../docs/builder.schema.json",
+  "template": {
+    "title": "Coming soon",
+    "description": "A page without the site menu: a countdown to the launch and a form to be told when it opens."
+  },
+  "version": 1,
+  "layout": "blank",
+  "sections": [
+    {
+      "id": "sx077",
+      "type": "section",
+      "style": {
+        "background": "dark",
+        "padding": {
+          "base": "2xl",
+          "mobile": "xl"
+        },
+        "text": "center",
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "cx078",
+          "widgets": [
+            {
+              "id": "wa071",
+              "type": "animated-headline",
+              "tag": "h1",
+              "size": "2xl",
+              "before": {
+                "id": "Sesuatu yang",
+                "en": "Something"
+              },
+              "words": {
+                "id": "baru\nseru\nistimewa",
+                "en": "new\nexciting\nspecial"
+              },
+              "after": {
+                "id": "segera hadir.",
+                "en": "is coming soon."
+              }
+            },
+            {
+              "id": "wt072",
+              "type": "text",
+              "html": {
+                "id": "<p>Kami sedang menyiapkan semuanya. Tinggalkan email Anda dan jadi yang pertama tahu saat kami buka.</p>",
+                "en": "<p>We are getting everything ready. Leave your email and be the first to know when we open.</p>"
+              },
+              "size": "lg"
+            },
+            {
+              "id": "wc073",
+              "type": "countdown",
+              "date": "2027-01-01 09:00",
+              "ended": {
+                "id": "Kami sudah buka!",
+                "en": "We are open!"
+              }
+            },
+            {
+              "id": "ws074",
+              "type": "spacer",
+              "size": "md"
+            },
+            {
+              "id": "wf075",
+              "type": "form",
+              "name": "Daftar tunggu",
+              "fields": [
+                {
+                  "label": {
+                    "id": "Email",
+                    "en": "Email"
+                  },
+                  "kind": "email",
+                  "required": true,
+                  "placeholder": {
+                    "id": "nama@email.com",
+                    "en": "name@email.com"
+                  }
+                }
+              ],
+              "submit": {
+                "id": "Kabari saya",
+                "en": "Notify me"
+              },
+              "button_width": "full",
+              "success": {
+                "id": "Terima kasih! Kami akan mengabari Anda.",
+                "en": "Thank you! We will let you know."
+              }
+            },
+            {
+              "id": "ws076",
+              "type": "social-icons",
+              "variant": "circle"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "label": "Cards",
+  "icon": "card",
+  "group": "basic",
+  "description": "A grid of cards, each with an optional image, title, text and link.",
+  "fields": [
+    { "key": "columns", "type": "select", "label": "Per row", "options": ["1", "2", "3", "4"], "default": "3", "responsive": true },
+    { "key": "cards", "type": "repeater", "label": "Cards", "min_items": 1, "max_items": 24, "fields": [
+      { "key": "image", "type": "image", "label": "Image" },
+      { "key": "kicker", "type": "text", "label": "Small text above", "translatable": true },
+      { "key": "title", "type": "text", "label": "Title", "translatable": true },
+      { "key": "text", "type": "textarea", "label": "Text", "translatable": true },
+      { "key": "url", "type": "url", "label": "Link", "translatable": true }
+    ] }
+  ]
+}

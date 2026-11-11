@@ -1,0 +1,8 @@
+{
+  "label": "Article content",
+  "icon": "text",
+  "group": "template",
+  "context": "single",
+  "description": "The text of the article, as written in the editor.",
+  "fields": []
+}

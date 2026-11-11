@@ -1,0 +1,10 @@
+{
+  "label": "Site logo",
+  "icon": "globe",
+  "group": "site",
+  "description": "The site icon and title from the settings, linking to the homepage.",
+  "fields": [
+    { "key": "show_title", "type": "toggle", "label": "Show the site title", "default": true },
+    { "key": "size", "type": "select", "label": "Icon size", "options": ["24", "28", "36", "48"], "default": "28" }
+  ]
+}

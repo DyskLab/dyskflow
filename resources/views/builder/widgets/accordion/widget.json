@@ -1,0 +1,52 @@
+{
+  "label": "Accordion",
+  "icon": "list",
+  "group": "content",
+  "description": "Sections that open and close, with formatted text inside. For questions and answers, the FAQ widget can also tell search engines.",
+  "fields": [
+    {
+      "key": "items",
+      "type": "repeater",
+      "label": "Sections",
+      "min_items": 1,
+      "max_items": 30,
+      "fields": [
+        {
+          "key": "title",
+          "type": "text",
+          "label": "Title",
+          "translatable": true,
+          "required": true
+        },
+        {
+          "key": "body",
+          "type": "richtext",
+          "label": "Content",
+          "translatable": true
+        }
+      ]
+    },
+    {
+      "key": "open_first",
+      "type": "toggle",
+      "label": "Open the first section",
+      "default": true
+    },
+    {
+      "key": "one_open",
+      "type": "toggle",
+      "label": "Close the others when one opens",
+      "default": true
+    },
+    {
+      "key": "variant",
+      "type": "select",
+      "label": "Style",
+      "options": [
+        "lines",
+        "boxed"
+      ],
+      "default": "boxed"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "label": "Progress bars",
+  "icon": "activity",
+  "group": "content",
+  "description": "Bars that fill to a percentage, such as skills or goals.",
+  "fields": [
+    {
+      "key": "items",
+      "type": "repeater",
+      "label": "Bars",
+      "min_items": 1,
+      "max_items": 12,
+      "fields": [
+        {
+          "key": "label",
+          "type": "text",
+          "label": "Label",
+          "translatable": true,
+          "required": true
+        },
+        {
+          "key": "percent",
+          "type": "number",
+          "label": "Percent",
+          "min": 0,
+          "max": 100,
+          "default": 80
+        },
+        {
+          "key": "color",
+          "type": "select",
+          "label": "Color",
+          "options": [
+            "primary",
+            "brand-secondary",
+            "brand-accent",
+            "success",
+            "foreground"
+          ],
+          "default": "primary"
+        }
+      ]
+    },
+    {
+      "key": "show_percent",
+      "type": "toggle",
+      "label": "Show the percentage",
+      "default": true
+    },
+    {
+      "key": "height",
+      "type": "select",
+      "label": "Bar height",
+      "options": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "label": "Form",
+  "icon": "mail",
+  "group": "content",
+  "description": "A contact, sign-up or order form. Messages are kept in Content > Forms and can be sent to your email.",
+  "fields": [
+    { "key": "name", "type": "text", "label": "Form name", "default": "Contact form", "help": "Shown in Content > Forms, to tell forms apart." },
+    { "key": "fields", "type": "repeater", "label": "Fields", "min_items": 1, "max_items": 20, "fields": [
+      { "key": "label", "type": "text", "label": "Label", "translatable": true, "required": true },
+      { "key": "kind", "type": "select", "label": "Type", "options": ["text", "email", "tel", "textarea", "select", "radio", "checkbox", "number", "date"], "default": "text" },
+      { "key": "required", "type": "toggle", "label": "Required", "default": false },
+      { "key": "placeholder", "type": "text", "label": "Placeholder", "translatable": true },
+      { "key": "options", "type": "textarea", "label": "Choices, one per line", "translatable": true, "help": "For the select and radio types." },
+      { "key": "width", "type": "select", "label": "Width", "options": ["full", "half"], "default": "full" }
+    ] },
+    { "key": "submit", "type": "text", "label": "Button label", "translatable": true },
+    { "key": "button_width", "type": "select", "label": "Button width", "options": ["auto", "full"], "default": "auto" },
+    { "key": "success", "type": "textarea", "label": "Message after sending", "translatable": true },
+    { "key": "email_to", "type": "text", "label": "Send each message to this email", "help": "Empty: the email in Settings > Contact. Leave both empty to only keep messages in Content > Forms." },
+    { "key": "redirect", "type": "url", "label": "After sending, go to this page", "translatable": true, "help": "Empty: stay on the page and show the message." },
+    { "key": "consent", "type": "text", "label": "Consent note under the button", "translatable": true, "help": "For example: By sending this form you agree to our privacy policy." }
+  ]
+}

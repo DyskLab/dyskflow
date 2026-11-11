@@ -1,0 +1,89 @@
+{
+  "label": "Reviews carousel",
+  "icon": "comment",
+  "group": "content",
+  "description": "Customer reviews with stars, sliding sideways.",
+  "fields": [
+    {
+      "key": "items",
+      "type": "repeater",
+      "label": "Reviews",
+      "min_items": 1,
+      "max_items": 20,
+      "fields": [
+        {
+          "key": "text",
+          "type": "textarea",
+          "label": "Review",
+          "translatable": true,
+          "required": true
+        },
+        {
+          "key": "name",
+          "type": "text",
+          "label": "Name"
+        },
+        {
+          "key": "role",
+          "type": "text",
+          "label": "Role or company",
+          "translatable": true
+        },
+        {
+          "key": "image",
+          "type": "image",
+          "label": "Photo"
+        },
+        {
+          "key": "rating",
+          "type": "select",
+          "label": "Stars",
+          "options": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "default": "5"
+        }
+      ]
+    },
+    {
+      "key": "per_view",
+      "type": "select",
+      "label": "Visible at once",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "default": "3",
+      "responsive": true
+    },
+    {
+      "key": "autoplay",
+      "type": "number",
+      "label": "Autoplay every (seconds)",
+      "min": 0,
+      "max": 30,
+      "default": 0,
+      "help": "0: only with the arrows. Stops while the visitor hovers or focuses it."
+    },
+    {
+      "key": "arrows",
+      "type": "toggle",
+      "label": "Arrows",
+      "default": true
+    },
+    {
+      "key": "dots",
+      "type": "toggle",
+      "label": "Dots",
+      "default": true
+    }
+  ]
+}

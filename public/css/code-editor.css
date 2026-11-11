@@ -1,0 +1,49 @@
+/* Design > Files editor. CodeMirror 5 styled with the tokens from ui.css, in light and dark. */
+.code-editor { display: grid; gap: 12px; min-width: 0; }
+.code-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.code-title { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+.code-title .file-path { margin: 0; }
+.code-kbd { font: 500 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; opacity: .7; margin-left: 4px; }
+.code-message [data-code-message-text] { white-space: pre-line; }
+.code-message { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.code-area { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; min-width: 0; }
+.code-status { display: flex; gap: 16px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
+
+.code-area .CodeMirror {
+  height: calc(100vh - 300px); min-height: 380px;
+  font: 13px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  background: var(--background); color: var(--foreground);
+}
+.code-area .CodeMirror-gutters { background: var(--sidebar); border-right: 1px solid var(--border); }
+.code-area .CodeMirror-linenumber { color: var(--muted-foreground); padding: 0 8px 0 4px; }
+.code-area .CodeMirror-cursor { border-left-color: var(--foreground); }
+.code-area .CodeMirror-activeline-background { background: color-mix(in oklab, var(--primary) 6%, transparent); }
+.code-area .CodeMirror-selected, .code-area .CodeMirror-focused .CodeMirror-selected { background: color-mix(in oklab, var(--primary) 18%, transparent); }
+.code-area .CodeMirror-matchingbracket { color: var(--primary-text) !important; outline: 1px solid color-mix(in oklab, var(--primary) 50%, transparent); }
+.code-area .CodeMirror-dialog { background: var(--card); color: var(--foreground); border-color: var(--border); padding: 6px 10px; font-size: 13px; }
+.code-area .CodeMirror-dialog input { color: inherit; font: inherit; }
+.code-area .cm-searching { background: color-mix(in oklab, var(--warning) 30%, transparent); }
+
+/* Syntax colors: muted, so the code stays readable in both themes. */
+.code-area .cm-keyword, .code-area .cm-blade-directive { color: oklch(.5 .17 300); }
+.code-area .cm-blade-echo { color: var(--primary-text); font-weight: 600; }
+.code-area .cm-tag { color: oklch(.5 .15 25); }
+.code-area .cm-attribute, .code-area .cm-property { color: oklch(.5 .12 250); }
+.code-area .cm-string, .code-area .cm-string-2 { color: oklch(.5 .13 150); }
+.code-area .cm-number, .code-area .cm-atom { color: oklch(.55 .14 60); }
+.code-area .cm-comment { color: var(--muted-foreground); font-style: italic; }
+.code-area .cm-variable-2, .code-area .cm-def { color: oklch(.5 .1 220); }
+.code-area .cm-qualifier, .code-area .cm-builtin { color: oklch(.5 .14 330); }
+.code-area .cm-meta, .code-area .cm-bracket { color: var(--muted-foreground); }
+.code-area .cm-error { color: var(--destructive); }
+.dark .code-area .cm-keyword, .dark .code-area .cm-blade-directive { color: oklch(.78 .13 300); }
+.dark .code-area .cm-tag { color: oklch(.76 .13 25); }
+.dark .code-area .cm-attribute, .dark .code-area .cm-property { color: oklch(.8 .1 240); }
+.dark .code-area .cm-string, .dark .code-area .cm-string-2 { color: oklch(.8 .13 150); }
+.dark .code-area .cm-number, .dark .code-area .cm-atom { color: oklch(.82 .13 75); }
+.dark .code-area .cm-variable-2, .dark .code-area .cm-def { color: oklch(.8 .09 220); }
+.dark .code-area .cm-qualifier, .dark .code-area .cm-builtin { color: oklch(.8 .12 330); }
+
+@media (max-width: 768px) {
+  .code-area .CodeMirror { height: 60vh; min-height: 280px; font-size: 12px; }
+}

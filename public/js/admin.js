@@ -331,7 +331,7 @@
       all.checked = boxes.length > 0 && checked.length === boxes.length;
       all.indeterminate = checked.length > 0 && checked.length < boxes.length;
     }
-    boxes.forEach(function (b) { b.closest('tr').classList.toggle('selected', b.checked); });
+    boxes.forEach(function (b) { (b.closest('tr, .dt-tile') || b).classList.toggle('selected', b.checked); });
     var bar = $('[data-bulk-bar]', table);
     if (bar) {
       bar.hidden = checked.length === 0;
@@ -350,6 +350,57 @@
   });
   $$('[data-table]').forEach(syncTable);
 
+  /* ---------- Checkbox panels (form fields): count, "Select all" per group, filter ---------- */
+  function syncChecks(panel) {
+    var boxes = $$('.check-option .checkbox', panel);
+    var count = $('[data-check-count]', panel);
+    if (count) count.textContent = count.dataset.text.replace(':count', boxes.filter(function (b) { return b.checked; }).length).replace(':total', boxes.length);
+    $$('[data-check-group]', panel).forEach(function (group) {
+      var button = $('[data-check-group-all]', group);
+      if (!button) return;
+      var all = $$('.check-option .checkbox', group);
+      button.textContent = all.length && all.every(function (b) { return b.checked; }) ? button.dataset.clear : button.dataset.select;
+    });
+  }
+  document.addEventListener('change', function (e) {
+    var panel = e.target.closest('[data-check-panel]');
+    if (panel) syncChecks(panel);
+  });
+  document.addEventListener('click', function (e) {
+    var button = e.target.closest('[data-check-group-all]');
+    if (!button) return;
+    var group = button.closest('[data-check-group]');
+    // Only the options the filter shows: "Select all" after filtering picks the matches.
+    var shown = $$('.check-option', group).filter(function (o) { return !o.hidden; }).map(function (o) { return $('.checkbox', o); });
+    var on = !shown.every(function (b) { return b.checked; });
+    shown.forEach(function (b) { b.checked = on; });
+    var panel = button.closest('[data-check-panel]');
+    syncChecks(panel);
+    var form = panel.closest('form');
+    if (form) form.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+  document.addEventListener('input', function (e) {
+    if (!e.target.matches('[data-check-filter]')) return;
+    var panel = e.target.closest('[data-check-panel]');
+    var term = e.target.value.trim().toLowerCase();
+    var any = false;
+    $$('[data-check-group]', panel).forEach(function (group) {
+      var visible = 0;
+      $$('.check-option', group).forEach(function (o) {
+        o.hidden = term !== '' && o.dataset.checkText.indexOf(term) < 0;
+        if (!o.hidden) visible++;
+      });
+      group.hidden = visible === 0;
+      if (visible) any = true;
+    });
+    var none = $('[data-check-none]', panel);
+    if (none) none.hidden = any;
+  });
+  // A filter is for finding, never for submitting the form.
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.matches && e.target.matches('[data-check-filter]')) e.preventDefault();
+  });
+
   /* ---------- Media picker ---------- */
   var pickerCallback = null;
   document.addEventListener('click', function (e) {
@@ -363,7 +414,7 @@
         if (preview) { preview.src = item.url; preview.hidden = false; }
         $('input', field).dispatchEvent(new Event('input', { bubbles: true }));
       };
-      openPicker();
+      openPicker($('input', field).value);
       return;
     }
     var clear = e.target.closest('[data-media-clear]');
@@ -382,11 +433,11 @@
     }
   });
   var savedSheet = null;
-  function openPicker() {
+  function openPicker(current) {
     /* A settings or term form may already be open in the sheet: keep it and bring it back afterwards. */
     savedSheet = sheet.classList.contains('open') ? Array.prototype.slice.call(body.childNodes) : null;
     if (savedSheet) savedSheet = { nodes: savedSheet };
-    var url = window.CMS_MEDIA_PICKER;
+    var url = window.CMS_MEDIA_PICKER + (current ? (window.CMS_MEDIA_PICKER.indexOf('?') < 0 ? '?' : '&') + 'current=' + encodeURIComponent(current) : '');
     var keep = savedSheet;
     if (keep) { var holder = document.createDocumentFragment(); keep.nodes.forEach(function (n) { holder.appendChild(n); }); keep.holder = holder; }
     loadSheet(url, true);
@@ -401,28 +452,183 @@
       closeSheet();
     }
   }
-  document.addEventListener('submit', function (e) {
-    var form = e.target;
-    if (!form.matches('[data-media-upload]')) return;
+  /*
+   * Uploads, in the Upload sheet and the image picker: files go up one at a time, each with a
+   * progress bar. A file of the wrong type or too large is refused before it is sent, and a file
+   * the server refuses shows the reason, without stopping the others.
+   */
+  function fileSize(bytes) {
+    return bytes >= 1048576 ? (bytes / 1048576).toFixed(1).replace(/\.0$/, '') + ' MB' : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+  }
+  function uploadRow(list, name) {
+    var row = document.createElement('div');
+    row.className = 'upload-row';
+    row.innerHTML = '<span class="upload-name"></span><span class="upload-state"></span><span class="upload-bar"><span></span></span><span class="upload-error"></span>';
+    $('.upload-name', row).textContent = name;
+    list.appendChild(row);
+    return row;
+  }
+  function rowState(row, state, text) {
+    row.dataset.state = state;
+    $('.upload-state', row).textContent = state === 'done' ? (i18n.uploaded || 'Uploaded') : state === 'error' ? (i18n.failed || 'Failed') : (text || '');
+    if (state === 'error') $('.upload-error', row).textContent = text || i18n.uploadFailed || 'Upload failed.';
+  }
+  function uploadOne(box, file, row) {
+    return new Promise(function (resolve) {
+      var data = new FormData();
+      data.append('files[]', file);
+      data.append('_token', $('input[name="_token"]', box).value);
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', box.dataset.uploadUrl);
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      xhr.upload.onprogress = function (e) {
+        if (!e.lengthComputable) return;
+        var pct = Math.round(e.loaded / e.total * 100);
+        $('.upload-bar span', row).style.width = pct + '%';
+        rowState(row, 'busy', pct < 100 ? pct + '%' : (i18n.processing || 'Processing…'));
+      };
+      xhr.onload = function () {
+        var res = {};
+        try { res = JSON.parse(xhr.responseText); } catch (err) { /* an HTML error page */ }
+        if (xhr.status === 200 && res.saved && res.saved.length) { rowState(row, 'done'); resolve(res.saved[0]); return; }
+        var message = (res.errors && res.errors[0] && res.errors[0].message) || res.message;
+        if (xhr.status === 413) message = message || i18n.tooLargeHost;
+        else if (xhr.status === 419) message = i18n.sessionExpired;
+        else if (xhr.status === 403) message = i18n.noPermission;
+        else if (!message || xhr.status >= 500) message = i18n.serverError;
+        rowState(row, 'error', message);
+        resolve(null);
+      };
+      xhr.onerror = function () { rowState(row, 'error', i18n.network); resolve(null); };
+      rowState(row, 'busy', '0%');
+      xhr.send(data);
+    });
+  }
+  function uploadFiles(box, files, onSaved, onDone) {
+    var list = $('[data-upload-list]', box);
+    var allowed = (box.dataset.allowed || '').split(',').filter(Boolean);
+    var max = Number(box.dataset.max) || 0;
+    var queue = [], failed = 0, saved = 0;
+    Array.prototype.forEach.call(files, function (file) {
+      var row = uploadRow(list, file.name);
+      var ext = (file.name.split('.').pop() || '').toLowerCase();
+      if (allowed.length && allowed.indexOf(ext) < 0) { rowState(row, 'error', (i18n.typeNotAllowed || '').replace(':type', ext).replace(':types', allowed.join(', '))); failed++; return; }
+      if (max && file.size > max) { rowState(row, 'error', (i18n.tooLarge || '').replace(':size', fileSize(file.size)).replace(':max', box.dataset.maxLabel)); failed++; return; }
+      queue.push({ file: file, row: row });
+    });
+    (function next() {
+      var item = queue.shift();
+      if (!item) { if (onDone) onDone(saved, failed); return; }
+      uploadOne(box, item.file, item.row).then(function (media) {
+        if (media) { saved++; if (onSaved) onSaved(media); } else failed++;
+        next();
+      });
+    })();
+  }
+
+  /* Choosing or dropping files. In the picker one good image is used right away; several are added to the grid. */
+  function startUpload(box, files) {
+    if (!files || !files.length) return;
+    var picker = box.matches('[data-picker]');
+    var single = files.length === 1;
+    uploadFiles(box, files, function (media) {
+      if (!picker) return;
+      var grid = $('[data-picker-grid]', box);
+      var tile = document.createElement('button');
+      tile.type = 'button';
+      tile.className = 'picker-item is-new';
+      tile.setAttribute('data-media-choose', '');
+      tile.dataset.path = media.path; tile.dataset.url = media.url; tile.dataset.alt = media.alt || ''; tile.dataset.title = (media.title || '').toLowerCase();
+      tile.innerHTML = '<span class="picker-thumb"><img alt="" decoding="async"></span><span class="picker-name"></span><span class="picker-meta"></span>';
+      $('img', tile).src = media.url;
+      $('.picker-name', tile).textContent = media.title || media.path.split('/').pop();
+      $('.picker-meta', tile).textContent = media.width && media.height ? media.width + '×' + media.height : '';
+      grid.insertBefore(tile, grid.firstChild);
+      var empty = $('[data-picker-empty]', box); if (empty) empty.hidden = true;
+      var filter = $('[data-picker-filter]', box); if (filter) filter.hidden = false;
+      if (single && pickerCallback) { tile.click(); }
+    }, function (saved, failed) {
+      if (picker) return;
+      // The Upload sheet: all good reloads the list; with errors, they stay readable until Done.
+      if (!failed) { location.reload(); return; }
+      var done = $('[data-upload-done]', box.parentNode);
+      if (done) done.hidden = saved === 0;
+    });
+  }
+  document.addEventListener('change', function (e) {
+    if (!e.target.matches('[data-upload-input]')) return;
+    startUpload(e.target.closest('[data-uploader]'), e.target.files);
+    e.target.value = '';
+  });
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-upload-done]')) location.reload();
+  });
+  ['dragenter', 'dragover'].forEach(function (type) {
+    document.addEventListener(type, function (e) {
+      var box = e.target.closest && e.target.closest('[data-uploader]');
+      if (!box || !e.dataTransfer || Array.prototype.indexOf.call(e.dataTransfer.types, 'Files') < 0) return;
+      e.preventDefault();
+      box.classList.add('is-dragging');
+    });
+  });
+  document.addEventListener('dragleave', function (e) {
+    var box = e.target.closest && e.target.closest('[data-uploader]');
+    if (box && !box.contains(e.relatedTarget)) box.classList.remove('is-dragging');
+  });
+  document.addEventListener('drop', function (e) {
+    var box = e.target.closest && e.target.closest('[data-uploader]');
+    if (!box || !e.dataTransfer || !e.dataTransfer.files.length) return;
     e.preventDefault();
-    var status = $('[data-upload-status]', form);
-    status.textContent = i18n.uploading || 'Uploading…';
-    fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
-      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
-      .then(function (res) {
-        if (!res.ok) { status.textContent = res.data.message || 'Error'; return; }
-        if (pickerCallback) {
-          pickerCallback(res.data);
-          pickerCallback = null;
-          restoreOrClose();
-        }
-      })
-      .catch(function () { status.textContent = i18n.loadFailed || 'Failed.'; });
+    box.classList.remove('is-dragging');
+    startUpload(box, e.dataTransfer.files);
+  });
+
+  /* Searching the picker's images by title, file name and alt text. */
+  document.addEventListener('input', function (e) {
+    if (!e.target.matches('[data-picker-filter]')) return;
+    var box = e.target.closest('[data-picker]');
+    var term = e.target.value.trim().toLowerCase(), shown = 0;
+    $$('.picker-item', box).forEach(function (tile) {
+      tile.hidden = term !== '' && (tile.dataset.title || '').indexOf(term) < 0;
+      if (!tile.hidden) shown++;
+    });
+    $('[data-picker-none]', box).hidden = shown > 0 || !$$('.picker-item', box).length;
   });
 
   /* ---------- Fragment setup ---------- */
+  /* Color fields: the picker and the hex code follow each other; "Default" empties the setting. */
+  document.addEventListener('input', function (e) {
+    var box = e.target.closest('[data-color-field]');
+    if (!box) return;
+    var text = $('[data-color-text]', box), picker = $('[data-color-picker]', box);
+    if (e.target === picker) { text.value = picker.value; picker.removeAttribute('data-empty'); }
+    else if (/^#[0-9a-f]{6}$/i.test(text.value)) { picker.value = text.value.toLowerCase(); picker.removeAttribute('data-empty'); }
+    $('[data-color-clear]', box).hidden = text.value === '';
+  });
+  document.addEventListener('click', function (e) {
+    var clear = e.target.closest('[data-color-clear]');
+    if (!clear) return;
+    var box = clear.closest('[data-color-field]');
+    $('[data-color-text]', box).value = '';
+    $('[data-color-picker]', box).setAttribute('data-empty', '');
+    clear.hidden = true;
+  });
+
   function initFragment(root) {
     initSlug(root);
+    initStarters(root);
+  }
+
+  /* Starter thumbnails draw a 1280px page; scale it to the card's width, whatever the sheet's size. */
+  var starterFit = window.ResizeObserver && new ResizeObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var width = entry.contentRect.width;
+      if (width) entry.target.style.setProperty('--starter-scale', String(width / 1280));
+    });
+  });
+  function initStarters(root) {
+    if (starterFit) $$('.starter-thumb', root).forEach(function (box) { starterFit.observe(box); });
   }
 
   function slugify(text) {

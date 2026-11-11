@@ -15,5 +15,6 @@
   }
 })();
 </script>
-<link rel="stylesheet" href="{{ asset('css/ui.css') }}?v={{ config('cms.version') }}">
-<link rel="stylesheet" href="{{ asset('css/admin.css') }}?v={{ config('cms.version') }}">
+<link rel="stylesheet" href="{{ asset_v('css/ui.css') }}">
+<link rel="stylesheet" href="{{ asset_v('css/admin.css') }}">
+@stack('head')

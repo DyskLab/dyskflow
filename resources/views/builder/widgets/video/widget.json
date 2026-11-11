@@ -1,0 +1,13 @@
+{
+  "label": "Video",
+  "icon": "video",
+  "group": "media",
+  "description": "A YouTube or Vimeo video, or an mp4/webm file. YouTube and Vimeo load only after the visitor presses play, so the page sets no third-party cookies.",
+  "fields": [
+    { "key": "url", "type": "url", "label": "YouTube or Vimeo link", "help": "Or leave empty and use a video file below." },
+    { "key": "file", "type": "file", "label": "Video file", "accept": ["mp4", "webm"], "help": "mp4 or webm, used when there is no link." },
+    { "key": "title", "type": "text", "label": "Title", "translatable": true },
+    { "key": "poster", "type": "image", "label": "Cover image" },
+    { "key": "loop", "type": "toggle", "label": "Play a video file silently on a loop, like a GIF", "default": false }
+  ]
+}

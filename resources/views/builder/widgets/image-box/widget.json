@@ -1,0 +1,74 @@
+{
+  "label": "Image box",
+  "icon": "image",
+  "group": "basic",
+  "description": "An image with a title, text and a button, side by side or stacked.",
+  "fields": [
+    {
+      "key": "image",
+      "type": "image",
+      "label": "Image",
+      "required": true
+    },
+    {
+      "key": "alt",
+      "type": "text",
+      "label": "Image description",
+      "translatable": true
+    },
+    {
+      "key": "position",
+      "type": "select",
+      "label": "Image position",
+      "options": [
+        "top",
+        "left",
+        "right"
+      ],
+      "default": "left"
+    },
+    {
+      "key": "ratio",
+      "type": "select",
+      "label": "Image shape",
+      "options": [
+        "auto",
+        "1:1",
+        "4:3",
+        "16:9",
+        "3:4"
+      ],
+      "default": "4:3"
+    },
+    {
+      "key": "kicker",
+      "type": "text",
+      "label": "Small text above",
+      "translatable": true
+    },
+    {
+      "key": "title",
+      "type": "text",
+      "label": "Title",
+      "translatable": true
+    },
+    {
+      "key": "text",
+      "type": "textarea",
+      "label": "Text",
+      "translatable": true
+    },
+    {
+      "key": "button_label",
+      "type": "text",
+      "label": "Button label",
+      "translatable": true
+    },
+    {
+      "key": "url",
+      "type": "url",
+      "label": "Link",
+      "translatable": true
+    }
+  ]
+}

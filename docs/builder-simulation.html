@@ -1,0 +1,1213 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simulasi DyskFlow Builder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: guided tour on top, a working mock of the admin builder below, sharing DyskFlow's shadcn-neutral tokens. */
+:root {
+  --radius: .625rem;
+  --bg: oklch(.985 .002 40);
+  --background: oklch(1 0 0);
+  --foreground: oklch(.145 0 0);
+  --card: oklch(1 0 0);
+  --primary: oklch(.58 .2 32);
+  --primary-fg: oklch(1 0 0);
+  --primary-text: oklch(.55 .2 32);
+  --primary-soft: oklch(.95 .03 32);
+  --muted: oklch(.97 0 0);
+  --muted-fg: oklch(.52 0 0);
+  --border: oklch(.922 0 0);
+  --ring: oklch(.72 .15 32);
+  --success: oklch(.527 .154 150);
+  --success-soft: oklch(.95 .04 150);
+  --warning: oklch(.555 .163 49);
+  --warning-soft: oklch(.96 .04 70);
+  --destructive: oklch(.5 .19 18);
+  --ai: oklch(.5 .14 265);
+  --ai-soft: oklch(.95 .03 265);
+  --code-bg: oklch(.2 .01 260);
+  --code-fg: oklch(.92 0 0);
+  --code-key: oklch(.78 .1 230);
+  --code-str: oklch(.8 .12 145);
+  --code-num: oklch(.8 .13 70);
+  --code-hl: oklch(.32 .05 32);
+  --site-dark: oklch(.2 .01 40);
+  --font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: oklch(.13 .003 40); --background: oklch(.165 0 0); --foreground: oklch(.985 0 0); --card: oklch(.205 0 0);
+    --primary-text: oklch(.74 .16 35); --primary-soft: oklch(.3 .07 32); --muted: oklch(.26 0 0); --muted-fg: oklch(.72 0 0);
+    --border: oklch(1 0 0 / 12%); --ring: oklch(.65 .17 32); --success: oklch(.79 .2 151); --success-soft: oklch(.3 .06 150);
+    --warning: oklch(.83 .17 80); --warning-soft: oklch(.32 .06 70); --destructive: oklch(.7 .19 12); --ai: oklch(.78 .12 265); --ai-soft: oklch(.3 .07 265);
+    --code-bg: oklch(.12 .01 260); --site-dark: oklch(.1 .005 40); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: oklch(.13 .003 40); --background: oklch(.165 0 0); --foreground: oklch(.985 0 0); --card: oklch(.205 0 0);
+  --primary-text: oklch(.74 .16 35); --primary-soft: oklch(.3 .07 32); --muted: oklch(.26 0 0); --muted-fg: oklch(.72 0 0);
+  --border: oklch(1 0 0 / 12%); --ring: oklch(.65 .17 32); --success: oklch(.79 .2 151); --success-soft: oklch(.3 .06 150);
+  --warning: oklch(.83 .17 80); --warning-soft: oklch(.32 .06 70); --destructive: oklch(.7 .19 12); --ai: oklch(.78 .12 265); --ai-soft: oklch(.3 .07 265);
+  --code-bg: oklch(.12 .01 260); --site-dark: oklch(.1 .005 40); color-scheme: dark;
+}
+* , ::before, ::after { box-sizing: border-box; }
+body { background: var(--bg); color: var(--foreground); font: 14px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p { margin: 0; text-wrap: balance; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.wrap { max-width: 1320px; margin: 0 auto; padding-block: 28px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 20px; }
+
+/* intro */
+.intro { display: grid; gap: 6px; max-width: 760px; }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--primary-text); }
+.intro h1 { font-size: clamp(22px, 3vw, 30px); letter-spacing: -.02em; }
+.intro p { color: var(--muted-fg); }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: calc(var(--radius) - 2px); border: 1px solid var(--border); background: var(--card); cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap; }
+.btn:hover { background: var(--muted); }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: var(--primary-fg); }
+.btn.primary:hover { filter: brightness(1.06); }
+.btn.ghost { border-color: transparent; background: transparent; }
+.btn.ghost:hover { background: var(--muted); }
+.btn.sm { height: 26px; padding: 0 8px; font-size: 12px; }
+.btn:disabled { opacity: .45; cursor: default; }
+.badge { display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 7px; border-radius: 999px; font-size: 11px; font-weight: 600; border: 1px solid var(--border); background: var(--muted); color: var(--muted-fg); white-space: nowrap; }
+.badge.ok { background: var(--success-soft); color: var(--success); border-color: transparent; }
+.badge.warn { background: var(--warning-soft); color: var(--warning); border-color: transparent; }
+.badge.ai { background: var(--ai-soft); color: var(--ai); border-color: transparent; }
+.badge.pri { background: var(--primary-soft); color: var(--primary-text); border-color: transparent; }
+.seg { display: inline-flex; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); overflow: hidden; background: var(--card); }
+.seg button { border: 0; background: transparent; height: 30px; padding: 0 10px; cursor: pointer; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 5px; }
+.seg button + button { border-left: 1px solid var(--border); }
+.seg button[aria-pressed="true"] { background: var(--muted); color: var(--primary-text); }
+
+/* tour */
+.tour { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 360px); gap: 16px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); }
+.steps { padding: 16px; display: grid; gap: 14px; min-width: 0; }
+.stepper { display: flex; gap: 4px; flex-wrap: wrap; }
+.stepper button { flex: 1 1 0; min-width: 34px; height: 6px; border: 0; padding: 0; border-radius: 99px; background: var(--border); cursor: pointer; }
+.stepper button.done { background: var(--success); }
+.stepper button.current { background: var(--primary); }
+.step-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.step-num { font-size: 12px; font-weight: 600; color: var(--muted-fg); font-variant-numeric: tabular-nums; }
+.step-head h2 { font-size: 18px; letter-spacing: -.01em; }
+.step-body { color: var(--muted-fg); max-width: 68ch; }
+.step-body b { color: var(--foreground); font-weight: 600; }
+.step-body code, .mono { font-family: var(--mono); font-size: 12px; }
+.step-body code { background: var(--muted); padding: 1px 5px; border-radius: 4px; color: var(--foreground); }
+.step-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.who { display: inline-flex; gap: 6px; }
+.side { display: grid; gap: 16px; align-content: start; min-width: 0; }
+.files { padding: 14px 16px; display: grid; gap: 8px; }
+.files h3, .term h3 { font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--muted-fg); }
+.ftree { font-family: var(--mono); font-size: 12px; display: grid; gap: 3px; }
+.ftree div { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.ftree .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ftree .dim { color: var(--muted-fg); }
+.ftree .flash { animation: flash 1.4s ease; border-radius: 4px; }
+@keyframes flash { 0%, 40% { background: var(--primary-soft); } 100% { background: transparent; } }
+.term { background: var(--code-bg); color: var(--code-fg); border-radius: var(--radius); padding: 12px 14px; font-family: var(--mono); font-size: 12px; line-height: 1.6; min-height: 120px; overflow-x: auto; }
+.term h3 { color: oklch(.7 0 0); font-family: var(--font); margin-bottom: 6px; }
+.term .p { color: var(--code-str); }
+.term .ok { color: var(--code-str); }
+.term .dimt { color: oklch(.65 0 0); }
+.term pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+
+/* app frame */
+.app { overflow: hidden; display: grid; grid-template-rows: auto 1fr; min-height: 640px; position: relative; }
+.chrome { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--border); background: var(--muted); font-size: 12px; color: var(--muted-fg); min-width: 0; }
+.chrome .dots { display: flex; gap: 5px; }
+.chrome .dots i { width: 10px; height: 10px; border-radius: 50%; background: var(--border); display: block; }
+.chrome .url { flex: 1; min-width: 0; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 3px 10px; font-family: var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.screen { min-width: 0; position: relative; }
+
+/* list screen */
+.list { padding: 20px; display: grid; gap: 16px; align-content: start; }
+.crumbs { font-size: 12px; color: var(--muted-fg); }
+.list-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.list-head h2 { font-size: 20px; letter-spacing: -.01em; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 560px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+th { font-size: 12px; font-weight: 500; color: var(--muted-fg); background: var(--muted); }
+tr:last-child td { border-bottom: 0; }
+tr.new td { animation: flash 1.6s ease; }
+.cb { width: 14px; height: 14px; border: 1px solid var(--border); border-radius: 4px; display: inline-block; vertical-align: middle; }
+.note { font-size: 12px; color: var(--muted-fg); }
+
+/* sheet */
+.scrim { position: absolute; inset: 0; background: oklch(0 0 0 / 35%); display: flex; justify-content: flex-end; z-index: 20; }
+.sheet { width: min(380px, 100%); height: 100%; background: var(--card); border-left: 1px solid var(--border); padding: 20px; display: grid; gap: 14px; align-content: start; overflow-y: auto; animation: slide .2s ease; }
+@keyframes slide { from { transform: translateX(24px); opacity: .4; } }
+.sheet h3 { font-size: 16px; }
+.field { display: grid; gap: 5px; min-width: 0; }
+.field > label, .flabel { font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 6px; justify-content: space-between; }
+.input, select.input, textarea.input { width: 100%; height: 32px; padding: 0 10px; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); background: var(--background); font-size: 13px; }
+textarea.input { height: auto; min-height: 72px; padding: 8px 10px; resize: vertical; line-height: 1.45; }
+.input:focus { outline: 2px solid var(--ring); outline-offset: 0; border-color: transparent; }
+.hint { font-size: 11px; color: var(--muted-fg); }
+.tpl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tpl label { border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); padding: 10px; cursor: pointer; display: grid; gap: 6px; font-size: 12px; }
+.tpl label:has(input:checked) { border-color: var(--primary); background: var(--primary-soft); }
+.tpl input { position: absolute; opacity: 0; pointer-events: none; }
+.tpl .thumb { height: 44px; border-radius: 4px; background: var(--muted); display: grid; gap: 3px; padding: 5px; }
+.tpl .thumb i { display: block; background: var(--border); border-radius: 2px; }
+
+/* modal (data-confirm) */
+.modal-scrim { position: absolute; inset: 0; background: oklch(0 0 0 / 40%); display: grid; place-items: center; z-index: 30; padding: 16px; }
+.modal { width: min(420px, 100%); background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; display: grid; gap: 12px; animation: pop .15s ease; }
+@keyframes pop { from { transform: scale(.97); opacity: .5; } }
+.modal h3 { font-size: 16px; }
+.modal p { color: var(--muted-fg); font-size: 13px; }
+.modal .row { display: flex; justify-content: flex-end; gap: 8px; }
+
+/* editor screen */
+.editor { display: grid; grid-template-rows: auto 1fr; height: 100%; min-height: 600px; }
+.topbar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--border); flex-wrap: wrap; background: var(--card); }
+.topbar .title { font-weight: 600; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.topbar .spacer { flex: 1; }
+.panes { display: grid; grid-template-columns: 230px minmax(0, 1fr) 300px; min-height: 0; }
+.pane { border-right: 1px solid var(--border); background: var(--card); display: grid; grid-template-rows: auto 1fr; min-height: 0; min-width: 0; }
+.pane.right { border-right: 0; border-left: 1px solid var(--border); }
+.tabs { display: flex; border-bottom: 1px solid var(--border); }
+.tabs button { flex: 1; border: 0; background: transparent; padding: 9px 6px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--muted-fg); border-bottom: 2px solid transparent; }
+.tabs button[aria-selected="true"] { color: var(--foreground); border-bottom-color: var(--primary); }
+.pane-body { overflow-y: auto; padding: 12px; display: grid; gap: 14px; align-content: start; max-height: 640px; }
+.group-title { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted-fg); display: flex; align-items: center; gap: 6px; }
+.palette { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.wbtn { border: 1px solid var(--border); background: var(--background); border-radius: calc(var(--radius) - 2px); padding: 9px 6px; display: grid; justify-items: center; gap: 4px; font-size: 11px; font-weight: 500; cursor: grab; }
+.wbtn:hover { border-color: var(--primary); color: var(--primary-text); }
+.wbtn .ic { width: 22px; height: 22px; display: grid; place-items: center; border-radius: 5px; background: var(--muted); font-size: 11px; font-weight: 700; font-family: var(--mono); }
+.wbtn.custom .ic { background: var(--ai-soft); color: var(--ai); }
+.wbtn.fresh { animation: flash 1.6s ease 2; }
+.presets { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.preset { border: 1px solid var(--border); background: var(--background); border-radius: 6px; padding: 6px; display: grid; gap: 2px; grid-template-columns: repeat(12, 1fr); height: 30px; cursor: pointer; }
+.preset i { background: var(--border); border-radius: 2px; display: block; }
+.preset:hover { border-color: var(--primary); }
+.preset:hover i { background: var(--primary-soft); }
+.nav { display: grid; gap: 1px; font-size: 12px; }
+.nav button { border: 0; background: transparent; text-align: left; padding: 4px 6px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 6px; min-width: 0; }
+.nav button span.t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav button:hover { background: var(--muted); }
+.nav button[aria-current="true"] { background: var(--primary-soft); color: var(--primary-text); }
+.nav .k { font-size: 10px; font-family: var(--mono); color: var(--muted-fg); }
+.empty-note { font-size: 12px; color: var(--muted-fg); padding: 10px; border: 1px dashed var(--border); border-radius: 6px; text-align: center; }
+
+/* canvas */
+.canvas { background: var(--muted); overflow: auto; padding: 18px; min-width: 0; max-height: 690px; }
+.device { margin: 0 auto; background: var(--background); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: max-width .25s ease; box-shadow: 0 1px 2px oklch(0 0 0 / 6%); }
+.device.desktop { max-width: 100%; }
+.device.tablet { max-width: 768px; }
+.device.mobile { max-width: 380px; }
+
+/* site preview (what visitors see) */
+.site { font-family: var(--font); color: var(--foreground); background: var(--background); container-type: inline-size; }
+.site-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid var(--border); gap: 10px; }
+.site-head .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; }
+.site-head nav { display: flex; gap: 14px; font-size: 12px; color: var(--muted-fg); }
+.site-foot { padding: 14px 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted-fg); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.pv-sec { position: relative; outline: 1px dashed transparent; outline-offset: -1px; }
+.pv-sec.bg-muted { background: var(--muted); }
+.pv-sec.bg-primary { background: var(--primary); color: var(--primary-fg); }
+.pv-sec.bg-dark { background: var(--site-dark); color: oklch(.97 0 0); }
+.pv-inner { margin: 0 auto; padding-inline: 20px; }
+.pv-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 20px; align-items: center; }
+.pv-col { position: relative; min-width: 0; display: grid; gap: 12px; align-content: start; outline: 1px dashed transparent; outline-offset: 4px; border-radius: 4px; min-height: 40px; }
+.pv-col.a-center { text-align: center; justify-items: center; }
+.pv-col.a-end { text-align: end; justify-items: end; }
+.pv-w { position: relative; outline: 1px solid transparent; outline-offset: 3px; border-radius: 3px; min-width: 0; }
+.edit .pv-sec:hover { outline-color: var(--ring); }
+.edit .pv-col:hover { outline-color: var(--border); }
+.edit .pv-w:hover { outline-color: var(--ring); cursor: pointer; }
+.edit .sel.pv-sec { outline: 2px solid var(--primary); }
+.edit .sel.pv-col { outline: 2px dashed var(--primary); }
+.edit .sel.pv-w { outline: 2px solid var(--primary); }
+.edit .flashnode { animation: flashnode 1.8s ease; }
+@keyframes flashnode { 0%, 50% { box-shadow: 0 0 0 4px var(--ai-soft), 0 0 0 6px var(--ai); } 100% { box-shadow: none; } }
+.tag { position: absolute; top: 0; left: 0; z-index: 3; font-size: 10px; font-weight: 600; background: var(--primary); color: var(--primary-fg); padding: 1px 6px; border-radius: 0 0 4px 0; font-family: var(--font); letter-spacing: .02em; }
+.tools { position: absolute; top: -26px; right: -2px; z-index: 4; display: flex; background: var(--primary); border-radius: 5px; overflow: hidden; }
+.tools button { border: 0; background: transparent; color: var(--primary-fg); width: 24px; height: 22px; cursor: pointer; font-size: 12px; display: grid; place-items: center; }
+.tools button:hover { background: oklch(0 0 0 / 15%); }
+.drop { border: 1.5px dashed var(--border); border-radius: 6px; padding: 14px; font-size: 12px; color: var(--muted-fg); text-align: center; width: 100%; font-family: var(--font); }
+.drop.over, .pv-col.over { border-color: var(--primary); background: var(--primary-soft); }
+.pv-missing { display: inline-block; font-size: 11px; font-weight: 500; color: var(--warning); background: var(--warning-soft); border-radius: 4px; padding: 2px 6px; font-family: var(--font); }
+.pv-err { font-size: 12px; color: var(--destructive); border: 1px solid var(--destructive); border-radius: 6px; padding: 8px; font-family: var(--mono); }
+.w-heading { margin: 0; letter-spacing: -.02em; line-height: 1.12; font-weight: 700; }
+.s-md { font-size: 20px; } .s-lg { font-size: 28px; } .s-xl { font-size: 36px; } .s-2xl { font-size: 46px; }
+.w-text { opacity: .82; font-size: 15px; max-width: 60ch; }
+.w-btn { display: inline-flex; align-items: center; height: 40px; padding: 0 18px; border-radius: 8px; font-weight: 600; font-size: 14px; text-decoration: none; background: var(--primary); color: var(--primary-fg); border: 1px solid var(--primary); }
+.w-btn.outline { background: transparent; color: inherit; border-color: currentColor; }
+.bg-primary .w-btn:not(.outline) { background: oklch(1 0 0); color: var(--primary); border-color: oklch(1 0 0); }
+.w-img { width: 100%; border-radius: 10px; display: grid; place-items: end start; padding: 12px; color: oklch(1 0 0); font-size: 11px; font-family: var(--mono); max-width: 100%; }
+.w-img.r-43 { aspect-ratio: 4 / 3; } .w-img.r-169 { aspect-ratio: 16 / 9; } .w-img.r-11 { aspect-ratio: 1; }
+.img-hero { background: radial-gradient(circle at 70% 30%, oklch(.85 .12 60), transparent 55%), linear-gradient(135deg, oklch(.6 .19 32), oklch(.42 .14 10)); }
+.img-produk { background: radial-gradient(circle at 30% 70%, oklch(.85 .08 200), transparent 55%), linear-gradient(135deg, oklch(.5 .1 230), oklch(.3 .08 260)); }
+.img-tim { background: radial-gradient(circle at 50% 40%, oklch(.88 .08 120), transparent 50%), linear-gradient(135deg, oklch(.55 .12 150), oklch(.35 .08 170)); }
+.w-spacer.sz-sm { height: 12px; } .w-spacer.sz-md { height: 28px; } .w-spacer.sz-lg { height: 56px; }
+.edit .w-spacer { background: repeating-linear-gradient(45deg, transparent 0 6px, var(--muted) 6px 12px); border-radius: 3px; }
+.w-faq { display: grid; gap: 8px; width: 100%; text-align: left; }
+.w-faq details { border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; background: var(--background); }
+.w-faq summary { font-weight: 600; cursor: pointer; font-size: 14px; }
+.w-faq p { margin-top: 6px; font-size: 13px; opacity: .8; }
+.w-cd { display: grid; gap: 8px; }
+.w-cd .lbl { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; opacity: .75; }
+.w-cd .boxes { display: flex; gap: 8px; flex-wrap: wrap; }
+.w-cd .box { min-width: 58px; padding: 8px 10px; border-radius: 8px; background: oklch(0 0 0 / 6%); text-align: center; }
+.bg-primary .w-cd .box, .bg-dark .w-cd .box { background: oklch(1 0 0 / 14%); }
+.w-cd .n { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.w-cd .u { font-size: 10px; opacity: .75; }
+
+/* right pane */
+.props { display: grid; gap: 14px; }
+.props-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.props-head h3 { font-size: 14px; }
+.props-path { font-family: var(--mono); font-size: 11px; color: var(--muted-fg); word-break: break-all; }
+.dev-ic { font-size: 11px; color: var(--muted-fg); font-weight: 400; }
+.trs { display: inline-flex; gap: 3px; }
+.trs span { font-size: 10px; font-weight: 600; padding: 0 4px; border-radius: 3px; background: var(--muted); color: var(--muted-fg); }
+.trs span.on { background: var(--success-soft); color: var(--success); }
+.trs span.cur { outline: 1px solid var(--primary); }
+.rep { display: grid; gap: 8px; }
+.rep-item { border: 1px solid var(--border); border-radius: 6px; padding: 8px; display: grid; gap: 6px; }
+.rep-item .rh { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted-fg); }
+.json { background: var(--code-bg); color: var(--code-fg); font-family: var(--mono); font-size: 11.5px; line-height: 1.55; border-radius: 8px; padding: 10px 0; overflow-x: auto; }
+.json .ln { display: block; padding: 0 12px; white-space: pre; }
+.json .ln.hl { background: var(--code-hl); }
+.json .k { color: var(--code-key); } .json .s { color: var(--code-str); } .json .n { color: var(--code-num); }
+
+/* code overlay */
+.codev { position: absolute; inset: 0; z-index: 15; background: var(--card); display: grid; grid-template-rows: auto 1fr; }
+.codev .cbody { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: 0; }
+.codev .ctree { border-right: 1px solid var(--border); padding: 12px; overflow-y: auto; display: grid; gap: 2px; align-content: start; font-family: var(--mono); font-size: 12px; }
+.codev .ctree button { border: 0; background: transparent; text-align: left; padding: 4px 6px; border-radius: 4px; cursor: pointer; font-family: inherit; display: flex; gap: 6px; align-items: center; }
+.codev .ctree button:hover { background: var(--muted); }
+.codev .ctree button[aria-current="true"] { background: var(--primary-soft); color: var(--primary-text); }
+.codev .ced { display: grid; grid-template-rows: auto 1fr auto; min-height: 0; min-width: 0; }
+.codev .cbar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--border); flex-wrap: wrap; font-size: 12px; }
+.codev textarea { width: 100%; height: 100%; min-height: 420px; border: 0; resize: none; background: var(--code-bg); color: var(--code-fg); font-family: var(--mono); font-size: 12px; line-height: 1.55; padding: 12px 14px; tab-size: 2; }
+.codev textarea:focus { outline: none; }
+.codev .cmsg { padding: 8px 12px; font-size: 12px; border-top: 1px solid var(--border); display: grid; gap: 3px; }
+.cmsg .e { color: var(--destructive); font-family: var(--mono); }
+.cmsg .w { color: var(--warning); font-family: var(--mono); }
+
+/* public view */
+.public { position: absolute; inset: 0; z-index: 16; background: var(--card); display: grid; grid-template-rows: auto 1fr; }
+.public .pbar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.public .pbody { overflow: auto; background: var(--muted); padding: 18px; max-height: 690px; }
+
+/* toast */
+.toasts { position: absolute; right: 14px; bottom: 14px; z-index: 40; display: grid; gap: 8px; pointer-events: none; max-width: calc(100% - 28px); }
+.toast { background: var(--foreground); color: var(--background); padding: 10px 14px; border-radius: 8px; font-size: 13px; box-shadow: 0 6px 20px oklch(0 0 0 / 20%); animation: pop .2s ease; display: flex; gap: 8px; align-items: center; }
+.toast.ai { background: var(--ai); color: oklch(1 0 0); }
+
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted-fg); }
+
+@media (max-width: 1080px) {
+  .panes { grid-template-columns: 200px minmax(0, 1fr); }
+  .pane.right { grid-column: 1 / -1; border-left: 0; border-top: 1px solid var(--border); }
+}
+@media (max-width: 900px) {
+  .tour { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 720px) {
+  .panes { grid-template-columns: minmax(0, 1fr); }
+  .pane.left { order: 3; border-right: 0; border-top: 1px solid var(--border); }
+  .canvas { order: 1; padding: 10px; }
+  .pane.right { order: 2; }
+  .codev .cbody { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; }
+  .codev .ctree { border-right: 0; border-bottom: 1px solid var(--border); max-height: 150px; }
+  .pv-grid { gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { *, ::before, ::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="intro">
+    <span class="eyebrow">Simulasi rencana · docs/PLAN-WEB-BUILDER.md</span>
+    <h1>Membuat landing page dengan builder, AI, dan kode</h1>
+    <p>Ikuti 8 langkah di bawah, atau langsung coba sendiri di jendela admin: klik elemen di preview, ubah field di panel kanan, tambah widget dari kiri. Semua perubahan ditulis ke satu file, <code class="mono">page.draft.json</code>, yang juga bisa diedit AI dan manusia lewat kode.</p>
+  </header>
+
+  <section class="tour">
+    <div class="card steps" aria-live="polite">
+      <div class="stepper" id="stepper"></div>
+      <div class="step-head"><span class="step-num" id="stepNum"></span><h2 id="stepTitle"></h2><span class="who" id="stepWho"></span></div>
+      <p class="step-body" id="stepBody"></p>
+      <div class="step-actions">
+        <button class="btn primary" id="runStep">Jalankan langkah ini</button>
+        <button class="btn" id="prevStep">Sebelumnya</button>
+        <button class="btn" id="nextStep">Berikutnya</button>
+        <span class="spacer" style="flex:1"></span>
+        <button class="btn ghost" id="resetAll">Ulangi dari awal</button>
+      </div>
+    </div>
+    <div class="side">
+      <div class="card files">
+        <h3>File di disk</h3>
+        <div class="ftree" id="ftree"></div>
+        <div class="legend"><span><span class="badge pri">Builder</span> ditulis builder</span><span><span class="badge ai">AI</span> ditulis AI</span></div>
+      </div>
+      <div class="term" id="term"><h3>Terminal AI</h3><pre id="termOut"><span class="dimt">Belum ada perintah. AI dipakai di langkah 6 dan 7.</span></pre></div>
+    </div>
+  </section>
+
+  <section class="card app" aria-label="Simulasi admin DyskFlow">
+    <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url" id="url"></span></div>
+    <div class="screen" id="screen"></div>
+    <div class="toasts" id="toasts"></div>
+  </section>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const LOCALES = ['id', 'en'];
+  const DEVICES = { desktop: 'Desktop', tablet: 'Tablet', mobile: 'HP' };
+  const SLUG = 'promo-desember';
+  const ASSETS = { 'assets/hero.webp': 'img-hero', 'assets/produk.webp': 'img-produk', 'assets/tim.webp': 'img-tim' };
+
+  /* ---------- widget definitions (mirror of widget.json files) ---------- */
+  const SIZE = ['md', 'lg', 'xl', '2xl'];
+  const W = {
+    heading: { label: 'Heading', ic: 'H', group: 'Dasar', fields: [
+      { key: 'text', type: 'text', label: 'Teks', tr: true, required: true },
+      { key: 'level', type: 'select', label: 'Level', options: [1, 2, 3], num: true },
+      { key: 'size', type: 'select', label: 'Ukuran', options: SIZE, responsive: true },
+    ], make: () => ({ text: { id: 'Judul baru', en: '' }, level: 2, size: 'lg' }) },
+    text: { label: 'Teks', ic: '¶', group: 'Dasar', fields: [
+      { key: 'html', type: 'textarea', label: 'Paragraf (rich text)', tr: true },
+    ], make: () => ({ html: { id: 'Tulis paragraf di sini.', en: '' } }) },
+    button: { label: 'Tombol', ic: '▭', group: 'Dasar', fields: [
+      { key: 'label', type: 'text', label: 'Label', tr: true, required: true },
+      { key: 'url', type: 'url', label: 'Link', required: true },
+      { key: 'variant', type: 'select', label: 'Gaya', options: ['primary', 'outline'] },
+    ], make: () => ({ label: { id: 'Klik di sini', en: '' }, url: '#', variant: 'primary' }) },
+    image: { label: 'Gambar', ic: '▣', group: 'Dasar', fields: [
+      { key: 'src', type: 'select', label: 'File', options: Object.keys(ASSETS) },
+      { key: 'alt', type: 'text', label: 'Teks alternatif', tr: true },
+      { key: 'ratio', type: 'select', label: 'Rasio', options: ['4:3', '16:9', '1:1'] },
+    ], make: () => ({ src: 'assets/hero.webp', alt: { id: '', en: '' }, ratio: '4:3' }) },
+    faq: { label: 'FAQ', ic: '?', group: 'Konten', fields: [
+      { key: 'items', type: 'repeater', label: 'Pertanyaan', sub: [
+        { key: 'q', type: 'text', label: 'Pertanyaan', tr: true },
+        { key: 'a', type: 'textarea', label: 'Jawaban', tr: true },
+      ], blank: () => ({ q: { id: 'Pertanyaan baru?', en: '' }, a: { id: 'Jawabannya.', en: '' } }) },
+    ], make: () => ({ items: [{ q: { id: 'Pertanyaan pertama?', en: '' }, a: { id: 'Jawabannya.', en: '' } }] }) },
+    spacer: { label: 'Spasi', ic: '↕', group: 'Layout', fields: [
+      { key: 'size', type: 'select', label: 'Tinggi', options: ['sm', 'md', 'lg'], responsive: true },
+    ], make: () => ({ size: 'md' }) },
+    countdown: { label: 'Countdown', ic: '⏱', group: 'Kustom', custom: true, fields: [
+      { key: 'until', type: 'date', label: 'Berakhir pada', required: true },
+      { key: 'label', type: 'text', label: 'Label', tr: true },
+    ], make: () => ({ until: '2026-12-31', label: { id: 'Promo berakhir dalam', en: '' } }) },
+  };
+  const SECTION_FIELDS = [
+    { key: 'style.padding', type: 'select', label: 'Padding atas/bawah', options: ['sm', 'md', 'lg', 'xl'], responsive: true },
+    { key: 'style.background', type: 'select', label: 'Latar', options: ['default', 'muted', 'primary', 'dark'] },
+    { key: 'style.width', type: 'select', label: 'Lebar isi', options: ['narrow', 'normal', 'wide'] },
+    { key: 'anchor', type: 'text', label: 'Anchor (#id)', hint: 'Untuk link seperti #faq' },
+  ];
+  const COLUMN_FIELDS = [
+    { key: 'width', type: 'select', label: 'Lebar (dari 12 kolom)', options: [3, 4, 5, 6, 7, 8, 9, 12], responsive: true, num: true },
+    { key: 'align', type: 'select', label: 'Perataan', options: ['start', 'center', 'end'] },
+  ];
+  const PAD = { sm: 24, md: 40, lg: 60, xl: 84 };
+  const MAXW = { narrow: 640, normal: 960, wide: 1180 };
+
+  /* ---------- state ---------- */
+  let S;
+  function fresh() {
+    return {
+      screen: 'list', sheet: false, page: null, selected: null, lang: 'id', device: 'desktop', leftTab: 'widgets', rightTab: 'props',
+      customReady: false, published: false, publishedSpec: null, confirm: false, code: null, public: null, publicLang: 'id',
+      files: {}, history: [], future: [], step: 0, done: new Set(), revisions: 0, newRow: false, freshCustom: false,
+    };
+  }
+  S = fresh();
+
+  const ID_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  const rid = (p) => p + Array.from({ length: 4 }, () => ID_CHARS[Math.floor(Math.random() * 36)]).join('');
+
+  /* ---------- tree helpers ---------- */
+  function walk(fn) {
+    if (!S.page) return;
+    S.page.sections.forEach((s, si) => {
+      fn(s, 'section', S.page.sections, si, null);
+      (s.columns || []).forEach((c, ci) => {
+        fn(c, 'column', s.columns, ci, s);
+        (c.widgets || []).forEach((w, wi) => fn(w, 'widget', c.widgets, wi, c));
+      });
+    });
+  }
+  function locate(id) {
+    let hit = null;
+    walk((node, kind, list, index, parent) => { if (node.id === id) hit = { node, kind, list, index, parent }; });
+    return hit;
+  }
+  function pathOf(id) {
+    let out = '';
+    S.page && S.page.sections.forEach((s, si) => {
+      if (s.id === id) out = `sections[${si}]`;
+      (s.columns || []).forEach((c, ci) => {
+        if (c.id === id) out = `sections[${si}].columns[${ci}]`;
+        (c.widgets || []).forEach((w, wi) => { if (w.id === id) out = `sections[${si}].columns[${ci}].widgets[${wi}]`; });
+      });
+    });
+    return out;
+  }
+  const getAt = (obj, path) => path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+  function setAt(obj, path, val) {
+    const keys = path.split('.');
+    let o = obj;
+    keys.slice(0, -1).forEach((k) => { if (o[k] == null || typeof o[k] !== 'object') o[k] = {}; o = o[k]; });
+    o[keys[keys.length - 1]] = val;
+  }
+  function res(v, device) {
+    if (v == null || typeof v !== 'object') return v;
+    if (device === 'mobile') return v.mobile ?? v.tablet ?? v.base;
+    if (device === 'tablet') return v.tablet ?? v.base;
+    return v.base;
+  }
+  function setRes(cur, device, val) {
+    const key = device === 'desktop' ? 'base' : device;
+    if (cur == null || typeof cur !== 'object') {
+      if (key === 'base') return val;
+      cur = { base: cur };
+    } else cur = { ...cur };
+    cur[key] = val;
+    return cur;
+  }
+  const tr = (v, lang) => (v && typeof v === 'object' ? v[lang] || '' : v || '');
+
+  /* ---------- mutation + history ---------- */
+  function snapshot() { S.history.push(JSON.stringify(S.page)); if (S.history.length > 50) S.history.shift(); S.future = []; }
+  function change(fn, by = 'Builder') {
+    snapshot();
+    fn();
+    touch(`page.draft.json`, by);
+    renderEditor();
+  }
+  function touch(file, by) { S.files[file] = { by, t: Date.now() }; S.lastTouched = file; renderFiles(); }
+
+  /* ---------- JSON serialisation (stable order like the plan says) ---------- */
+  const ORDER = ['$schema', 'version', 'layout', 'settings', 'sections', 'id', 'type', 'style', 'anchor', 'width', 'align', 'columns', 'widgets'];
+  function sortKeys(v) {
+    if (Array.isArray(v)) return v.map(sortKeys);
+    if (v && typeof v === 'object') {
+      const keys = Object.keys(v).sort((a, b) => {
+        const ia = ORDER.indexOf(a), ib = ORDER.indexOf(b);
+        if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+        return 0;
+      });
+      const o = {};
+      keys.forEach((k) => { o[k] = sortKeys(v[k]); });
+      return o;
+    }
+    return v;
+  }
+  const toJson = (spec) => JSON.stringify(sortKeys(spec), null, 2);
+  function jsonHtml(text, hlId) {
+    return text.split('\n').map((line) => {
+      let h = esc(line)
+        .replace(/(&quot;(?:[^&]|&(?!quot;))*?&quot;)(\s*:)/g, '<span class="k">$1</span>$2')
+        .replace(/(:\s*|^\s*)(&quot;(?:[^&]|&(?!quot;))*?&quot;)/g, '$1<span class="s">$2</span>')
+        .replace(/(:\s*)(-?\d+(?:\.\d+)?|true|false|null)(,?)$/g, '$1<span class="n">$2</span>$3');
+      const hl = hlId && line.includes(`"id": "${hlId}"`);
+      return `<span class="ln${hl ? ' hl' : ''}">${h || ' '}</span>`;
+    }).join('');
+  }
+
+  /* ---------- validation (builder:validate) ---------- */
+  function validate(spec) {
+    const errors = [], warnings = [], ids = new Set();
+    if (!spec || typeof spec !== 'object') return { errors: ['Isi file harus berupa objek JSON.'], warnings };
+    if (!Array.isArray(spec.sections)) return { errors: ['"sections" wajib berupa array.'], warnings };
+    const needId = (node, path) => {
+      if (!node.id) { node.id = rid(path.endsWith(']') && path.includes('widgets') ? 'w' : path.includes('columns') ? 'c' : 's'); warnings.push(`${path}: id kosong, dibuat otomatis "${node.id}"`); }
+      if (ids.has(node.id)) errors.push(`${path} (${node.id}): id ganda`);
+      ids.add(node.id);
+    };
+    spec.sections.forEach((s, si) => {
+      const p = `sections[${si}]`;
+      needId(s, p);
+      if (!Array.isArray(s.columns)) { errors.push(`${p} (${s.id}): "columns" wajib berupa array`); return; }
+      s.columns.forEach((c, ci) => {
+        const pc = `${p}.columns[${ci}]`;
+        needId(c, pc);
+        if (!Array.isArray(c.widgets)) { errors.push(`${pc} (${c.id}): "widgets" wajib berupa array`); return; }
+        c.widgets.forEach((w, wi) => {
+          const pw = `${pc}.widgets[${wi}]`;
+          needId(w, pw);
+          const def = W[w.type];
+          if (!def || (def.custom && !S.customReady)) { warnings.push(`${pw} (${w.id}): widget "${w.type}" tidak dikenal. Disimpan apa adanya, tidak dirender.`); return; }
+          def.fields.forEach((f) => {
+            const v = w[f.key];
+            if (f.required && (v == null || (f.tr ? !LOCALES.some((l) => v[l]) : v === ''))) errors.push(`${pw} (${w.id}): field "${f.key}" wajib diisi`);
+            if (f.type === 'url' && typeof v === 'string' && /^\s*(javascript|data):/i.test(v)) errors.push(`${pw} (${w.id}): URL "${v}" ditolak. Hanya http, https, mailto, tel, /path, dan #anchor.`);
+          });
+        });
+      });
+    });
+    return { errors, warnings };
+  }
+
+  /* ---------- rendering the page (Builder::render) ---------- */
+  function txt(v, lang, mode) {
+    const t = tr(v, lang);
+    if (t) return esc(t);
+    return mode === 'edit' ? `<span class="pv-missing">Belum diterjemahkan (${lang.toUpperCase()})</span>` : '';
+  }
+  function renderWidget(w, ctx) {
+    const { lang, device, mode } = ctx;
+    const def = W[w.type];
+    if (!def || (def.custom && !S.customReady)) return mode === 'edit' ? `<div class="pv-err">widget "${esc(w.type)}" tidak dikenal (${esc(w.id)})</div>` : '';
+    switch (w.type) {
+      case 'heading': { const l = Math.min(3, Math.max(1, Number(w.level) || 2)); return `<h${l} class="w-heading s-${esc(res(w.size, device) || 'lg')}">${txt(w.text, lang, mode)}</h${l}>`; }
+      case 'text': return `<p class="w-text">${txt(w.html, lang, mode)}</p>`;
+      case 'button': return `<a class="w-btn ${w.variant === 'outline' ? 'outline' : ''}" href="#" onclick="return false">${txt(w.label, lang, mode)}</a>`;
+      case 'image': { const r = { '4:3': 'r-43', '16:9': 'r-169', '1:1': 'r-11' }[w.ratio] || 'r-43'; return `<div class="w-img ${r} ${ASSETS[w.src] || 'img-hero'}" role="img" aria-label="${esc(tr(w.alt, lang))}">${esc(w.src)}</div>`; }
+      case 'spacer': return `<div class="w-spacer sz-${esc(res(w.size, device) || 'md')}"></div>`;
+      case 'faq': return `<div class="w-faq">${(w.items || []).map((it, i) => `<details${i === 0 ? ' open' : ''}><summary>${txt(it.q, lang, mode)}</summary><p>${txt(it.a, lang, mode)}</p></details>`).join('')}</div>`;
+      case 'countdown': {
+        const end = new Date((w.until || '2026-12-31') + 'T23:59:59');
+        const ms = Math.max(0, end - new Date());
+        const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60;
+        const u = lang === 'en' ? ['days', 'hours', 'min'] : ['hari', 'jam', 'menit'];
+        return `<div class="w-cd"><span class="lbl">${txt(w.label, lang, mode)}</span><div class="boxes">${[d, h, m].map((n, i) => `<div class="box"><div class="n">${n}</div><div class="u">${u[i]}</div></div>`).join('')}</div></div>`;
+      }
+    }
+    return '';
+  }
+  function renderPage(spec, ctx) {
+    const { mode, device } = ctx;
+    const edit = mode === 'edit';
+    const secs = (spec.sections || []).map((s) => {
+      const st = s.style || {};
+      const pad = PAD[res(st.padding, device)] ?? PAD.lg;
+      const sel = edit && S.selected === s.id;
+      const cols = (s.columns || []).map((c) => {
+        const span = Number(res(c.width, device)) || 12;
+        const csel = edit && S.selected === c.id;
+        const ws = (c.widgets || []).map((w) => {
+          const wsel = edit && S.selected === w.id;
+          const tools = wsel ? `<div class="tools"><button data-act="up" title="Naik" aria-label="Naikkan">↑</button><button data-act="down" title="Turun" aria-label="Turunkan">↓</button><button data-act="dup" title="Duplikat" aria-label="Duplikat">⧉</button><button data-act="del" title="Hapus" aria-label="Hapus">✕</button></div>` : '';
+          return `<div class="pv-w${wsel ? ' sel' : ''}" data-id="${esc(w.id)}">${tools}${renderWidget(w, ctx)}</div>`;
+        }).join('');
+        const empty = edit && !(c.widgets || []).length ? `<div class="drop">Tarik widget ke sini, atau pilih kolom ini lalu klik widget di kiri</div>` : '';
+        return `<div class="pv-col a-${esc(c.align || 'start')}${csel ? ' sel' : ''}" data-id="${esc(c.id)}" style="grid-column: span ${Math.min(12, Math.max(1, span))}">${ws}${empty}</div>`;
+      }).join('');
+      const tag = sel ? `<span class="tag">Section · ${esc(s.id)}</span>` : '';
+      return `<section class="pv-sec bg-${esc(st.background || 'default')}${sel ? ' sel' : ''}" data-id="${esc(s.id)}"${s.anchor ? ` id="${esc(s.anchor)}"` : ''} style="padding-block:${pad}px">${tag}<div class="pv-inner" style="max-width:${MAXW[st.width] || 960}px"><div class="pv-grid">${cols}</div></div></section>`;
+    }).join('');
+    const empty = edit && !(spec.sections || []).length ? `<div style="padding:40px 20px"><div class="drop">Halaman masih kosong. Pilih bentuk section di panel kiri.</div></div>` : '';
+    const L = ctx.lang === 'en';
+    const head = `<header class="site-head"><span class="brand"><svg width="20" height="20" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="24" fill="#EE4433"/><g fill="none" stroke="#fff" stroke-linecap="round" stroke-width="7"><path d="M44 22.6A30 30 0 1 0 73 32.7"/><path d="M34 54c4-10 10-10 16-2s12 8 16-2"/></g></svg>Toko Contoh</span><nav>${device === 'mobile' ? '<span>☰</span>' : `<span>${L ? 'Home' : 'Beranda'}</span><span>Blog</span><span>${L ? 'Promo' : 'Promo'}</span>`}</nav></header>`;
+    const foot = `<footer class="site-foot"><span>© 2026 Toko Contoh</span><span>site.partials.footer</span></footer>`;
+    return `<div class="site ${edit ? 'edit' : ''}">${head}${secs}${empty}${foot}</div>`;
+  }
+
+  /* ---------- translation completeness ---------- */
+  function trCount() {
+    const out = { id: [0, 0], en: [0, 0] };
+    const add = (v) => LOCALES.forEach((l) => { out[l][1]++; if (v && v[l]) out[l][0]++; });
+    walk((n, kind) => {
+      if (kind !== 'widget' || !W[n.type]) return;
+      W[n.type].fields.forEach((f) => {
+        if (f.tr) add(n[f.key]);
+        if (f.type === 'repeater') (n[f.key] || []).forEach((it) => f.sub.forEach((sf) => sf.tr && add(it[sf.key])));
+      });
+    });
+    return out;
+  }
+
+  /* ---------- screens ---------- */
+  const LANDINGS = [
+    { slug: 'dyskflow', title: 'DyskFlow', kind: 'code', status: 'Homepage', addr: '/' },
+    { slug: 'kontak', title: 'Kontak', kind: 'code', status: 'Tayang', addr: '/kontak' },
+    { slug: 'example', title: 'Example', kind: 'code', status: 'Tersembunyi', addr: '—' },
+  ];
+  function setUrl() {
+    const base = 'contoh.com/admin/design/builder';
+    $('#url').textContent = S.public ? `contoh.com/${S.publicLang === 'en' ? 'en/' : ''}${SLUG}` : S.screen === 'list' ? base : `${base}/${SLUG}`;
+  }
+  function render() {
+    setUrl();
+    if (S.screen === 'list') renderList(); else renderEditorShell();
+    renderFiles();
+    renderTour();
+  }
+
+  function renderList() {
+    const rows = LANDINGS.map((l) => `<tr><td><span class="cb"></span></td><td><b>${esc(l.title)}</b><div class="note mono">landing/${esc(l.slug)}/index.blade.php</div></td><td><span class="badge">Kode</span></td><td>${esc(l.status)}</td><td class="mono">${esc(l.addr)}</td><td><button class="btn sm" disabled title="Halaman kode dibuka di code editor">Edit kode</button></td></tr>`);
+    if (S.page) rows.push(`<tr class="${S.newRow ? 'new' : ''}"><td><span class="cb"></span></td><td><b>${esc(tr(S.title, 'id'))}</b><div class="note mono">landing/${SLUG}/page.json</div></td><td><span class="badge pri">Builder</span></td><td>${S.published ? '<span class="badge ok">Tayang</span>' : '<span class="badge warn">Draft</span>'}</td><td class="mono">/${SLUG}</td><td><button class="btn sm primary" data-go="editor">Buka builder</button></td></tr>`);
+    S.newRow = false;
+    $('#screen').innerHTML = `<div class="list">
+      <div class="crumbs">Dashboard / Design / Builder</div>
+      <div class="list-head"><h2>Landing pages</h2><button class="btn primary" id="newPage">+ Halaman baru</button></div>
+      <div class="tablewrap"><table><thead><tr><th></th><th>Halaman</th><th>Jenis</th><th>Status</th><th>Alamat</th><th></th></tr></thead><tbody>${rows.join('')}</tbody></table></div>
+      <p class="note">Halaman <b>Kode</b> dibuat manual atau oleh AI di <code class="mono">index.blade.php</code> dan dibuka di code editor. Halaman <b>Builder</b> bersumber dari <code class="mono">page.json</code> dan bisa dibuka di keduanya.</p>
+    </div>${S.sheet ? sheetHtml() : ''}`;
+  }
+  function sheetHtml() {
+    return `<div class="scrim" data-close-sheet><form class="sheet" id="sheetForm" onsubmit="return false">
+      <h3>Halaman baru</h3>
+      <div class="field"><label for="f-title">Judul</label><input class="input" id="f-title" value="${esc(S.draftTitle || '')}" placeholder="Promo Desember"></div>
+      <div class="field"><label for="f-slug">Slug</label><input class="input mono" id="f-slug" value="${esc(S.draftSlug || '')}" placeholder="promo-desember"><span class="hint">Alamat: /promo-desember dan /en/promo-desember. Huruf kecil, angka, - dan _.</span></div>
+      <div class="field"><span class="flabel">Template awal</span><div class="tpl">
+        <label><input type="radio" name="tpl" value="blank" checked><span class="thumb"><i style="height:6px"></i><i style="height:22px;opacity:.4"></i></span>Kosong</label>
+        <label><input type="radio" name="tpl" value="hero"><span class="thumb" style="grid-template-columns:7fr 5fr"><i></i><i style="background:var(--primary-soft)"></i></span>Hero 2 kolom</label>
+      </div></div>
+      <div class="field"><label for="f-layout">Layout</label><select class="input" id="f-layout"><option value="site">site: header dan footer situs</option><option value="blank">blank: tanpa header dan footer</option><option value="custom" disabled>custom: layout.blade.php (butuh code.manage)</option></select></div>
+      <p class="hint">Yang dibuat: <span class="mono">landing/&lt;slug&gt;/landing.json</span> dan <span class="mono">page.draft.json</span>. Belum tampil publik sampai dipublish.</p>
+      <div class="row" style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="btn" data-close-sheet>Batal</button><button class="btn primary" id="createPage">Buat dan buka builder</button></div>
+    </form></div>`;
+  }
+
+  function renderEditorShell() {
+    $('#screen').innerHTML = `<div class="editor">
+      <div class="topbar" id="topbar"></div>
+      <div class="panes">
+        <aside class="pane left"><div class="tabs" role="tablist"><button role="tab" data-lt="widgets">Widget</button><button role="tab" data-lt="nav">Navigator</button></div><div class="pane-body" id="left"></div></aside>
+        <div class="canvas" id="canvas"><div class="device" id="device"></div></div>
+        <aside class="pane right"><div class="tabs" role="tablist"><button role="tab" data-rt="props">Properti</button><button role="tab" data-rt="json">page.draft.json</button></div><div class="pane-body" id="right"></div></aside>
+      </div>
+    </div><div id="overlay"></div>`;
+    renderEditor();
+  }
+  function renderEditor() {
+    if (S.screen !== 'editor' || !$('#topbar')) return;
+    renderTopbar(); renderLeft(); renderPreview(); renderRight(); renderOverlay(); setUrl();
+  }
+  function renderTopbar() {
+    const c = trCount();
+    const pct = (l) => (c[l][1] ? `${c[l][0]}/${c[l][1]}` : '—');
+    $('#topbar').innerHTML = `
+      <button class="btn ghost sm" data-go="list" aria-label="Kembali ke daftar">←</button>
+      <span class="title">${esc(tr(S.title, 'id'))} ${S.published && !S.dirtySincePublish ? '<span class="badge ok">Tayang</span>' : S.published ? '<span class="badge warn">Ada draft</span>' : '<span class="badge warn">Draft</span>'}</span>
+      <span class="spacer"></span>
+      <span class="seg" aria-label="Perangkat">${Object.entries(DEVICES).map(([k, v]) => `<button data-dev="${k}" aria-pressed="${S.device === k}">${{ desktop: '🖥', tablet: '▯', mobile: '📱' }[k]} ${v}</button>`).join('')}</span>
+      <span class="seg" aria-label="Bahasa">${LOCALES.map((l) => `<button data-lang="${l}" aria-pressed="${S.lang === l}">${l.toUpperCase()} <span class="dev-ic">${pct(l)}</span></button>`).join('')}</span>
+      <button class="btn sm" data-undo ${S.history.length ? '' : 'disabled'} aria-label="Undo">↶</button>
+      <button class="btn sm" data-redo ${S.future.length ? '' : 'disabled'} aria-label="Redo">↷</button>
+      <button class="btn sm" data-code>{ } Kode</button>
+      ${S.published ? '<button class="btn sm" data-public>Lihat publik</button>' : ''}
+      <button class="btn sm primary" data-publish>Publish</button>`;
+  }
+  function renderLeft() {
+    $$('[data-lt]').forEach((b) => b.setAttribute('aria-selected', String(S.leftTab === b.dataset.lt)));
+    const el = $('#left');
+    if (S.leftTab === 'nav') {
+      const items = [];
+      walk((n, kind) => {
+        const pad = kind === 'section' ? 0 : kind === 'column' ? 14 : 28;
+        const name = kind === 'section' ? 'Section' : kind === 'column' ? `Kolom ${res(n.width, S.device) || 12}/12` : (W[n.type]?.label || n.type);
+        const extra = kind === 'widget' && W[n.type]?.fields.find((f) => f.tr) ? ` · ${tr(n[W[n.type].fields.find((f) => f.tr).key], S.lang)}` : '';
+        items.push(`<button data-sel="${esc(n.id)}" aria-current="${S.selected === n.id}" style="padding-left:${pad + 6}px"><span class="k">${esc(n.id)}</span><span class="t">${esc(name + extra)}</span></button>`);
+      });
+      el.innerHTML = items.length ? `<div class="nav">${items.join('')}</div><p class="hint">Struktur: section → kolom → widget. Pilih node, lalu pakai ↑ ↓ di preview untuk menggeser.</p>` : `<div class="empty-note">Belum ada section.</div>`;
+      return;
+    }
+    const groups = {};
+    Object.entries(W).forEach(([k, d]) => { if (d.custom && !S.customReady) return; (groups[d.group] ||= []).push([k, d]); });
+    el.innerHTML = `
+      <div class="group-title">Section baru</div>
+      <div class="presets">${[[12], [6, 6], [7, 5], [4, 4, 4]].map((p) => `<button class="preset" data-preset="${p.join(',')}" title="${p.join(' / ')}" aria-label="Section ${p.length} kolom ${p.join('/')}">${p.map((n) => `<i style="grid-column:span ${n}"></i>`).join('')}</button>`).join('')}</div>
+      ${Object.entries(groups).map(([g, list]) => `<div class="group-title">${esc(g)}${g === 'Kustom' ? ' <span class="badge ai">dari kode</span>' : ''}</div><div class="palette">${list.map(([k, d]) => `<button class="wbtn${d.custom ? ' custom' : ''}${d.custom && S.freshCustom ? ' fresh' : ''}" draggable="true" data-add="${k}"><span class="ic">${esc(d.ic)}</span>${esc(d.label)}</button>`).join('')}</div>`).join('')}
+      ${S.customReady ? '<p class="hint">Countdown berasal dari <span class="mono">widgets/countdown/</span> yang ditulis AI. Panel field-nya dibaca dari <span class="mono">widget.json</span>.</p>' : '<p class="hint">Klik widget untuk menambahkannya ke kolom yang dipilih, atau tarik ke kolom di preview.</p>'}`;
+    S.freshCustom = false;
+  }
+  function renderPreview() {
+    const d = $('#device');
+    if (!d) return;
+    d.className = `device ${S.device}`;
+    d.innerHTML = renderPage(S.page, { lang: S.lang, device: S.device, mode: 'edit' });
+  }
+  function fieldHtml(node, f, base = '') {
+    const path = base ? `${base}.${f.key}` : f.key;
+    const raw = getAt(node, path);
+    const id = `fx-${path.replace(/\W/g, '-')}`;
+    const devNote = f.responsive ? `<span class="dev-ic">${{ desktop: '🖥', tablet: '▯', mobile: '📱' }[S.device]} ${DEVICES[S.device]}</span>` : '';
+    const trNote = f.tr ? `<span class="trs">${LOCALES.map((l) => `<span class="${raw && raw[l] ? 'on' : ''} ${l === S.lang ? 'cur' : ''}">${l.toUpperCase()}</span>`).join('')}</span>` : '';
+    const attrs = `id="${id}" data-path="${esc(path)}" data-f="${esc(JSON.stringify({ tr: !!f.tr, responsive: !!f.responsive, num: !!f.num }))}"`;
+    if (f.type === 'repeater') {
+      const items = raw || [];
+      return `<div class="field"><span class="flabel">${esc(f.label)} <span class="dev-ic">${items.length} item</span></span><div class="rep">${items.map((it, i) => `<div class="rep-item"><div class="rh"><span>#${i + 1}</span><button class="btn ghost sm" data-rep-del="${esc(path)}|${i}" aria-label="Hapus item">✕</button></div>${f.sub.map((sf) => fieldHtml(node, sf, `${path}.${i}`)).join('')}</div>`).join('')}<button class="btn sm" data-rep-add="${esc(path)}">+ Tambah item</button></div></div>`;
+    }
+    let value = f.tr ? tr(raw, S.lang) : f.responsive ? res(raw, S.device) : raw;
+    const inherited = f.responsive && S.device !== 'desktop' && (raw == null || typeof raw !== 'object' || raw[S.device] == null);
+    let input;
+    if (f.type === 'select') {
+      input = `<select class="input" ${attrs}>${f.options.map((o) => `<option value="${esc(o)}" ${String(o) === String(value ?? '') ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
+    } else if (f.type === 'textarea') {
+      input = `<textarea class="input" ${attrs} placeholder="${f.tr ? `Teks ${S.lang.toUpperCase()}` : ''}">${esc(value)}</textarea>`;
+    } else {
+      input = `<input class="input${f.type === 'url' ? ' mono' : ''}" type="${f.type === 'date' ? 'date' : 'text'}" ${attrs} value="${esc(value)}" placeholder="${f.tr ? `Teks ${S.lang.toUpperCase()}${S.lang !== 'id' ? ': ' + esc(tr(raw, 'id')) : ''}` : ''}">`;
+    }
+    const hint = inherited ? `<span class="hint">Mewarisi ukuran lebih besar. Ubah untuk mengatur khusus ${DEVICES[S.device]}.</span>` : f.hint ? `<span class="hint">${esc(f.hint)}</span>` : '';
+    return `<div class="field"><label for="${id}">${esc(f.label)} ${f.tr ? trNote : devNote}</label>${input}${hint}</div>`;
+  }
+  function renderRight() {
+    $$('[data-rt]').forEach((b) => b.setAttribute('aria-selected', String(S.rightTab === b.dataset.rt)));
+    const el = $('#right');
+    if (S.rightTab === 'json') {
+      el.innerHTML = `<p class="hint">Inilah file yang ditulis builder setiap kali Anda mengubah sesuatu. AI dan manusia mengedit file yang sama lewat tombol <b>{ } Kode</b>.</p><div class="json">${jsonHtml(toJson(S.page), S.selected)}</div>`;
+      return;
+    }
+    const hit = S.selected && locate(S.selected);
+    if (!hit) {
+      el.innerHTML = `<div class="empty-note">Klik section, kolom, atau widget di preview untuk mengubahnya.</div>
+        <div class="field"><label for="pg-layout">Layout halaman</label><select class="input" id="pg-layout" data-page="layout"><option value="site" ${S.page.layout === 'site' ? 'selected' : ''}>site: header dan footer</option><option value="blank" ${S.page.layout === 'blank' ? 'selected' : ''}>blank</option></select></div>`;
+      return;
+    }
+    const { node, kind } = hit;
+    const fields = kind === 'section' ? SECTION_FIELDS : kind === 'column' ? COLUMN_FIELDS : (W[node.type]?.fields || []);
+    const name = kind === 'section' ? 'Section' : kind === 'column' ? 'Kolom' : (W[node.type]?.label || node.type);
+    const src = kind === 'widget' && W[node.type]?.custom ? `<span class="badge ai">widgets/countdown</span>` : '';
+    el.innerHTML = `<div class="props">
+      <div class="props-head"><h3>${esc(name)} ${src}</h3><span class="badge">${esc(node.id)}</span></div>
+      <div class="props-path">${esc(pathOf(node.id))}</div>
+      ${fields.map((f) => fieldHtml(node, f)).join('')}
+      ${kind === 'widget' ? `<div class="field"><label for="fx-class">Class kustom <span class="dev-ic">jembatan ke assets/style.css</span></label><input class="input mono" id="fx-class" data-path="class" data-f='{"tr":false,"responsive":false}' value="${esc(node.class || '')}" placeholder="misal: promo-glow"></div>` : ''}
+      ${kind === 'section' ? `<button class="btn sm" data-act-sel="del">Hapus section</button>` : ''}
+    </div>`;
+  }
+
+  /* ---------- overlays: code editor, confirm, public view ---------- */
+  function codeFiles() {
+    const f = [`landing/${SLUG}/landing.json`, `landing/${SLUG}/page.draft.json`];
+    if (S.published) f.push(`landing/${SLUG}/page.json`);
+    f.push(`landing/${SLUG}/assets/hero.webp`);
+    if (S.customReady) f.push(`landing/${SLUG}/widgets/countdown/widget.json`, `landing/${SLUG}/widgets/countdown/view.blade.php`);
+    return f;
+  }
+  function fileContent(path) {
+    const base = path.split('/').slice(2).join('/');
+    if (base === 'page.draft.json') return toJson(S.page);
+    if (base === 'page.json') return toJson(S.publishedSpec);
+    if (base === 'landing.json') return JSON.stringify({ title: tr(S.title, 'id'), description: 'Diskon akhir tahun', public: S.published, menu: true }, null, 2);
+    if (base === 'widgets/countdown/widget.json') return JSON.stringify({ name: 'countdown', label: 'Countdown', icon: 'clock', group: 'custom', fields: [{ key: 'until', type: 'date', label: 'Ends at', required: true }, { key: 'label', type: 'text', label: 'Label', translatable: true }] }, null, 2);
+    if (base === 'widgets/countdown/view.blade.php') return `@php\n    $left = max(0, \\Carbon\\Carbon::parse($w['until'])->endOfDay()->diffInSeconds(now(), false) * -1);\n    $units = app()->getLocale() === 'en' ? ['days', 'hours', 'min'] : ['hari', 'jam', 'menit'];\n@endphp\n<div class="w-cd" data-until="{{ $w['until'] }}">\n    <span class="lbl">{{ $w['label'] }}</span>\n    <div class="boxes">\n        <div class="box"><div class="n">{{ intdiv($left, 86400) }}</div><div class="u">{{ $units[0] }}</div></div>\n        <div class="box"><div class="n">{{ intdiv($left, 3600) % 24 }}</div><div class="u">{{ $units[1] }}</div></div>\n        <div class="box"><div class="n">{{ intdiv($left, 60) % 60 }}</div><div class="u">{{ $units[2] }}</div></div>\n    </div>\n</div>\n`;
+    return '(file biner: gambar)';
+  }
+  function renderOverlay() {
+    const o = $('#overlay');
+    if (!o) return;
+    let html = '';
+    if (S.code) {
+      const file = S.code.file;
+      const editable = file.endsWith('page.draft.json');
+      const isCode = file.endsWith('.blade.php');
+      html += `<div class="codev"><div class="topbar"><button class="btn ghost sm" data-code-close aria-label="Tutup">←</button><span class="title mono" style="font-weight:500;font-size:12px">${esc(file)}</span><span class="spacer"></span>${editable ? `<button class="btn sm" data-code-sample>Sisipkan contoh error</button><button class="btn sm" data-code-cancel>Batal</button><button class="btn sm primary" data-code-save>Simpan (Ctrl+S)</button>` : `<span class="badge">${isCode ? 'code.manage' : 'hanya baca di simulasi'}</span>`}</div>
+        <div class="cbody"><div class="ctree">${codeFiles().map((p) => `<button data-open="${esc(p)}" aria-current="${p === file}">${p.endsWith('.json') ? '{}' : p.endsWith('.php') ? '<>' : '▣'} ${esc(p.split('/').slice(2).join('/'))}</button>`).join('')}</div>
+        <div class="ced"><div class="cbar"><span class="mono">${editable ? 'JSON · validasi saat simpan' : isCode ? 'Blade · ditulis AI, butuh code.manage' : 'JSON'}</span><span class="spacer" style="flex:1"></span><span class="hint">Builder hanya menulis *.json. File .blade.php tidak pernah disentuh builder.</span></div>
+        <textarea id="codeText" spellcheck="false" ${editable ? '' : 'readonly'} aria-label="Isi file">${esc(S.code.text ?? fileContent(file))}</textarea>
+        <div class="cmsg" id="codeMsg">${S.code.msg || '<span class="hint">Ubah teks, tambah widget, atau hapus field wajib, lalu Simpan. Builder memuat ulang file ini.</span>'}</div></div></div></div>`;
+    }
+    if (S.public) {
+      html += `<div class="public"><div class="pbar"><button class="btn ghost sm" data-public-close aria-label="Tutup">←</button><b>Tampilan pengunjung</b><span class="seg">${LOCALES.map((l) => `<button data-plang="${l}" aria-pressed="${S.publicLang === l}">/${l === 'en' ? 'en/' : ''}${SLUG}</button>`).join('')}</span><span class="seg">${Object.entries(DEVICES).map(([k, v]) => `<button data-pdev="${k}" aria-pressed="${S.public.device === k}">${v}</button>`).join('')}</span><span class="hint">Dirender dari page.json. Teks yang belum diterjemahkan tampil kosong.</span></div>
+        <div class="pbody"><div class="device ${S.public.device}">${renderPage(S.publishedSpec, { lang: S.publicLang, device: S.public.device, mode: 'public' })}</div></div></div>`;
+    }
+    if (S.confirm) {
+      const v = validate(JSON.parse(JSON.stringify(S.page)));
+      const c = trCount();
+      const miss = LOCALES.filter((l) => c[l][0] < c[l][1]);
+      html += `<div class="modal-scrim"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="cfT"><h3 id="cfT">Publish ${esc(tr(S.title, 'id'))}?</h3>
+        <p><span class="mono">page.draft.json</span> menjadi <span class="mono">page.json</span> dan langsung tayang di <span class="mono">/${SLUG}</span> dan <span class="mono">/en/${SLUG}</span>. ${S.published ? 'Versi yang sedang tayang disimpan sebagai revisi.' : ''}</p>
+        ${v.errors.length ? `<p style="color:var(--destructive)">Tidak bisa dipublish: ${esc(v.errors[0])}</p>` : ''}
+        ${miss.length ? `<p style="color:var(--warning)">Terjemahan belum lengkap: ${miss.map((l) => `${l.toUpperCase()} ${c[l][0]}/${c[l][1]}`).join(', ')}. Teks kosong tampil kosong.</p>` : ''}
+        <div class="row"><button class="btn" data-confirm-no>Batal</button><button class="btn primary" data-confirm-yes ${v.errors.length ? 'disabled' : ''}>Publish</button></div></div></div>`;
+    }
+    o.innerHTML = html;
+  }
+
+  /* ---------- files panel ---------- */
+  function renderFiles() {
+    const el = $('#ftree');
+    if (!S.page) { el.innerHTML = `<div class="dim">landing/</div><div class="dim">├─ dyskflow/</div><div class="dim">├─ example/</div><div class="dim">└─ kontak/</div><div class="hint" style="font-family:var(--font)">Halaman baru belum dibuat.</div>`; return; }
+    const rows = [['landing.json', 'landing.json'], ['page.draft.json', 'page.draft.json']];
+    if (S.published) rows.push(['page.json', 'page.json']);
+    rows.push(['assets/', null], ['  hero.webp', null]);
+    if (S.customReady) rows.push(['widgets/countdown/', null], ['  widget.json', 'widget.json'], ['  view.blade.php', 'view.blade.php']);
+    const last = S.lastTouched;
+    el.innerHTML = `<div class="dim">landing/${SLUG}/</div>` + rows.map(([label, key], i) => {
+      const meta = key && S.files[key];
+      const by = meta ? `<span class="badge ${meta.by === 'AI' ? 'ai' : 'pri'}">${meta.by}</span>` : '';
+      const pre = i === rows.length - 1 ? '└─ ' : '├─ ';
+      return `<div class="${key && key === last ? 'flash' : ''}"><span class="dim">${pre}</span><span class="nm">${esc(label.trim())}</span>${by}</div>`;
+    }).join('');
+    S.lastTouched = null;
+  }
+
+  /* ---------- toast + terminal ---------- */
+  function toast(msg, kind = '') {
+    const t = document.createElement('div');
+    t.className = `toast ${kind}`;
+    t.textContent = msg;
+    $('#toasts').appendChild(t);
+    setTimeout(() => t.remove(), 3600);
+  }
+  function term(lines, done) {
+    const out = $('#termOut');
+    out.innerHTML = '';
+    let i = 0;
+    const next = () => {
+      if (i >= lines.length) { done && done(); return; }
+      const [cls, text] = lines[i++];
+      const span = document.createElement('span');
+      span.className = cls;
+      span.textContent = text + '\n';
+      out.appendChild(span);
+      setTimeout(next, reduce ? 0 : 380);
+    };
+    next();
+  }
+
+  /* ---------- actions ---------- */
+  function createPage({ title = 'Promo Desember', tpl = 'blank', layout = 'site' } = {}) {
+    S.title = { id: title, en: '' };
+    S.page = { $schema: '../../docs/builder.schema.json', version: 1, layout, settings: { width: 'normal' }, sections: [] };
+    if (tpl === 'hero') addSection([7, 5], false);
+    S.files = {};
+    touch('landing.json', 'Builder');
+    touch('page.draft.json', 'Builder');
+    S.sheet = false; S.screen = 'editor'; S.newRow = true;
+    render();
+    toast('Dibuat: landing/promo-desember/page.draft.json');
+  }
+  function addSection(widths, record = true) {
+    const s = { id: rid('s'), type: 'section', style: { padding: 'lg', background: 'default' }, columns: widths.map((w) => ({ id: rid('c'), width: w, widgets: [] })) };
+    const apply = () => { S.page.sections.push(s); S.selected = s.columns[0].id; };
+    if (record) change(apply); else apply();
+    return s;
+  }
+  function targetColumn(colId) {
+    if (colId) return locate(colId)?.node;
+    const hit = S.selected && locate(S.selected);
+    if (hit?.kind === 'column') return hit.node;
+    if (hit?.kind === 'widget') return hit.parent;
+    if (hit?.kind === 'section') return hit.node.columns[0];
+    const secs = S.page.sections;
+    if (!secs.length) return addSection([12], false).columns[0];
+    const lastSec = secs[secs.length - 1];
+    return lastSec.columns[lastSec.columns.length - 1];
+  }
+  function addWidget(type, colId, props) {
+    let w;
+    change(() => {
+      const col = targetColumn(colId);
+      w = { id: rid('w'), type, ...W[type].make(), ...(props || {}) };
+      const hit = S.selected && locate(S.selected);
+      if (!colId && hit?.kind === 'widget' && hit.parent === col) col.widgets.splice(hit.index + 1, 0, w); else col.widgets.push(w);
+      S.selected = w.id;
+    });
+    return w;
+  }
+  function nodeAct(act) {
+    const hit = S.selected && locate(S.selected);
+    if (!hit) return;
+    const { list, index, node } = hit;
+    change(() => {
+      if (act === 'up' && index > 0) [list[index - 1], list[index]] = [list[index], list[index - 1]];
+      if (act === 'down' && index < list.length - 1) [list[index + 1], list[index]] = [list[index], list[index + 1]];
+      if (act === 'dup') { const copy = JSON.parse(JSON.stringify(node)); copy.id = rid(node.id[0]); list.splice(index + 1, 0, copy); S.selected = copy.id; }
+      if (act === 'del') { list.splice(index, 1); S.selected = null; }
+    });
+  }
+  function undo() { if (!S.history.length) return; S.future.push(JSON.stringify(S.page)); S.page = JSON.parse(S.history.pop()); touch('page.draft.json', 'Builder'); renderEditor(); }
+  function redo() { if (!S.future.length) return; S.history.push(JSON.stringify(S.page)); S.page = JSON.parse(S.future.pop()); touch('page.draft.json', 'Builder'); renderEditor(); }
+  function publish() {
+    S.publishedSpec = JSON.parse(JSON.stringify(S.page));
+    if (S.published) S.revisions++;
+    S.published = true; S.dirtySincePublish = false; S.confirm = false;
+    touch('page.json', 'Builder');
+    renderEditor(); renderFiles();
+    toast(S.revisions ? `Dipublish. Versi lama disimpan di file_revisions (${S.revisions}).` : 'Dipublish. Tayang di /promo-desember dan /en/promo-desember.');
+    markDone(7);
+  }
+  function applyExternal(spec, by, msg) {
+    snapshot();
+    S.page = spec;
+    if (S.published) S.dirtySincePublish = true;
+    touch('page.draft.json', by);
+    renderEditor();
+    toast(msg, by === 'AI' ? 'ai' : '');
+  }
+  function flashNode(id) {
+    requestAnimationFrame(() => { const n = $(`#device [data-id="${id}"]`); if (n) { n.classList.add('flashnode'); n.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' }); } });
+  }
+
+  /* ---------- input handling ---------- */
+  let editing = false, pendingSnap = false;
+  document.addEventListener('focusin', (e) => { if (e.target.closest('#right [data-path]')) { pendingSnap = true; editing = true; } });
+  document.addEventListener('focusout', (e) => { if (e.target.closest('#right [data-path]')) { editing = false; renderTopbar(); if (S.leftTab === 'nav') renderLeft(); } });
+  function fieldInput(el) {
+    const hit = locate(S.selected);
+    if (!hit) return;
+    if (pendingSnap) { snapshot(); pendingSnap = false; }
+    const f = JSON.parse(el.dataset.f || '{}');
+    const path = el.dataset.path;
+    let val = el.value;
+    if (f.num) val = Number(val);
+    const node = hit.node;
+    if (f.tr) { const cur = { ...(getAt(node, path) || {}) }; cur[S.lang] = val; setAt(node, path, cur); }
+    else if (f.responsive) setAt(node, path, setRes(getAt(node, path), S.device, val));
+    else if (path === 'class' && !val) delete node.class;
+    else setAt(node, path, val);
+    if (S.published) S.dirtySincePublish = true;
+    touch('page.draft.json', 'Builder');
+    renderPreview();
+    if (!editing || el.tagName === 'SELECT') { renderTopbar(); renderRight(); }
+    else {
+      // refresh translation badges without rebuilding the inputs
+      const lab = el.closest('.field')?.querySelector('.trs');
+      if (lab && f.tr) lab.innerHTML = LOCALES.map((l) => `<span class="${getAt(node, path)?.[l] ? 'on' : ''} ${l === S.lang ? 'cur' : ''}">${l.toUpperCase()}</span>`).join('');
+    }
+  }
+  document.addEventListener('input', (e) => {
+    if (e.target.matches('#right [data-path]') && e.target.tagName !== 'SELECT') fieldInput(e.target);
+    if (e.target.id === 'f-title') { const s = $('#f-slug'); if (s && !s.dataset.touched) s.value = e.target.value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+    if (e.target.id === 'f-slug') e.target.dataset.touched = '1';
+    if (e.target.id === 'codeText' && S.code) S.code.text = e.target.value;
+  });
+  document.addEventListener('change', (e) => {
+    if (e.target.matches('#right select[data-path]')) fieldInput(e.target);
+    if (e.target.matches('[data-page]')) change(() => { S.page[e.target.dataset.page] = e.target.value; });
+  });
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's' && S.code) { e.preventDefault(); saveCode(); }
+    if (e.key === 'Escape') { if (S.confirm) { S.confirm = false; renderOverlay(); } else if (S.sheet) { S.sheet = false; render(); } }
+  });
+
+  function saveCode() {
+    const text = $('#codeText')?.value ?? '';
+    let spec;
+    try { spec = JSON.parse(text); }
+    catch (err) { S.code.text = text; S.code.msg = `<span class="e">Bukan JSON yang valid: ${esc(err.message)}</span><span class="hint">File tidak disimpan. Halaman publik tetap memakai versi terakhir.</span>`; renderOverlay(); return; }
+    const v = validate(spec);
+    if (v.errors.length) {
+      S.code.text = text;
+      S.code.msg = v.errors.map((m) => `<span class="e">✕ ${esc(m)}</span>`).join('') + v.warnings.map((m) => `<span class="w">! ${esc(m)}</span>`).join('') + '<span class="hint">Ditolak dengan 422. Perbaiki baris di atas lalu simpan lagi.</span>';
+      renderOverlay(); return;
+    }
+    S.code = null;
+    applyExternal(spec, 'Manusia', v.warnings.length ? `Disimpan dengan ${v.warnings.length} peringatan. Builder memuat ulang file.` : 'Disimpan dari code editor. Builder memuat ulang file.');
+    v.warnings.forEach((w) => toast(w));
+  }
+
+  document.addEventListener('click', (e) => {
+    const t = e.target.closest('button, [data-id], [data-close-sheet], .scrim');
+    if (!t) return;
+    const d = t.dataset;
+    if (t.id === 'newPage') { S.sheet = true; render(); setTimeout(() => $('#f-title')?.focus(), 0); return; }
+    if ('closeSheet' in d && (e.target === t || t.tagName === 'BUTTON')) { S.sheet = false; render(); return; }
+    if (t.id === 'createPage') {
+      const title = $('#f-title').value.trim() || 'Promo Desember';
+      createPage({ title, tpl: document.querySelector('input[name="tpl"]:checked').value, layout: $('#f-layout').value });
+      markDone(0); return;
+    }
+    if (d.go) { S.screen = d.go; S.code = null; S.public = null; render(); return; }
+    if (d.dev) { S.device = d.dev; renderEditor(); return; }
+    if (d.lang) { S.lang = d.lang; renderEditor(); return; }
+    if (d.lt) { S.leftTab = d.lt; renderLeft(); return; }
+    if (d.rt) { S.rightTab = d.rt; renderRight(); return; }
+    if ('undo' in d) return undo();
+    if ('redo' in d) return redo();
+    if ('code' in d) { S.code = { file: `landing/${SLUG}/page.draft.json` }; renderOverlay(); return; }
+    if (d.open) { S.code = { file: d.open }; renderOverlay(); return; }
+    if ('codeClose' in d || 'codeCancel' in d) { S.code = null; renderOverlay(); return; }
+    if ('codeSave' in d) return saveCode();
+    if ('codeSample' in d) {
+      const spec = JSON.parse(toJson(S.page));
+      const col = spec.sections[0]?.columns[0];
+      if (col) col.widgets.push({ id: rid('w'), type: 'button', label: { id: 'Hubungi', en: '' }, url: 'javascript:alert(1)' }, { id: rid('w'), type: 'slider', images: [] });
+      else spec.sections = 'bukan array';
+      S.code.text = JSON.stringify(spec, null, 2); S.code.msg = '<span class="hint">Contoh: tombol dengan URL javascript: dan widget "slider" yang tidak ada. Klik Simpan untuk melihat hasil validasi.</span>';
+      renderOverlay(); return;
+    }
+    if ('publish' in d) { S.confirm = true; renderOverlay(); return; }
+    if ('confirmNo' in d) { S.confirm = false; renderOverlay(); return; }
+    if ('confirmYes' in d) return publish();
+    if ('public' in d) { S.public = { device: S.device === 'mobile' ? 'mobile' : 'desktop' }; S.publicLang = S.lang; renderOverlay(); setUrl(); return; }
+    if ('publicClose' in d) { S.public = null; renderOverlay(); setUrl(); return; }
+    if (d.plang) { S.publicLang = d.plang; renderOverlay(); setUrl(); return; }
+    if (d.pdev) { S.public.device = d.pdev; renderOverlay(); return; }
+    if (d.preset) { addSection(d.preset.split(',').map(Number)); return; }
+    if (d.add) { addWidget(d.add); return; }
+    if (d.sel) { S.selected = d.sel; renderEditor(); flashNode(d.sel); return; }
+    if (d.act) { e.stopPropagation(); nodeAct(d.act); return; }
+    if (d.actSel) { nodeAct(d.actSel); return; }
+    if (d.repAdd) { const hit = locate(S.selected); change(() => { const arr = getAt(hit.node, d.repAdd) || []; const f = W[hit.node.type].fields.find((x) => x.key === d.repAdd); arr.push(f.blank()); setAt(hit.node, d.repAdd, arr); }); return; }
+    if (d.repDel) { const [p, i] = d.repDel.split('|'); const hit = locate(S.selected); change(() => getAt(hit.node, p).splice(Number(i), 1)); return; }
+    if (d.id && t.closest('#device')) {
+      const w = e.target.closest('.pv-w') || e.target.closest('.pv-col') || e.target.closest('.pv-sec');
+      if (w) { S.selected = w.dataset.id; renderEditor(); }
+    }
+  });
+
+  /* drag from palette to a column */
+  document.addEventListener('dragstart', (e) => { const b = e.target.closest?.('[data-add]'); if (b) { e.dataTransfer.setData('text/plain', b.dataset.add); e.dataTransfer.effectAllowed = 'copy'; } });
+  document.addEventListener('dragover', (e) => { const c = e.target.closest?.('#device .pv-col'); if (c) { e.preventDefault(); document.querySelectorAll('.pv-col.over').forEach((x) => x !== c && x.classList.remove('over')); c.classList.add('over'); } });
+  document.addEventListener('dragleave', (e) => { const c = e.target.closest?.('#device .pv-col'); if (c && !c.contains(e.relatedTarget)) c.classList.remove('over'); });
+  document.addEventListener('drop', (e) => { const c = e.target.closest?.('#device .pv-col'); if (c) { e.preventDefault(); const type = e.dataTransfer.getData('text/plain'); if (W[type]) addWidget(type, c.dataset.id); } });
+
+  /* ---------- guided tour ---------- */
+  const firstHeroCols = () => {
+    const s = S.page.sections.find((x) => x.columns.length === 2) || addSection([7, 5], false);
+    return s.columns;
+  };
+  const STEPS = [
+    { title: 'Buat halaman baru', who: ['Manusia'],
+      body: 'Buka <b>Design › Builder</b>, klik <b>+ Halaman baru</b>, isi judul, lalu pilih template dan layout. Sistem membuat folder <code>landing/promo-desember/</code> berisi <code>landing.json</code> dan <code>page.draft.json</code>. Tidak ada baris yang ditambah di database.',
+      run: (cb) => { S.screen = 'list'; S.sheet = true; S.draftTitle = 'Promo Desember'; S.draftSlug = SLUG; render(); setTimeout(() => { createPage({ title: 'Promo Desember', tpl: 'blank' }); cb(); }, reduce ? 0 : 700); } },
+    { title: 'Tambah section 2 kolom', who: ['Manusia'],
+      body: 'Di panel kiri, klik bentuk section <b>7 / 5</b>. Section berisi dua kolom dari grid 12. Di <code>page.draft.json</code> muncul satu objek <code>section</code> dengan dua <code>columns</code>, masing-masing punya <code>id</code> tetap.',
+      run: (cb) => { if (!S.page.sections.some((s) => s.columns.length === 2)) addSection([7, 5]); cb(); } },
+    { title: 'Isi dengan widget', who: ['Manusia'],
+      body: 'Pilih kolom, lalu klik atau tarik widget: <b>Heading</b>, <b>Teks</b>, dan <b>Tombol</b> di kiri, <b>Gambar</b> di kanan. Klik widget di preview untuk mengisi field di panel kanan. Panel itu dibentuk dari <code>widget.json</code> masing-masing widget.',
+      run: (cb) => {
+        const [c1, c2] = firstHeroCols();
+        change(() => {
+          c1.widgets.push(
+            { id: rid('w'), type: 'heading', text: { id: 'Diskon Akhir Tahun hingga 50%', en: '' }, level: 1, size: 'xl' },
+            { id: rid('w'), type: 'text', html: { id: 'Semua produk pilihan, hanya sampai 31 Desember. Gratis ongkir untuk pesanan pertama.', en: '' } },
+            { id: rid('w'), type: 'button', label: { id: 'Belanja sekarang', en: '' }, url: '/produk', variant: 'primary' });
+          c2.widgets.push({ id: rid('w'), type: 'image', src: 'assets/hero.webp', alt: { id: 'Produk unggulan Desember', en: '' }, ratio: '4:3' });
+          S.page.sections[0].style.background = 'muted';
+          S.selected = c1.widgets[0].id;
+        });
+        cb();
+      } },
+    { title: 'Terjemahkan ke English', who: ['Manusia'],
+      body: 'Klik <b>EN</b> di bar atas. Preview beralih ke bahasa Inggris, dan teks yang belum diterjemahkan ditandai kuning. Setiap teks disimpan sebagai <code>{ "id": "…", "en": "…" }</code>, dan angka di tombol bahasa menunjukkan berapa teks yang sudah terisi.',
+      run: (cb) => {
+        S.lang = 'en';
+        const EN = { 'Diskon Akhir Tahun hingga 50%': 'Year-end Sale: up to 50% off', 'Belanja sekarang': 'Shop now', 'Produk unggulan Desember': 'December featured products', 'Promo berakhir dalam': 'Sale ends in' };
+        const ENp = 'Selected products, only until 31 December. Free shipping on your first order.';
+        change(() => walk((n, k) => {
+          if (k !== 'widget' || !W[n.type]) return;
+          W[n.type].fields.forEach((f) => { if (f.tr && n[f.key] && !n[f.key].en) n[f.key].en = EN[n[f.key].id] || (n.type === 'text' ? ENp : n[f.key].id); });
+        }));
+        cb();
+      } },
+    { title: 'Atur tampilan HP', who: ['Manusia'],
+      body: 'Klik <b>📱 HP</b>. Kedua kolom masih 7/12 dan 5/12, jadi terlalu sempit. Pilih kolom, lalu ubah <b>Lebar</b> menjadi 12 khusus HP. Builder menyimpannya sebagai <code>"width": { "base": 7, "mobile": 12 }</code>. Desktop tidak berubah.',
+      run: (cb) => {
+        S.device = 'mobile';
+        renderEditor();
+        setTimeout(() => {
+          const s = S.page.sections.find((x) => x.columns.length === 2);
+          change(() => { s.columns.forEach((c) => { c.width = setRes(c.width, 'mobile', 12); }); s.style.padding = setRes(s.style.padding, 'mobile', 'md'); S.selected = s.columns[0].id; });
+          cb();
+        }, reduce ? 0 : 600);
+      } },
+    { title: 'AI menambah section lewat file', who: ['AI'],
+      body: 'AI tidak memakai builder. Ia mengedit <code>page.draft.json</code> langsung, mengikuti <code>docs/BUILDER.md</code>, lalu menjalankan <code>builder:validate</code>. Builder yang sedang terbuka melihat hash file berubah dan memuat ulang otomatis. Section FAQ baru langsung bisa diedit secara visual.',
+      run: (cb) => {
+        term([
+          ['p', '$ claude "Tambahkan section FAQ 3 pertanyaan di bawah hero landing/promo-desember, ikuti docs/BUILDER.md"'],
+          ['dimt', '● Membaca docs/BUILDER.md'],
+          ['dimt', '● Membaca landing/promo-desember/page.draft.json'],
+          ['', '● Edit page.draft.json  (+1 section, +2 widget, id baru)'],
+          ['p', '$ php artisan builder:validate promo-desember'],
+          ['ok', '✓ page.draft.json valid · 2 section · 7 widget · EN 100%'],
+        ], () => {
+          const spec = JSON.parse(toJson(S.page));
+          const sec = { id: rid('s'), type: 'section', anchor: 'faq', style: { padding: 'lg', width: 'narrow' }, columns: [{ id: rid('c'), width: 12, align: 'center', widgets: [
+            { id: rid('w'), type: 'heading', level: 2, size: 'lg', text: { id: 'Pertanyaan yang sering diajukan', en: 'Frequently asked questions' } },
+            { id: rid('w'), type: 'faq', items: [
+              { q: { id: 'Sampai kapan promo berlaku?', en: 'How long does the sale run?' }, a: { id: 'Sampai 31 Desember 2026 pukul 23.59 WIB.', en: 'Until 31 December 2026, 23:59 WIB.' } },
+              { q: { id: 'Apakah bisa digabung dengan voucher?', en: 'Can I combine it with a voucher?' }, a: { id: 'Bisa, kecuali voucher ongkir.', en: 'Yes, except shipping vouchers.' } },
+              { q: { id: 'Bagaimana cara retur?', en: 'How do returns work?' }, a: { id: 'Retur gratis dalam 7 hari setelah barang diterima.', en: 'Free returns within 7 days of delivery.' } },
+            ] },
+          ] }] };
+          spec.sections.push(sec);
+          S.selected = sec.columns[0].widgets[1].id;
+          S.device = 'desktop';
+          applyExternal(spec, 'AI', 'page.draft.json diubah dari luar. Builder memuat ulang: +1 section FAQ.');
+          flashNode(sec.id);
+          cb();
+        });
+      } },
+    { title: 'AI membuat widget kustom', who: ['AI', 'Manusia'],
+      body: 'Tidak ada widget hitung mundur di core. AI menulisnya sebagai kode di <code>widgets/countdown/</code>: <code>widget.json</code> (field) dan <code>view.blade.php</code> (tampilan). Widget itu langsung muncul di grup <b>Kustom</b>. Orang tanpa akses kode memasangnya dan mengisi tanggalnya dari panel kanan. Buka <b>{ } Kode</b> untuk melihat kedua file.',
+      run: (cb) => {
+        term([
+          ['p', '$ claude "Buat widget countdown untuk promo-desember: tanggal berakhir dan label, dua bahasa"'],
+          ['', '● Buat widgets/countdown/widget.json'],
+          ['', '● Buat widgets/countdown/view.blade.php'],
+          ['p', '$ php artisan builder:validate promo-desember'],
+          ['ok', '✓ widget "countdown" valid (2 field)'],
+        ], () => {
+          S.customReady = true; S.freshCustom = true; S.leftTab = 'widgets';
+          touch('widget.json', 'AI'); touch('view.blade.php', 'AI');
+          renderEditor();
+          toast('Widget baru tersedia: Countdown (dari widgets/countdown)', 'ai');
+          setTimeout(() => {
+            const [c1] = firstHeroCols();
+            S.selected = c1.widgets[c1.widgets.length - 1]?.id || c1.id;
+            const w = addWidget('countdown', null, { until: '2026-12-31', label: { id: 'Promo berakhir dalam', en: 'Sale ends in' } });
+            flashNode(w.id);
+            cb();
+          }, reduce ? 0 : 900);
+        });
+      } },
+    { title: 'Publish', who: ['Manusia'],
+      body: 'Klik <b>Publish</b>. Konfirmasi memakai modal <code>data-confirm</code> dan menampilkan status terjemahan. <code>page.draft.json</code> menjadi <code>page.json</code>, dan halaman tayang di <code>/promo-desember</code> dan <code>/en/promo-desember</code>. Klik <b>Lihat publik</b> untuk melihatnya sebagai pengunjung.',
+      run: (cb) => { S.confirm = true; renderOverlay(); setTimeout(() => { publish(); S.public = { device: 'desktop' }; S.publicLang = 'id'; renderOverlay(); setUrl(); cb(); }, reduce ? 0 : 900); } },
+  ];
+
+  function markDone(i) { S.done.add(i); renderTour(); }
+  function renderTour() {
+    const st = STEPS[S.step];
+    $('#stepper').innerHTML = STEPS.map((x, i) => `<button class="${S.done.has(i) ? 'done' : ''} ${i === S.step ? 'current' : ''}" data-step="${i}" aria-label="Langkah ${i + 1}: ${esc(x.title)}"></button>`).join('');
+    $('#stepNum').textContent = `Langkah ${S.step + 1} dari ${STEPS.length}`;
+    $('#stepTitle').textContent = st.title;
+    $('#stepWho').innerHTML = st.who.map((w) => `<span class="badge ${w === 'AI' ? 'ai' : 'pri'}">${w}</span>`).join('');
+    $('#stepBody').innerHTML = st.body;
+    $('#runStep').textContent = S.done.has(S.step) ? 'Sudah dijalankan ✓' : 'Jalankan langkah ini';
+    $('#runStep').disabled = S.done.has(S.step) || running;
+    $('#prevStep').disabled = S.step === 0;
+    $('#nextStep').disabled = S.step === STEPS.length - 1;
+  }
+  let running = false;
+  function runStep(i, done) {
+    // run any earlier steps that were skipped, in order
+    const todo = [];
+    for (let k = 0; k <= i; k++) if (!S.done.has(k)) todo.push(k);
+    running = true; renderTour();
+    const go = () => {
+      if (!todo.length) { running = false; renderTour(); done && done(); return; }
+      const k = todo.shift();
+      if (k > 0 && S.screen !== 'editor') { S.screen = 'editor'; S.code = null; render(); }
+      STEPS[k].run(() => { S.done.add(k); go(); });
+    };
+    go();
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-step]');
+    if (b) { S.step = Number(b.dataset.step); renderTour(); }
+  });
+  $('#runStep').addEventListener('click', () => runStep(S.step));
+  $('#prevStep').addEventListener('click', () => { S.step = Math.max(0, S.step - 1); renderTour(); });
+  $('#nextStep').addEventListener('click', () => { S.step = Math.min(STEPS.length - 1, S.step + 1); renderTour(); });
+  $('#resetAll').addEventListener('click', () => { S = fresh(); $('#termOut').innerHTML = '<span class="dimt">Belum ada perintah. AI dipakai di langkah 6 dan 7.</span>'; render(); });
+
+  function $$(s) { return Array.from(document.querySelectorAll(s)); }
+  render();
+})();
+</script>
+</body>
+</html>

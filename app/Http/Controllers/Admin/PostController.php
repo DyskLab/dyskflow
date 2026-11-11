@@ -48,7 +48,9 @@ class PostController extends Controller
 
         $columns = [
             ['key' => 'title', 'label' => __('Title'), 'sort' => true, 'render' => fn ($p) => new HtmlString(
-                ($p->trashed() ? '<span style="font-weight:500">'.e($p->title).'</span>' : '<a href="'.e(route("$base.edit", $p)).'" style="font-weight:500;text-decoration:none">'.e($p->title).'</a>').'<div class="muted small">/'.($isArticle ? 'blog/' : '').e($p->slug).'</div>'
+                ($p->trashed() ? '<span style="font-weight:500">'.e($p->title).'</span>' : '<a href="'.e(route("$base.edit", $p)).'" style="font-weight:500;text-decoration:none">'.e($p->title).'</a>')
+                .($p->isBuilder() ? ' <span class="badge badge-muted">'.e(__('Builder')).'</span>'.($p->builder_draft !== null ? ' <span class="badge badge-warning">'.e(__('Unpublished changes')).'</span>' : '') : '')
+                .'<div class="muted small">/'.($isArticle ? 'blog/' : '').e($p->slug).'</div>'
             )],
             ['key' => 'status', 'label' => __('Status'), 'sort' => true, 'render' => fn ($p) => $this->statusBadge($p)],
             ['key' => 'translation', 'label' => Locales::name(Locales::second()), 'render' => fn ($p) => $this->translationBadge($p)],
@@ -83,6 +85,7 @@ class PostController extends Controller
             'title' => $isArticle ? __('Articles') : __('Pages'),
             'actions' => array_filter([
                 $trashed && ! $inTrash ? ['label' => __('Trash (:count)', ['count' => $trashed]), 'icon' => 'trash', 'secondary' => true, 'url' => route("$base.index", ['f' => ['status' => 'trash']])] : null,
+                $isArticle ? null : ['label' => __('New builder page'), 'icon' => 'landing', 'secondary' => true, 'sheet' => route('admin.pages.builder.create'), 'wide' => true],
                 ['label' => $isArticle ? __('New article') : __('New page'), 'url' => route("$base.create")],
             ]),
             'table' => DataTable::make([
@@ -105,7 +108,8 @@ class PostController extends Controller
                     ['label' => __('Restore'), 'icon' => 'refresh', 'post' => route("$base.bulk"), 'fields' => ['ids[]' => [$p->id], 'action' => 'restore']],
                     ['label' => __('Delete permanently'), 'icon' => 'trash', 'post' => route("$base.bulk"), 'fields' => ['ids[]' => [$p->id], 'action' => 'force'], 'danger' => true, 'confirm' => __('Delete ":title" permanently? Its translations and comments go with it. This cannot be undone.', ['title' => $p->title])],
                 ] : [
-                    ['label' => __('Edit'), 'icon' => 'pencil', 'url' => route("$base.edit", $p)],
+                    $p->isBuilder() ? ['label' => __('Edit with the builder'), 'icon' => 'landing', 'url' => route('admin.pages.builder.edit', $p)] : null,
+                    ['label' => $p->isBuilder() ? __('Page details') : __('Edit'), 'icon' => 'pencil', 'url' => route("$base.edit", $p)],
                     ['label' => __('Translate'), 'icon' => 'languages', 'url' => route("$base.translation", $p)],
                     ['label' => __('View'), 'icon' => 'external', 'url' => $p->url(), 'blank' => true],
                     ['label' => __('Move to trash'), 'icon' => 'trash', 'post' => route("$base.bulk"), 'fields' => ['ids[]' => [$p->id], 'action' => 'delete'], 'danger' => true, 'confirm' => __('Move ":title" to the trash?', ['title' => $p->title])],
@@ -208,10 +212,13 @@ class PostController extends Controller
             ? Carbon::parse($data['published_at'], setting('timezone', 'Asia/Jakarta'))->utc()
             : ($data['status'] === 'published' ? now() : null);
 
+        // A builder page keeps its content: it is the text of the published layout (see BuilderController::publishLayout).
+        if (! $post->isBuilder()) {
+            $post->content = HtmlSanitizer::clean($data['content'] ?? '');
+        }
         $post->fill([
             'title' => $data['title'],
             'slug' => $slug,
-            'content' => HtmlSanitizer::clean($data['content'] ?? ''),
             'excerpt' => $data['excerpt'] ?? null,
             'status' => $data['status'],
             'published_at' => $publishedAt,

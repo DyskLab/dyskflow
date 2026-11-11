@@ -1,0 +1,42 @@
+{
+  "label": "Audio",
+  "icon": "play",
+  "group": "media",
+  "description": "An audio file such as a podcast episode or a song, with the browser's own player.",
+  "fields": [
+    {
+      "key": "file",
+      "type": "file",
+      "label": "Audio file",
+      "accept": [
+        "mp3",
+        "m4a",
+        "ogg",
+        "wav"
+      ],
+      "required": true
+    },
+    {
+      "key": "title",
+      "type": "text",
+      "label": "Title",
+      "translatable": true
+    },
+    {
+      "key": "artist",
+      "type": "text",
+      "label": "Artist or speaker"
+    },
+    {
+      "key": "cover",
+      "type": "image",
+      "label": "Cover image"
+    },
+    {
+      "key": "download",
+      "type": "toggle",
+      "label": "Download link",
+      "default": false
+    }
+  ]
+}

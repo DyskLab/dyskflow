@@ -10,9 +10,11 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // Before installing there is no users table: an old "remember me" cookie must not be looked up.
+        $installed = cms_installed();
         $locale = session('locale')
-            ?: $request->user()?->locale
-            ?: (cms_installed() ? setting('locale', 'id') : 'id');
+            ?: ($installed ? $request->user()?->locale : null)
+            ?: ($installed ? setting('locale', 'id') : 'id');
 
         app()->setLocale(in_array($locale, ['en', 'id'], true) ? $locale : 'id');
 

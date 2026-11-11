@@ -31,6 +31,7 @@ A guide for AI coding tools, and for people working with them. It stands on its 
 | Something added to existing pages: a banner, tracking tag, text after articles | Plugin |
 | A database table, admin screen, settings form or form handler | Plugin |
 | A designed page with a form that saves data | Both: the landing page holds the markup and posts to a plugin route |
+| A different look for the blog, articles or pages of the default theme | A theme override: copy the file to `theme/views/site/...` or `theme/assets/...` (see [DESIGN-TOOLS.md](DESIGN-TOOLS.md)) |
 
 A landing page has no backend of its own: no routes, no controller, no migrations. An article or page written in the admin is content, and it cannot be selected as a landing page.
 
@@ -45,9 +46,14 @@ landing/<slug>/
   index.blade.php    entry file (or index.html); Blade wins if both exist
   landing.json       title, description, public, menu
   assets/            CSS, JS, images, fonts, video
+  lang/id.json       optional: translations for __(), see Languages
 ```
 
 `<slug>` must match `^[a-z0-9][a-z0-9_-]*$`. A folder that breaks this, or that has no entry file, is ignored without any error.
+
+**Builder page or code page?** Builder pages are pages in the admin with their layout as JSON in the database, not folders here. Read and write them with `php artisan builder:export` and `builder:import`, following [BUILDER.md](BUILDER.md). For a new page, prefer a builder page (`builder:import <slug> page.json --create="Title"`) when the design fits sections, columns and the listed widgets, because people can then keep editing it in the admin. Write a code page in `landing/` when it needs its own markup throughout.
+
+Before writing code for a contact or sign-up form, a countdown, tabs, a carousel or similar, check the widget table in [BUILDER.md](BUILDER.md#widgets): the `form` widget already keeps messages in **Content > Forms** without cookies. Use the brand variables (`--primary`, `--brand-secondary`, `--brand-accent`, `--font-heading`, `--font-body`, `--radius`) in your own CSS so the page follows **Design > Colors & fonts**.
 
 Do not use a slug from `reserved_slugs` in `config/cms.php`: `admin`, `install`, `blog`, `category`, `tag`, `search`, `feed`, `sitemap.xml`, `robots.txt`, `_landing`, `locale`, `uploads`, `css`, `js`, `up`, `en`, `id`. The check only runs for admin pages, so a landing page with one of these slugs gets no error but may be unreachable.
 
@@ -179,7 +185,13 @@ In `index.html` the URLs carry no version, so renaming a changed file is the onl
 
 One folder serves both languages. For body text, use the `$t` closure from the skeleton: the text then lives in the landing folder and survives updates. `landing/dyskflow/` does this.
 
-Do not add strings to `lang/id.json`. **Updates overwrite that file**, so anything you add is lost at the next update. This also affects `title` and `description` in `landing.json`, which can only be translated through `__()`. Write them in the site's default language, or see [Translations](#translations) for the plugin route.
+Do not add strings to the core `lang/id.json`. **Updates overwrite that file**, so anything you add is lost at the next update. Put them in `landing/<slug>/lang/id.json` instead: the CMS loads that file on every request, and updates never touch `landing/`. This is how `title` and `description` in `landing.json` get translated, since they go through `__()`:
+
+```json
+{ "Contact us": "Hubungi kami", "Questions about an order? Write to us.": "Ada pertanyaan soal pesanan? Tulis ke kami." }
+```
+
+The strings are available on every page, so give them wording of your own. A key the core already translates keeps the core's translation. The theme can do the same with `theme/lang/id.json`.
 
 ### Hooks on landing pages
 
@@ -350,15 +362,9 @@ Admin notifications go through `Notifier`. Pass the title in English, without `_
 
 ### Translations
 
-`lang/id.json` is overwritten by updates, so a plugin keeps its own file. Add this to `plugin.php`:
+`lang/id.json` is overwritten by updates, so a plugin keeps its own file: write `__('English text')` in code and put `{"English text": "Teks Indonesia"}` in `plugins/<slug>/lang/id.json`. The CMS loads it while the plugin is on; no code is needed (older plugins that call `app('translator')->addJsonPath(__DIR__.'/lang')` still work). Do not use a key equal to a Laravel lang file name, such as `Pagination` or `Validation`.
 
-```php
-app('translator')->addJsonPath(__DIR__.'/lang');
-```
-
-Then write `__('English text')` in code and put `{"English text": "Teks Indonesia"}` in `plugins/<slug>/lang/id.json`. Do not use a key equal to a Laravel lang file name, such as `Pagination` or `Validation`.
-
-These strings become available everywhere while the plugin is on, including in landing pages. A small plugin can therefore carry translations for a `landing.json` title.
+These strings become available everywhere while the plugin is on, including in landing pages. A key the core already translates keeps the core's translation.
 
 ### Cookies and caching
 
@@ -516,8 +522,6 @@ use Plugins\Faq\Item;
 
 require_once __DIR__.'/src/Item.php';
 require_once __DIR__.'/src/AdminController.php';
-
-app('translator')->addJsonPath(__DIR__.'/lang');
 
 add_filter('cms.admin_menu', function ($items) {
     if (auth()->user()->can('plugins.manage')) {

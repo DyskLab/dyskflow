@@ -1,0 +1,21 @@
+{
+  "label": "Previous and next article",
+  "icon": "right",
+  "group": "template",
+  "context": "single",
+  "description": "Links to the article before and after this one.",
+  "fields": [
+    {
+      "key": "labels",
+      "type": "toggle",
+      "label": "Show Previous and Next",
+      "default": true
+    },
+    {
+      "key": "same_category",
+      "type": "toggle",
+      "label": "Only in the same category",
+      "default": false
+    }
+  ]
+}

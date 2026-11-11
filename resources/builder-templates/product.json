@@ -1,0 +1,486 @@
+{
+  "$schema": "../../docs/builder.schema.json",
+  "template": {
+    "title": "Product or app",
+    "description": "Hero, numbers, features, testimonials, pricing, FAQ and a closing call to action."
+  },
+  "version": 1,
+  "layout": "site",
+  "sections": [
+    {
+      "id": "st007",
+      "type": "section",
+      "style": {
+        "padding": {
+          "base": "xl",
+          "mobile": "lg"
+        },
+        "valign": "center"
+      },
+      "columns": [
+        {
+          "id": "ct004",
+          "width": {
+            "base": 7,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wt001",
+              "type": "heading",
+              "tag": "h1",
+              "size": "2xl",
+              "kicker": {
+                "id": "Produk baru",
+                "en": "New product"
+              },
+              "text": {
+                "id": "Kerjakan lebih banyak dengan usaha lebih sedikit.",
+                "en": "Get more done with less effort."
+              }
+            },
+            {
+              "id": "wt002",
+              "type": "text",
+              "size": "lg",
+              "html": {
+                "id": "<p>Jelaskan dalam satu atau dua kalimat masalah apa yang diselesaikan produk Anda dan untuk siapa.</p>",
+                "en": "<p>Explain in one or two sentences what problem your product solves and for whom.</p>"
+              }
+            },
+            {
+              "id": "wt003",
+              "type": "button",
+              "buttons": [
+                {
+                  "label": {
+                    "id": "Coba gratis",
+                    "en": "Try it free"
+                  },
+                  "url": "#harga"
+                },
+                {
+                  "label": {
+                    "id": "Lihat fitur",
+                    "en": "See features"
+                  },
+                  "url": "#fitur",
+                  "variant": "outline"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "ct006",
+          "width": {
+            "base": 5,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wt005",
+              "type": "icon-list",
+              "items": [
+                {
+                  "title": {
+                    "id": "Siap dalam 5 menit",
+                    "en": "Ready in 5 minutes"
+                  },
+                  "text": {
+                    "id": "Tanpa instalasi rumit.",
+                    "en": "No complicated setup."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Data Anda aman",
+                    "en": "Your data is safe"
+                  },
+                  "text": {
+                    "id": "Dicadangkan setiap hari.",
+                    "en": "Backed up every day."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Bantuan nyata",
+                    "en": "Real support"
+                  },
+                  "text": {
+                    "id": "Tim kami membalas dalam satu hari kerja.",
+                    "en": "Our team replies within one working day."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st010",
+      "type": "section",
+      "style": {
+        "background": "primary",
+        "padding": "lg",
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "ct009",
+          "widgets": [
+            {
+              "id": "wt008",
+              "type": "stats",
+              "items": [
+                {
+                  "value": "10.000+",
+                  "label": {
+                    "id": "Pengguna",
+                    "en": "Users"
+                  }
+                },
+                {
+                  "value": "4,9/5",
+                  "label": {
+                    "id": "Rating",
+                    "en": "Rating"
+                  }
+                },
+                {
+                  "value": "24/7",
+                  "label": {
+                    "id": "Dukungan",
+                    "en": "Support"
+                  }
+                },
+                {
+                  "value": "99,9%",
+                  "label": {
+                    "id": "Uptime",
+                    "en": "Uptime"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st014",
+      "type": "section",
+      "anchor": "fitur",
+      "style": {
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "ct013",
+          "widgets": [
+            {
+              "id": "wt011",
+              "type": "heading",
+              "text": {
+                "id": "Semua yang Anda butuhkan",
+                "en": "Everything you need"
+              }
+            },
+            {
+              "id": "wt012",
+              "type": "card",
+              "margin": "md",
+              "columns": {
+                "base": "3",
+                "tablet": "2",
+                "mobile": "1"
+              },
+              "cards": [
+                {
+                  "title": {
+                    "id": "Cepat",
+                    "en": "Fast"
+                  },
+                  "text": {
+                    "id": "Halaman terbuka dalam sekejap di semua perangkat.",
+                    "en": "Pages open in an instant on every device."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Mudah",
+                    "en": "Simple"
+                  },
+                  "text": {
+                    "id": "Tim Anda bisa memakainya tanpa pelatihan.",
+                    "en": "Your team can use it without training."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Terhubung",
+                    "en": "Connected"
+                  },
+                  "text": {
+                    "id": "Bekerja dengan alat yang sudah Anda pakai.",
+                    "en": "Works with the tools you already use."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st018",
+      "type": "section",
+      "style": {
+        "background": "muted",
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "ct017",
+          "widgets": [
+            {
+              "id": "wt015",
+              "type": "heading",
+              "text": {
+                "id": "Kata pelanggan kami",
+                "en": "What our customers say"
+              }
+            },
+            {
+              "id": "wt016",
+              "type": "testimonials",
+              "margin": "md",
+              "items": [
+                {
+                  "quote": {
+                    "id": "Kami hemat berjam-jam setiap minggu.",
+                    "en": "We save hours every week."
+                  },
+                  "name": "Rina",
+                  "role": {
+                    "id": "Pemilik toko",
+                    "en": "Shop owner"
+                  }
+                },
+                {
+                  "quote": {
+                    "id": "Paling mudah dari semua yang pernah kami coba.",
+                    "en": "The easiest of everything we have tried."
+                  },
+                  "name": "Andi",
+                  "role": "Startup"
+                },
+                {
+                  "quote": {
+                    "id": "Dukungannya cepat dan ramah.",
+                    "en": "Support is fast and friendly."
+                  },
+                  "name": "Sari",
+                  "role": {
+                    "id": "Manajer pemasaran",
+                    "en": "Marketing manager"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st022",
+      "type": "section",
+      "anchor": "harga",
+      "style": {
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "ct021",
+          "widgets": [
+            {
+              "id": "wt019",
+              "type": "heading",
+              "text": {
+                "id": "Harga yang jelas",
+                "en": "Clear pricing"
+              }
+            },
+            {
+              "id": "wt020",
+              "type": "pricing",
+              "margin": "md",
+              "plans": [
+                {
+                  "name": {
+                    "id": "Dasar",
+                    "en": "Basic"
+                  },
+                  "price": "Rp 0",
+                  "period": {
+                    "id": "/bulan",
+                    "en": "/month"
+                  },
+                  "features": {
+                    "id": "1 pengguna\nFitur inti\nDukungan email",
+                    "en": "1 user\nCore features\nEmail support"
+                  },
+                  "button_label": {
+                    "id": "Mulai",
+                    "en": "Start"
+                  },
+                  "url": "#"
+                },
+                {
+                  "name": "Pro",
+                  "price": "Rp 99.000",
+                  "period": {
+                    "id": "/bulan",
+                    "en": "/month"
+                  },
+                  "features": {
+                    "id": "5 pengguna\nSemua fitur\nDukungan prioritas",
+                    "en": "5 users\nAll features\nPriority support"
+                  },
+                  "button_label": {
+                    "id": "Pilih Pro",
+                    "en": "Choose Pro"
+                  },
+                  "url": "#",
+                  "featured": true,
+                  "badge": {
+                    "id": "Populer",
+                    "en": "Popular"
+                  }
+                },
+                {
+                  "name": {
+                    "id": "Bisnis",
+                    "en": "Business"
+                  },
+                  "price": {
+                    "id": "Hubungi kami",
+                    "en": "Contact us"
+                  },
+                  "features": {
+                    "id": "Pengguna tak terbatas\nPelatihan tim\nKontrak khusus",
+                    "en": "Unlimited users\nTeam training\nCustom contract"
+                  },
+                  "button_label": {
+                    "id": "Hubungi",
+                    "en": "Contact"
+                  },
+                  "url": "#"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st026",
+      "type": "section",
+      "style": {
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "ct025",
+          "widgets": [
+            {
+              "id": "wt023",
+              "type": "heading",
+              "text": {
+                "id": "Pertanyaan umum",
+                "en": "Frequently asked questions"
+              }
+            },
+            {
+              "id": "wt024",
+              "type": "faq",
+              "margin": "md",
+              "schema": true,
+              "items": [
+                {
+                  "question": {
+                    "id": "Apakah ada masa percobaan?",
+                    "en": "Is there a free trial?"
+                  },
+                  "answer": {
+                    "id": "Ya, paket Dasar gratis selamanya.",
+                    "en": "Yes, the Basic plan is free forever."
+                  }
+                },
+                {
+                  "question": {
+                    "id": "Bisakah saya berhenti kapan saja?",
+                    "en": "Can I cancel at any time?"
+                  },
+                  "answer": {
+                    "id": "Bisa, tanpa biaya tambahan.",
+                    "en": "Yes, with no extra fee."
+                  }
+                },
+                {
+                  "question": {
+                    "id": "Bagaimana cara membayar?",
+                    "en": "How do I pay?"
+                  },
+                  "answer": {
+                    "id": "Transfer bank, e-wallet, atau kartu kredit.",
+                    "en": "Bank transfer, e-wallet or credit card."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "st030",
+      "type": "section",
+      "style": {
+        "background": "dark",
+        "text": "center",
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "ct029",
+          "widgets": [
+            {
+              "id": "wt027",
+              "type": "heading",
+              "text": {
+                "id": "Siap mencoba?",
+                "en": "Ready to try it?"
+              }
+            },
+            {
+              "id": "wt028",
+              "type": "button",
+              "margin": "sm",
+              "buttons": [
+                {
+                  "label": {
+                    "id": "Mulai sekarang",
+                    "en": "Start now"
+                  },
+                  "url": "#harga"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

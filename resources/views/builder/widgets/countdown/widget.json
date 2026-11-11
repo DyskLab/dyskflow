@@ -1,0 +1,44 @@
+{
+  "label": "Countdown",
+  "icon": "clock",
+  "group": "content",
+  "description": "Days, hours, minutes and seconds until a date, such as an event or the end of a promotion.",
+  "fields": [
+    {
+      "key": "date",
+      "type": "text",
+      "label": "Date and time",
+      "required": true,
+      "help": "Format: 2026-12-31 19:00, in the site's timezone."
+    },
+    {
+      "key": "labels",
+      "type": "toggle",
+      "label": "Show labels (days, hours…)",
+      "default": true
+    },
+    {
+      "key": "seconds",
+      "type": "toggle",
+      "label": "Show seconds",
+      "default": true
+    },
+    {
+      "key": "variant",
+      "type": "select",
+      "label": "Style",
+      "options": [
+        "boxes",
+        "plain"
+      ],
+      "default": "boxes"
+    },
+    {
+      "key": "ended",
+      "type": "text",
+      "label": "Text when it ends",
+      "translatable": true,
+      "default": ""
+    }
+  ]
+}

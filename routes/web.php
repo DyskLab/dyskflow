@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin;
+use App\Http\Controllers\FormController;
 use App\Http\Controllers\InstallController;
 use App\Http\Controllers\SiteController;
 use App\Http\Middleware\SiteLocale;
@@ -18,6 +19,8 @@ Route::prefix('install')->controller(InstallController::class)->group(function (
 });
 
 /* Language switch */
+// The builder's Form widget. No CSRF token, so public pages stay cookie-free: see App\Support\Forms.
+Route::post('form', [FormController::class, 'submit'])->middleware('throttle:20,1')->name('form.submit');
 Route::post('locale/{locale}', [Admin\AccountController::class, 'locale'])->whereIn('locale', ['en', 'id'])->name('locale');
 
 /* Auth */
@@ -70,6 +73,56 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
         });
     }
 
+    // The visual builder edits the JSON layout of a page (posts.builder), like Elementor, and of a
+    // Theme Builder template (Design > Templates) with the same actions under its own address.
+    $builderRoutes = function () {
+        Route::prefix('{post}/builder')->whereNumber('post')->group(function () {
+            Route::get('/', 'edit')->name('edit');
+            Route::post('start', 'start')->name('start');
+            Route::post('classic', 'classic')->name('classic');
+            Route::get('spec', 'spec')->name('spec');
+            Route::post('draft', 'saveDraft')->middleware('throttle:120,1')->name('draft');
+            Route::post('render', 'render')->middleware('throttle:240,1')->name('render');
+            Route::post('publish', 'publish')->middleware('throttle:30,1')->name('publish');
+            Route::post('upload', 'upload')->middleware(['can:media.manage', 'throttle:30,1'])->name('upload');
+            Route::post('discard', 'discard')->name('discard');
+            Route::get('revisions', 'revisions')->name('revisions');
+            Route::get('revisions/{revision}', 'revision')->whereNumber('revision')->name('revision');
+            Route::post('revisions/{revision}/restore', 'restore')->whereNumber('revision')->name('restore');
+        });
+    };
+    Route::prefix('pages')->name('pages.builder.')->middleware('can:pages.manage')->controller(Admin\BuilderController::class)->group(function () use ($builderRoutes) {
+        Route::get('builder/create', 'createForm')->name('create');
+        Route::post('builder/create', 'store')->name('store');
+        Route::get('builder/starter', 'starter')->name('starter');
+        $builderRoutes();
+    });
+    Route::prefix('design/templates')->name('design.templates.')->middleware('can:appearance.manage')->group(function () use ($builderRoutes) {
+        Route::controller(Admin\TemplateController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('create', 'createForm')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('{template}/conditions', 'conditionsForm')->whereNumber('template')->name('conditions');
+            Route::post('{template}/conditions', 'saveConditions')->whereNumber('template')->name('conditions.save');
+            Route::post('{template}/toggle', 'toggle')->whereNumber('template')->name('toggle');
+            Route::post('{template}/delete', 'destroy')->whereNumber('template')->name('delete');
+        });
+        Route::name('builder.')->controller(Admin\BuilderController::class)->group($builderRoutes);
+    });
+    // Saved blocks: containers kept to be inserted into other layouts. The list is under Design;
+    // the editor's own calls need either permission, since pages and templates both use blocks.
+    Route::prefix('design/blocks')->name('design.blocks.')->group(function () use ($builderRoutes) {
+        Route::controller(Admin\BlockController::class)->group(function () {
+            Route::get('/', 'index')->middleware('can:appearance.manage')->name('index');
+            Route::get('create', 'createForm')->middleware('can:appearance.manage')->name('create');
+            Route::post('create', 'create')->middleware('can:appearance.manage')->name('create.save');
+            Route::post('{block}/delete', 'destroy')->whereNumber('block')->middleware('can:appearance.manage')->name('delete');
+            Route::get('library', 'library')->name('library');
+            Route::post('library', 'store')->name('store');
+        });
+        Route::name('builder.')->middleware('can:appearance.manage')->controller(Admin\BuilderController::class)->group($builderRoutes);
+    });
+
     foreach (['categories' => 'category', 'tags' => 'tag'] as $path => $taxonomy) {
         Route::prefix($path)->name("$path.")->middleware('can:terms.manage')->controller(Admin\TermController::class)->group(function () use ($taxonomy) {
             Route::get('/', 'index')->name('index')->defaults('taxonomy', $taxonomy);
@@ -81,6 +134,12 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
         });
     }
 
+    Route::prefix('forms')->name('forms.')->middleware('can:forms.manage')->controller(Admin\FormSubmissionController::class)->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('export', 'export')->name('export');
+        Route::post('bulk', 'bulk')->name('bulk');
+        Route::get('{submission}', 'show')->whereNumber('submission')->name('show');
+    });
     Route::prefix('comments')->name('comments.')->middleware('can:comments.manage')->controller(Admin\CommentController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('bulk', 'bulk')->name('bulk');
@@ -108,6 +167,33 @@ Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
             Route::post('{id}', 'save')->whereNumber('id')->name('update');
         });
     }
+
+    Route::prefix('design')->name('design.')->middleware('can:appearance.manage')->controller(Admin\FileController::class)->group(function () {
+        Route::get('files', 'index')->name('files.index');
+        Route::get('files/edit', 'edit')->name('files.edit');
+        Route::get('files/custom/{kind}', 'custom')->whereIn('kind', ['css', 'js'])->name('files.custom');
+        Route::post('files/save', 'save')->middleware('throttle:60,1')->name('files.save');
+        Route::get('files/create', 'createForm')->name('files.create');
+        Route::post('files/create', 'store')->name('files.store');
+        Route::get('files/rename', 'renameForm')->name('files.rename');
+        Route::post('files/rename', 'rename')->name('files.rename.save');
+        Route::post('files/delete', 'delete')->name('files.delete');
+        Route::get('files/upload', 'uploadForm')->name('files.upload');
+        Route::post('files/upload', 'upload')->name('files.upload.save');
+        Route::get('files/revisions', 'revisions')->name('files.revisions');
+        Route::get('files/revisions/{id}', 'revision')->whereNumber('id')->name('files.revision');
+        Route::post('files/revisions/{id}/restore', 'restore')->whereNumber('id')->name('files.restore');
+        Route::get('confirm', 'confirmForm')->name('confirm');
+        Route::post('confirm', 'confirm')->middleware('throttle:10,1');
+    });
+
+    Route::prefix('design')->name('design.')->middleware('can:appearance.manage')->controller(Admin\DesignController::class)->group(function () {
+        Route::get('theme', 'theme')->name('theme.index');
+        Route::post('theme/override', 'overrideFile')->name('theme.override');
+        Route::post('theme/bulk', 'themeBulk')->name('theme.bulk');
+        // Landing pages are a folder of the Explorer now; the old address still works.
+        Route::get('landing', fn () => redirect()->route('admin.design.files.index', ['dir' => 'landing'], 301))->name('landing.index');
+    });
 
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('/', [Admin\SettingController::class, 'index'])->name('index');
@@ -161,6 +247,7 @@ Route::controller(SiteController::class)->group(function () {
     Route::get('sitemap.xml', 'sitemap');
     Route::get('robots.txt', 'robots');
     Route::get('_landing/{slug}/{path}', 'landingAsset')->where('path', '.*');
+    Route::get('_theme/{path}', 'themeAsset')->where('path', '.*');
 });
 
 /* Public site: the same pages in each language. In views, link with site_route() to stay in the current language. */

@@ -1,0 +1,95 @@
+{
+  "label": "Image carousel",
+  "icon": "image",
+  "group": "media",
+  "description": "Images sliding sideways, such as client logos or a portfolio.",
+  "fields": [
+    {
+      "key": "images",
+      "type": "repeater",
+      "label": "Images",
+      "min_items": 1,
+      "max_items": 30,
+      "fields": [
+        {
+          "key": "src",
+          "type": "image",
+          "label": "Image",
+          "required": true
+        },
+        {
+          "key": "alt",
+          "type": "text",
+          "label": "Description",
+          "translatable": true
+        },
+        {
+          "key": "caption",
+          "type": "text",
+          "label": "Caption",
+          "translatable": true
+        },
+        {
+          "key": "url",
+          "type": "url",
+          "label": "Link",
+          "translatable": true
+        }
+      ]
+    },
+    {
+      "key": "ratio",
+      "type": "select",
+      "label": "Shape",
+      "options": [
+        "auto",
+        "1:1",
+        "4:3",
+        "16:9",
+        "3:4"
+      ],
+      "default": "4:3"
+    },
+    {
+      "key": "logos",
+      "type": "toggle",
+      "label": "Logos: grey until hovered, not cropped",
+      "default": false
+    },
+    {
+      "key": "per_view",
+      "type": "select",
+      "label": "Visible at once",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "default": "3",
+      "responsive": true
+    },
+    {
+      "key": "autoplay",
+      "type": "number",
+      "label": "Autoplay every (seconds)",
+      "min": 0,
+      "max": 30,
+      "default": 0,
+      "help": "0: only with the arrows. Stops while the visitor hovers or focuses it."
+    },
+    {
+      "key": "arrows",
+      "type": "toggle",
+      "label": "Arrows",
+      "default": true
+    },
+    {
+      "key": "dots",
+      "type": "toggle",
+      "label": "Dots",
+      "default": true
+    }
+  ]
+}

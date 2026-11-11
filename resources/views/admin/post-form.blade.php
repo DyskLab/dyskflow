@@ -30,10 +30,33 @@
                     <input class="input" id="slug" name="slug" value="{{ old('slug', $post->slug) }}" data-slug-from="title" autocomplete="off" spellcheck="false">
                 </div>
 
-                <div class="field">
-                    <span class="label">{{ __('Content') }}</span>
-                    @include('admin.partials.editor', ['value' => $post->content])
-                </div>
+                @if ($post->isBuilder())
+                    {{-- The layout is edited in the builder. The content field is left out, so saving here never touches it. --}}
+                    <div class="card">
+                        <div class="card-content stack-sm">
+                            <div class="row between">
+                                <strong>{{ __('This page is designed with the builder') }}</strong>
+                                @if ($post->builder_draft !== null)<span class="badge badge-warning">{{ __('Unpublished changes') }}</span>@endif
+                            </div>
+                            <p class="muted small">{{ __('Sections, columns and widgets are edited in the builder. The title, address, SEO, publishing and translation stay here.') }}</p>
+                            <div class="row">
+                                <a class="btn" href="{{ route('admin.pages.builder.edit', $post) }}">{{ icon('landing') }} {{ __('Edit with the builder') }}</a>
+                                <a class="btn btn-outline" href="{{ route('admin.pages.builder.revisions', $post) }}">{{ icon('restore') }} {{ __('Revisions') }}</a>
+                                <button class="btn btn-ghost" type="button" data-post-url="{{ route('admin.pages.builder.classic', $post) }}" data-confirm="{{ __('Use the classic editor for this page? The content becomes the text of the published layout, and the layout is kept as a revision.') }}">{{ __('Use the classic editor') }}</button>
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="field">
+                        <div class="row between">
+                            <span class="label">{{ __('Content') }}</span>
+                            @if ($post->exists && $type === 'page')
+                                <button class="btn btn-outline btn-sm" type="button" data-post-url="{{ route('admin.pages.builder.start', $post) }}" data-confirm="{{ __('Design this page with the builder? The current content becomes a text widget you can move and style. Save your changes here first.') }}">{{ icon('landing') }} {{ __('Edit with the builder') }}</button>
+                            @endif
+                        </div>
+                        @include('admin.partials.editor', ['value' => $post->content])
+                    </div>
+                @endif
 
                 <div class="field">
                     <label class="label" for="excerpt">{{ __('Excerpt') }}</label>

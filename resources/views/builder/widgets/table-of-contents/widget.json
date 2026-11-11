@@ -1,0 +1,44 @@
+{
+  "label": "Table of contents",
+  "icon": "ordered",
+  "group": "content",
+  "description": "Links to the headings of the page, built when the page loads.",
+  "fields": [
+    {
+      "key": "title",
+      "type": "text",
+      "label": "Title",
+      "translatable": true,
+      "default": ""
+    },
+    {
+      "key": "levels",
+      "type": "select",
+      "label": "Headings",
+      "options": [
+        "h2",
+        "h2-h3",
+        "h2-h4"
+      ],
+      "default": "h2-h3"
+    },
+    {
+      "key": "numbered",
+      "type": "toggle",
+      "label": "Numbered",
+      "default": false
+    },
+    {
+      "key": "collapsible",
+      "type": "toggle",
+      "label": "Can be folded",
+      "default": true
+    },
+    {
+      "key": "sticky",
+      "type": "toggle",
+      "label": "Stays in view while scrolling",
+      "default": false
+    }
+  ]
+}

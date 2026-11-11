@@ -1,0 +1,254 @@
+{
+  "$schema": "../../docs/builder.schema.json",
+  "template": {
+    "title": "Contact",
+    "description": "A contact form beside your details, opening hours and questions people often ask."
+  },
+  "version": 1,
+  "layout": "site",
+  "sections": [
+    {
+      "id": "sx029",
+      "type": "section",
+      "style": {
+        "padding": {
+          "base": "xl",
+          "mobile": "lg"
+        },
+        "text": "center",
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "cx030",
+          "widgets": [
+            {
+              "id": "wh027",
+              "type": "heading",
+              "text": {
+                "id": "Ada yang bisa kami bantu?",
+                "en": "How can we help?"
+              },
+              "tag": "h1",
+              "size": "xl",
+              "kicker": {
+                "id": "Kontak",
+                "en": "Contact"
+              }
+            },
+            {
+              "id": "wt028",
+              "type": "text",
+              "html": {
+                "id": "<p>Kirim pesan lewat formulir di bawah, atau hubungi kami langsung. Kami membalas dalam satu hari kerja.</p>",
+                "en": "<p>Send a message with the form below, or reach us directly. We reply within one working day.</p>"
+              },
+              "size": "lg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx037",
+      "type": "section",
+      "style": {},
+      "columns": [
+        {
+          "id": "cx038",
+          "width": {
+            "base": 7,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wf031",
+              "type": "form",
+              "name": "Kontak",
+              "fields": [
+                {
+                  "label": {
+                    "id": "Nama",
+                    "en": "Name"
+                  },
+                  "kind": "text",
+                  "required": true,
+                  "width": "half"
+                },
+                {
+                  "label": {
+                    "id": "Email",
+                    "en": "Email"
+                  },
+                  "kind": "email",
+                  "required": true,
+                  "width": "half"
+                },
+                {
+                  "label": {
+                    "id": "Nomor WhatsApp",
+                    "en": "WhatsApp number"
+                  },
+                  "kind": "tel",
+                  "width": "half"
+                },
+                {
+                  "label": {
+                    "id": "Keperluan",
+                    "en": "Topic"
+                  },
+                  "kind": "select",
+                  "width": "half",
+                  "options": {
+                    "id": "Pertanyaan\nPemesanan\nKerja sama\nLainnya",
+                    "en": "Question\nOrder\nPartnership\nOther"
+                  }
+                },
+                {
+                  "label": {
+                    "id": "Pesan",
+                    "en": "Message"
+                  },
+                  "kind": "textarea",
+                  "required": true
+                }
+              ],
+              "consent": {
+                "id": "Dengan mengirim formulir ini, Anda setuju kami menghubungi Anda kembali.",
+                "en": "By sending this form you agree that we may contact you back."
+              }
+            }
+          ]
+        },
+        {
+          "id": "cx039",
+          "width": {
+            "base": 5,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wh032",
+              "type": "heading",
+              "text": {
+                "id": "Hubungi langsung",
+                "en": "Reach us directly"
+              },
+              "tag": "h3",
+              "size": "md"
+            },
+            {
+              "id": "wc033",
+              "type": "contact"
+            },
+            {
+              "id": "wh034",
+              "type": "heading",
+              "text": {
+                "id": "Jam buka",
+                "en": "Opening hours"
+              },
+              "tag": "h3",
+              "size": "md"
+            },
+            {
+              "id": "wp035",
+              "type": "price-list",
+              "items": [
+                {
+                  "title": {
+                    "id": "Senin - Jumat",
+                    "en": "Monday - Friday"
+                  },
+                  "price": "08.00 - 17.00"
+                },
+                {
+                  "title": {
+                    "id": "Sabtu",
+                    "en": "Saturday"
+                  },
+                  "price": "09.00 - 14.00"
+                },
+                {
+                  "title": {
+                    "id": "Minggu",
+                    "en": "Sunday"
+                  },
+                  "price": {
+                    "id": "Tutup",
+                    "en": "Closed"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "ws036",
+              "type": "social-icons",
+              "variant": "circle",
+              "brand_colors": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx042",
+      "type": "section",
+      "style": {
+        "background": "muted",
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "cx043",
+          "widgets": [
+            {
+              "id": "wh040",
+              "type": "heading",
+              "text": {
+                "id": "Pertanyaan umum",
+                "en": "Common questions"
+              }
+            },
+            {
+              "id": "wf041",
+              "type": "faq",
+              "items": [
+                {
+                  "question": {
+                    "id": "Berapa lama Anda membalas pesan?",
+                    "en": "How fast do you reply?"
+                  },
+                  "answer": {
+                    "id": "Biasanya dalam satu hari kerja.",
+                    "en": "Usually within one working day."
+                  }
+                },
+                {
+                  "question": {
+                    "id": "Apakah bisa datang langsung?",
+                    "en": "Can I visit in person?"
+                  },
+                  "answer": {
+                    "id": "Bisa, pada jam buka di atas.",
+                    "en": "Yes, during the opening hours above."
+                  }
+                },
+                {
+                  "question": {
+                    "id": "Apakah ada biaya konsultasi?",
+                    "en": "Is there a fee for a first talk?"
+                  },
+                  "answer": {
+                    "id": "Konsultasi pertama gratis.",
+                    "en": "The first talk is free."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

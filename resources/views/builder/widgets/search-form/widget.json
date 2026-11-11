@@ -1,0 +1,41 @@
+{
+  "label": "Search box",
+  "icon": "search",
+  "group": "site",
+  "description": "A search field for the articles on the site.",
+  "fields": [
+    {
+      "key": "placeholder",
+      "type": "text",
+      "label": "Placeholder",
+      "translatable": true
+    },
+    {
+      "key": "button",
+      "type": "select",
+      "label": "Button",
+      "options": [
+        "icon",
+        "text",
+        "none"
+      ],
+      "default": "icon"
+    },
+    {
+      "key": "button_label",
+      "type": "text",
+      "label": "Button text",
+      "translatable": true
+    },
+    {
+      "key": "size",
+      "type": "select",
+      "label": "Size",
+      "options": [
+        "md",
+        "lg"
+      ],
+      "default": "md"
+    }
+  ]
+}

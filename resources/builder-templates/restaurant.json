@@ -1,0 +1,367 @@
+{
+  "$schema": "../../docs/builder.schema.json",
+  "template": {
+    "title": "Cafe or restaurant",
+    "description": "A menu with prices, opening hours, what guests say and how to order or find you."
+  },
+  "version": 1,
+  "layout": "site",
+  "sections": [
+    {
+      "id": "sx047",
+      "type": "section",
+      "style": {
+        "background": "dark",
+        "padding": {
+          "base": "2xl",
+          "mobile": "xl"
+        },
+        "text": "center",
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "cx048",
+          "widgets": [
+            {
+              "id": "wh044",
+              "type": "heading",
+              "text": {
+                "id": "Kopi enak, suasana hangat.",
+                "en": "Good coffee, warm place."
+              },
+              "tag": "h1",
+              "size": "2xl",
+              "kicker": {
+                "id": "Kafe & resto",
+                "en": "Cafe & kitchen"
+              }
+            },
+            {
+              "id": "wt045",
+              "type": "text",
+              "html": {
+                "id": "<p>Sajikan kalimat singkat tentang tempat Anda: menu andalan, suasana, dan lokasi.</p>",
+                "en": "<p>A short line about your place: signature menu, atmosphere and location.</p>"
+              },
+              "size": "lg"
+            },
+            {
+              "id": "wb046",
+              "type": "button",
+              "buttons": [
+                {
+                  "label": {
+                    "id": "Lihat menu",
+                    "en": "See the menu"
+                  },
+                  "url": "#menu"
+                },
+                {
+                  "label": {
+                    "id": "Pesan lewat WhatsApp",
+                    "en": "Order on WhatsApp"
+                  },
+                  "url": "https://wa.me/",
+                  "variant": "outline"
+                }
+              ],
+              "size": "lg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx050",
+      "type": "section",
+      "style": {},
+      "columns": [
+        {
+          "id": "cx051",
+          "widgets": [
+            {
+              "id": "wi049",
+              "type": "icon-box",
+              "columns": "3",
+              "position": "left",
+              "items": [
+                {
+                  "icon": "clock",
+                  "title": {
+                    "id": "Buka setiap hari",
+                    "en": "Open every day"
+                  },
+                  "text": {
+                    "id": "08.00 - 22.00",
+                    "en": "8 am - 10 pm"
+                  }
+                },
+                {
+                  "icon": "map-pin",
+                  "title": {
+                    "id": "Lokasi",
+                    "en": "Location"
+                  },
+                  "text": {
+                    "id": "Tulis alamat singkat di sini.",
+                    "en": "Write a short address here."
+                  }
+                },
+                {
+                  "icon": "truck",
+                  "title": {
+                    "id": "Antar ke rumah",
+                    "en": "Delivery"
+                  },
+                  "text": {
+                    "id": "Lewat WhatsApp atau aplikasi ojek online.",
+                    "en": "By WhatsApp or delivery apps."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx053",
+      "type": "section",
+      "anchor": "menu",
+      "style": {
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "cx054",
+          "widgets": [
+            {
+              "id": "wh052",
+              "type": "heading",
+              "text": {
+                "id": "Menu",
+                "en": "Menu"
+              },
+              "kicker": {
+                "id": "Pilihan kami",
+                "en": "Our picks"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx059",
+      "type": "section",
+      "style": {},
+      "columns": [
+        {
+          "id": "cx060",
+          "width": {
+            "base": 6,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wh055",
+              "type": "heading",
+              "text": {
+                "id": "Minuman",
+                "en": "Drinks"
+              },
+              "tag": "h3",
+              "size": "md"
+            },
+            {
+              "id": "wp056",
+              "type": "price-list",
+              "items": [
+                {
+                  "title": {
+                    "id": "Kopi susu",
+                    "en": "Iced milk coffee"
+                  },
+                  "price": "Rp 18.000",
+                  "description": {
+                    "id": "Espresso, susu segar, gula aren.",
+                    "en": "Espresso, fresh milk, palm sugar."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Americano",
+                    "en": "Americano"
+                  },
+                  "price": "Rp 15.000"
+                },
+                {
+                  "title": {
+                    "id": "Teh tarik",
+                    "en": "Pulled tea"
+                  },
+                  "price": "Rp 15.000"
+                },
+                {
+                  "title": {
+                    "id": "Cokelat panas",
+                    "en": "Hot chocolate"
+                  },
+                  "price": "Rp 20.000"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cx061",
+          "width": {
+            "base": 6,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wh057",
+              "type": "heading",
+              "text": {
+                "id": "Makanan",
+                "en": "Food"
+              },
+              "tag": "h3",
+              "size": "md"
+            },
+            {
+              "id": "wp058",
+              "type": "price-list",
+              "items": [
+                {
+                  "title": {
+                    "id": "Nasi goreng spesial",
+                    "en": "Special fried rice"
+                  },
+                  "price": "Rp 28.000",
+                  "description": {
+                    "id": "Dengan telur dan kerupuk.",
+                    "en": "With egg and crackers."
+                  }
+                },
+                {
+                  "title": {
+                    "id": "Roti bakar",
+                    "en": "Toast"
+                  },
+                  "price": "Rp 18.000"
+                },
+                {
+                  "title": {
+                    "id": "Kentang goreng",
+                    "en": "French fries"
+                  },
+                  "price": "Rp 16.000"
+                },
+                {
+                  "title": {
+                    "id": "Pisang goreng keju",
+                    "en": "Banana fritters with cheese"
+                  },
+                  "price": "Rp 17.000"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx065",
+      "type": "section",
+      "style": {
+        "background": "muted",
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "cx066",
+          "widgets": [
+            {
+              "id": "wh062",
+              "type": "heading",
+              "text": {
+                "id": "Kata tamu kami",
+                "en": "What our guests say"
+              }
+            },
+            {
+              "id": "ws063",
+              "type": "star-rating",
+              "rating": "4.5",
+              "label": {
+                "id": "dari 300+ ulasan",
+                "en": "from 300+ reviews"
+              }
+            },
+            {
+              "id": "wr064",
+              "type": "reviews",
+              "per_view": "3",
+              "items": [
+                {
+                  "text": {
+                    "id": "Kopi susunya juara, tempatnya nyaman untuk kerja.",
+                    "en": "Great iced coffee, a nice place to work."
+                  },
+                  "name": "Rina",
+                  "rating": "5"
+                },
+                {
+                  "text": {
+                    "id": "Harga terjangkau, porsi pas.",
+                    "en": "Fair prices, good portions."
+                  },
+                  "name": "Dimas",
+                  "rating": "5"
+                },
+                {
+                  "text": {
+                    "id": "Pelayannya ramah sekali.",
+                    "en": "Very friendly staff."
+                  },
+                  "name": "Wulan",
+                  "rating": "4"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx069",
+      "type": "section",
+      "style": {
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "cx070",
+          "widgets": [
+            {
+              "id": "wh067",
+              "type": "heading",
+              "text": {
+                "id": "Mampir atau pesan sekarang",
+                "en": "Drop by or order now"
+              }
+            },
+            {
+              "id": "wc068",
+              "type": "contact",
+              "layout": "cards"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

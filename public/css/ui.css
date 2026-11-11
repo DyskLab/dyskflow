@@ -26,6 +26,11 @@
   --sidebar: oklch(.985 0 0);
   --success: oklch(.527 .154 150.069);
   --warning: oklch(.555 .163 48.998);
+  /* Second and third brand colors, set in Settings > Colors & fonts. */
+  --brand-secondary: oklch(.42 .1 255);
+  --brand-secondary-foreground: oklch(1 0 0);
+  --brand-accent: oklch(.8 .16 85);
+  --brand-accent-foreground: oklch(.145 0 0);
   color-scheme: light;
 }
 .dark {
@@ -139,6 +144,30 @@ input[type="checkbox"].checkbox:checked::after {
 input[type="checkbox"].checkbox:indeterminate::after { content: ""; width: 8px; height: 2px; background: var(--primary-foreground); }
 .check-row { display: flex; align-items: center; gap: 8px; cursor: pointer; }
 .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+/* Checkbox lists in forms: options as bordered rows, in groups with "Select all", a count and a filter. */
+.check-panel { display: grid; gap: 14px; }
+.check-panel-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.check-filter { flex: 1 1 180px; min-height: 34px; }
+.check-count { margin-left: auto; white-space: nowrap; }
+.check-group { display: grid; gap: 8px; }
+.check-group-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted-foreground); }
+.check-group-all { appearance: none; border: 0; background: none; padding: 2px 4px; border-radius: 4px; font: inherit; font-size: 12px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--primary); cursor: pointer; }
+.check-group-all:hover { text-decoration: underline; }
+.check-group-all:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
+.check-options { display: grid; gap: 6px; }
+.check-option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: border-color .12s, background .12s; }
+.check-option:hover { background: var(--muted); }
+.check-option .checkbox { margin-top: 2px; }
+.check-option:has(.checkbox:checked) { border-color: color-mix(in oklab, var(--primary) 55%, var(--border)); background: color-mix(in oklab, var(--primary) 7%, transparent); }
+.check-option:has(.checkbox:focus-visible) { outline: 2px solid var(--ring); outline-offset: 1px; }
+.check-option-text { display: grid; gap: 2px; min-width: 0; }
+.check-option-label { font-size: 14px; font-weight: 500; line-height: 1.35; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.check-option-desc { font-size: 12.5px; line-height: 1.4; color: var(--muted-foreground); }
+/* Short options without groups, such as file types: a grid of small chips. */
+.check-panel-compact .check-options { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
+.check-panel-compact .check-option { padding: 7px 10px; align-items: center; }
+.check-panel-compact .check-option .checkbox { margin-top: 0; }
+.check-panel-compact .check-option-label { font-size: 13px; }
 .check-list { display: grid; gap: 8px; max-height: 200px; overflow: auto; padding: 2px; }
 .switch { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; }
 .switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
@@ -210,3 +239,9 @@ input[type="checkbox"].checkbox:indeterminate::after { content: ""; width: 8px; 
 .toast { padding: 12px 14px; background: var(--popover); color: var(--foreground); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: 0 8px 24px rgb(0 0 0 / .12); }
 .toast-error { color: var(--destructive); }
 
+
+/* Color setting: swatch picker, hex code and a reset button. */
+.color-field { display: flex; align-items: center; gap: 8px; }
+.color-field input[type="color"] { flex-shrink: 0; width: 40px; height: 36px; padding: 2px; border: 1px solid var(--input); border-radius: calc(var(--radius) - 2px); background: transparent; cursor: pointer; }
+.color-field input[type="color"][data-empty] { opacity: .45; }
+.color-field .input { max-width: 140px; text-transform: lowercase; }

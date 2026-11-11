@@ -20,10 +20,12 @@ class SearchController extends Controller
         $user = $request->user();
 
         $menus = collect(AdminMenu::items())
-            ->map(fn ($item) => ['label' => $item['label'], 'url' => $item['url']])
+            ->map(fn ($item) => ['label' => $item['label'], 'url' => $item['url'], 'keywords' => implode(' ', $item['keywords'] ?? [])])
             ->push(['label' => __('Settings'), 'url' => route('admin.settings.index')])
             ->concat(collect(AdminMenu::settingsCards())->map(fn ($card) => ['label' => $card['title'], 'url' => $card['url'], 'hint' => __('Settings')]))
-            ->when($term !== '', fn ($items) => $items->filter(fn ($item) => Str::contains($item['label'], $term, true)))
+            // Keywords find a screen by an older or other name, such as "Theme" for the Explorer.
+            ->when($term !== '', fn ($items) => $items->filter(fn ($item) => Str::contains($item['label'].' '.($item['keywords'] ?? ''), $term, true)))
+            ->map(fn ($item) => array_diff_key($item, ['keywords' => 1]))
             ->values();
 
         $groups = [['label' => __('Menu'), 'items' => $menus->all()]];

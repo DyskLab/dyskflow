@@ -1,0 +1,9 @@
+{
+  "label": "Spacer",
+  "icon": "spacer",
+  "group": "layout",
+  "description": "Empty space.",
+  "fields": [
+    { "key": "size", "type": "select", "label": "Height", "options": ["xs", "sm", "md", "lg", "xl", "2xl"], "default": "md", "responsive": true }
+  ]
+}

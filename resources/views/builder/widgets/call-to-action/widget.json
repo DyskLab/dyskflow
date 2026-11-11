@@ -1,0 +1,85 @@
+{
+  "label": "Call to action",
+  "icon": "card",
+  "group": "content",
+  "description": "An image with a title, text and buttons, to invite visitors to act.",
+  "fields": [
+    {
+      "key": "image",
+      "type": "image",
+      "label": "Image"
+    },
+    {
+      "key": "layout",
+      "type": "select",
+      "label": "Layout",
+      "options": [
+        "cover",
+        "left",
+        "right",
+        "top"
+      ],
+      "default": "cover"
+    },
+    {
+      "key": "kicker",
+      "type": "text",
+      "label": "Small text above",
+      "translatable": true
+    },
+    {
+      "key": "title",
+      "type": "text",
+      "label": "Title",
+      "translatable": true,
+      "required": true
+    },
+    {
+      "key": "text",
+      "type": "textarea",
+      "label": "Text",
+      "translatable": true
+    },
+    {
+      "key": "button_label",
+      "type": "text",
+      "label": "Button label",
+      "translatable": true
+    },
+    {
+      "key": "url",
+      "type": "url",
+      "label": "Button link",
+      "translatable": true
+    },
+    {
+      "key": "button2_label",
+      "type": "text",
+      "label": "Second button label",
+      "translatable": true
+    },
+    {
+      "key": "url2",
+      "type": "url",
+      "label": "Second button link",
+      "translatable": true
+    },
+    {
+      "key": "ribbon",
+      "type": "text",
+      "label": "Ribbon",
+      "translatable": true,
+      "help": "A small label in the corner, such as New or -20%."
+    },
+    {
+      "key": "align",
+      "type": "select",
+      "label": "Text alignment",
+      "options": [
+        "start",
+        "center"
+      ],
+      "default": "center"
+    }
+  ]
+}

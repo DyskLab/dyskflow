@@ -9,10 +9,13 @@ use App\Models\PostTranslation;
 use App\Models\Setting;
 use App\Models\Term;
 use App\Models\TermTranslation;
+use App\Support\Builder\Builder;
+use App\Support\Builder\Validator;
 use App\Support\HtmlSanitizer;
 use App\Support\Locales;
 use App\Support\SettingsSchema;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Throwable;
@@ -41,6 +44,7 @@ class ToolController extends Controller
             $data['posts'] = Post::whereIn('type', $types)->with(['terms:id,taxonomy,slug', 'translations'])->get()->map(function ($post) {
                 return collect($post->only(self::POST_FIELDS))->merge([
                     'published_at' => $post->published_at?->toIso8601String(),
+                    'builder' => $post->isBuilder() ? $post->builderSpec() : null,
                     'terms' => $post->terms->map(fn ($t) => ['taxonomy' => $t->taxonomy, 'slug' => $t->slug])->all(),
                     'translations' => $post->translations->map(fn ($t) => $t->only(['locale', 'status', ...Post::TRANSLATED]))->all(),
                 ])->all();
@@ -121,10 +125,12 @@ class ToolController extends Controller
             $values['slug'] = Str::slug($item['slug']);
             $values['content'] = HtmlSanitizer::clean($item['content'] ?? '');
             $values['status'] = ($item['status'] ?? '') === 'published' ? 'published' : 'draft';
-            $values['published_at'] = ! empty($item['published_at']) ? \Illuminate\Support\Carbon::parse($item['published_at'])->utc() : null;
+            $values['published_at'] = ! empty($item['published_at']) ? Carbon::parse($item['published_at'])->utc() : null;
             // Trashed posts still hold their slug. Importing one brings it back.
             $post = Post::withTrashed()->firstOrNew(['type' => $item['type'], 'slug' => $values['slug']]);
             $post->fill($values);
+            $post->builder = $item['type'] === 'page' ? self::importLayout($item['builder'] ?? null) : null;
+            $post->builder_draft = null;
             $post->deleted_at = null;
             $post->user_id ??= auth()->id();
             $post->save();
@@ -176,5 +182,21 @@ class ToolController extends Controller
             ->flatMap(fn ($section) => collect($section['fields'])->pluck('name'))
             ->reject(fn ($name) => in_array($name, ['mail_password', 'site_url', 'update_repo', 'home_page_id'], true))
             ->values()->all();
+    }
+
+    /** A builder layout from an export, or null (the classic content) when it has errors or adds code the user may not add. */
+    private static function importLayout(mixed $spec): ?string
+    {
+        if (! is_array($spec)) {
+            return null;
+        }
+        $result = Validator::check($spec);
+        try {
+            Builder::guardCode(null, $result['spec']);
+        } catch (Throwable) {
+            return null;
+        }
+
+        return $result['errors'] ? null : Builder::compact($result['spec']);
     }
 }

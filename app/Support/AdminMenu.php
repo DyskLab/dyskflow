@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Comment;
+use App\Models\FormSubmission;
 
 /** The sidebar and settings cards. The global search reads the same lists, so it never shows more than the user can open. */
 class AdminMenu
@@ -14,6 +15,10 @@ class AdminMenu
         $content = __('Content');
         $taxonomy = __('Taxonomy');
         $access = __('Access');
+        $design = __('Design');
+        // Code tools (landing pages, theme overrides, files) are for developers: hidden until
+        // Settings > General turns them on, so the sidebar shows only the visual tools by default.
+        $developer = setting('developer_menu') === '1' ? __('Developer') : null;
 
         return apply_filters('cms.admin_menu', array_values(array_filter([
             ['label' => __('Dashboard'), 'icon' => 'dashboard', 'url' => route('admin.dashboard'), 'match' => 'admin', 'group' => ''],
@@ -21,8 +26,14 @@ class AdminMenu
             $user->can('pages.manage') ? ['label' => __('Pages'), 'icon' => 'page', 'url' => route('admin.pages.index'), 'match' => 'admin/pages*', 'group' => $content] : null,
             $user->can('media.manage') ? ['label' => __('Media'), 'icon' => 'image', 'url' => route('admin.media.index'), 'match' => 'admin/media*', 'group' => $content] : null,
             $user->can('comments.manage') ? ['label' => __('Comments'), 'icon' => 'comment', 'url' => route('admin.comments.index'), 'match' => 'admin/comments*', 'group' => $content, 'count' => Comment::where('status', 'pending')->count()] : null,
+            $user->can('forms.manage') ? ['label' => __('Forms'), 'icon' => 'mail', 'url' => route('admin.forms.index'), 'match' => 'admin/forms*', 'group' => $content, 'count' => rescue(fn () => FormSubmission::where('is_read', false)->count(), 0, false)] : null,
             $user->can('terms.manage') ? ['label' => __('Categories'), 'icon' => 'folder', 'url' => route('admin.categories.index'), 'match' => 'admin/categories*', 'group' => $taxonomy] : null,
             $user->can('terms.manage') ? ['label' => __('Tags'), 'icon' => 'tag', 'url' => route('admin.tags.index'), 'match' => 'admin/tags*', 'group' => $taxonomy] : null,
+            $user->can('appearance.manage') ? ['label' => __('Templates'), 'icon' => 'panel', 'url' => route('admin.design.templates.index'), 'match' => 'admin/design/templates*', 'group' => $design] : null,
+            $user->can('appearance.manage') ? ['label' => __('Blocks'), 'icon' => 'copy', 'url' => route('admin.design.blocks.index'), 'match' => 'admin/design/blocks*', 'group' => $design] : null,
+            $user->can('settings.manage') ? ['label' => __('Colors & fonts'), 'icon' => 'palette', 'url' => route('admin.settings.edit', 'design'), 'match' => 'admin/settings/design', 'group' => $design, 'keywords' => [__('Global colors'), __('Fonts'), __('Typography'), __('Brand')]] : null,
+            // One place for all code: landing pages, the theme and plugins, with custom CSS and JavaScript.
+            $developer && $user->can('appearance.manage') ? ['label' => __('Explorer'), 'icon' => 'folder', 'url' => route('admin.design.files.index'), 'match' => ['admin/design/files*', 'admin/design/theme*', 'admin/design/landing*', 'admin/design/confirm*'], 'group' => $developer, 'keywords' => [__('Landing pages'), __('Theme'), __('Files'), __('Custom CSS'), __('Custom JavaScript')]] : null,
             $user->can('users.manage') ? ['label' => __('Users'), 'icon' => 'users', 'url' => route('admin.users.index'), 'match' => 'admin/users*', 'group' => $access] : null,
             $user->can('users.manage') ? ['label' => __('Roles'), 'icon' => 'shield', 'url' => route('admin.roles.index'), 'match' => 'admin/roles*', 'group' => $access] : null,
         ])));

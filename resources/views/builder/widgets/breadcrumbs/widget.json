@@ -1,0 +1,26 @@
+{
+  "label": "Breadcrumbs",
+  "icon": "right",
+  "group": "template",
+  "description": "Home > Category > Article, with structured data for search engines.",
+  "fields": [
+    {
+      "key": "home",
+      "type": "text",
+      "label": "Name of the first link",
+      "translatable": true
+    },
+    {
+      "key": "current",
+      "type": "toggle",
+      "label": "Show the current page",
+      "default": true
+    },
+    {
+      "key": "schema",
+      "type": "toggle",
+      "label": "Add structured data for search engines",
+      "default": true
+    }
+  ]
+}

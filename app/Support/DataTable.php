@@ -13,7 +13,8 @@ use Illuminate\Support\HtmlString;
  * pagination, sorting and filtering. Works with a query or a collection.
  *
  * Config: source, columns[key,label,sort,render,class], search[], filters[key=>[label,options,apply]],
- * default_sort[key,dir], bulk_url, bulk[action=>[label,danger]], row_actions, row_id, empty.
+ * default_sort[key,dir], bulk_url, bulk[action=>[label,danger]], row_actions, row_id, empty,
+ * grid (fn ($row) => HtmlString: the tile of a row in gallery view), default_view (list|grid).
  */
 class DataTable
 {
@@ -25,9 +26,27 @@ class DataTable
 
     public string $dir = 'asc';
 
+    /** "list" (the table) or "grid" (tiles, for tables with a "grid" renderer such as Media). */
+    public string $view = 'list';
+
     public function __construct(public array $config)
     {
+        if (isset($config['grid'])) {
+            $requested = request()->query('view');
+            $this->view = in_array($requested, ['list', 'grid'], true) ? $requested : (($config['default_view'] ?? 'list') === 'grid' ? 'grid' : 'list');
+        }
         $this->rows = $this->build();
+    }
+
+    public function viewUrl(string $view): string
+    {
+        return request()->fullUrlWithQuery(['view' => $view]);
+    }
+
+    /** @return list<array> the columns that can be sorted, for the sort menu of the gallery view */
+    public function sortable(): array
+    {
+        return array_values(array_filter($this->config['columns'], fn ($c) => ! empty($c['sort'])));
     }
 
     public static function make(array $config): self

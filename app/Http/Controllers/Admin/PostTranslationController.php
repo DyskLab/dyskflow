@@ -55,7 +55,8 @@ class PostTranslationController extends Controller
             'title' => $data['title'],
             'slug' => $slug,
             'status' => $data['status'],
-            'content' => HtmlSanitizer::clean($data['content'] ?? ''),
+            // A builder page has its text in each language inside the layout: content is the text of the published layout.
+            'content' => $post->isBuilder() ? BuilderController::text($post->builderSpec() ?? [], $locale) : HtmlSanitizer::clean($data['content'] ?? ''),
             'excerpt' => $data['excerpt'] ?? null,
             'meta_title' => $data['meta_title'] ?? null,
             'meta_description' => $data['meta_description'] ?? null,

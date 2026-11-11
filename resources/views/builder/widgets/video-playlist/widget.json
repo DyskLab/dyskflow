@@ -1,0 +1,58 @@
+{
+  "label": "Video playlist",
+  "icon": "video",
+  "group": "media",
+  "description": "Several YouTube or Vimeo videos with a list to pick from. Nothing loads from YouTube until the visitor presses play.",
+  "fields": [
+    {
+      "key": "items",
+      "type": "repeater",
+      "label": "Videos",
+      "min_items": 1,
+      "max_items": 30,
+      "fields": [
+        {
+          "key": "title",
+          "type": "text",
+          "label": "Title",
+          "translatable": true,
+          "required": true
+        },
+        {
+          "key": "url",
+          "type": "url",
+          "label": "YouTube or Vimeo link",
+          "required": true
+        },
+        {
+          "key": "duration",
+          "type": "text",
+          "label": "Duration",
+          "help": "For example 12:30"
+        },
+        {
+          "key": "thumb",
+          "type": "image",
+          "label": "Thumbnail",
+          "help": "Empty: the YouTube image."
+        }
+      ]
+    },
+    {
+      "key": "layout",
+      "type": "select",
+      "label": "List position",
+      "options": [
+        "side",
+        "below"
+      ],
+      "default": "side"
+    },
+    {
+      "key": "title",
+      "type": "text",
+      "label": "Playlist title",
+      "translatable": true
+    }
+  ]
+}

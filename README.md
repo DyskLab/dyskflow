@@ -45,6 +45,7 @@ The admin is available in English and Indonesian. These screenshots show Indones
 
 **Content**
 - Articles and pages, categories, tags, media, and moderated comments
+- Uploaded JPG and PNG photos can be converted to WebP automatically (Settings > Media)
 - A trash for articles, pages, and comments, so deleted items can be restored
 - View counts for articles and pages, with no cookies
 - Two languages (Indonesian and English) with per-language URLs such as `/en/blog/slug`. A page with no translation has no URL in that language
@@ -61,6 +62,16 @@ The admin is available in English and Indonesian. These screenshots show Indones
 - A Privacy Guide and Site Health
 - Dark mode
 
+**Design**
+- **Page builder**: design pages visually from sections, columns, and widgets, like Elementor, with a live preview, two languages, drafts, revisions, and Publish. The layout is JSON rendered on the server, so search engines get plain HTML, and AI tools read and write it with `builder:export` and `builder:import` ([docs/BUILDER.md](docs/BUILDER.md))
+- **Widgets**: 65 widgets, written for DyskFlow: headings, text, images, buttons, icon boxes, tabs, accordions, counters, progress bars, countdowns, carousels, reviews, price lists, flip boxes, hotspots, video playlists, code blocks, share and social buttons, a table of contents, and more. A search box and folding groups keep the list tidy
+- **Forms**: contact, sign-up, or order forms built in the page builder. Messages go to **Content > Forms** (with CSV export) and to your email. No cookies, a honeypot, and rate limits against spam
+- **Starter templates**: about us, contact, cafe or restaurant, coming soon, event, freelancer portfolio, product, and service, each with a live preview
+- **Theme Builder and Blocks**: design the article, list, header, and footer templates, and save parts of a page to reuse
+- **Colors & fonts**: brand colors, Google Fonts (downloaded to the site, so visitors never connect to Google), text size, and corner radius for the whole site
+- **Developer > Explorer**: browse, edit, create, rename, delete, and upload files in `theme/`, `landing/`, and `plugins/`, with a code editor (CodeMirror, no CDN), revisions, and conflict detection. Copy a file of the default theme into `theme/` to change it; the copy survives updates, and Reset brings the original back. Custom CSS and JavaScript for every page
+- PHP, Blade, and SVG need the *Edit code* permission and a fresh password or TOTP check. See [docs/DESIGN-TOOLS.md](docs/DESIGN-TOOLS.md)
+
 **Development**
 - [Landing pages](landing/README.md) as Blade code in the `landing/` folder. The homepage is chosen in Settings, from a landing page, the article list, or a regular page
 - [Plugins](plugins/README.md) in the `plugins/` folder, with hooks and automatic settings pages
@@ -72,7 +83,7 @@ Open **Settings > Update > Check for updates > Update now**. A notification appe
 - A database backup is made first.
 - The code comes from the latest release, and `vendor` is replaced only when `composer.lock` changed.
 - Database migrations run.
-- `.env`, `storage`, `landing`, `plugins`, `public/uploads`, and `cms.json` are never overwritten.
+- `.env`, `storage`, `landing`, `plugins`, `theme`, `public/uploads`, and `cms.json` are never overwritten.
 
 ## Sample data
 

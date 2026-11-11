@@ -1,0 +1,74 @@
+{
+  "label": "Hotspots",
+  "icon": "image",
+  "group": "media",
+  "description": "An image with numbered points that show a note when pressed, such as the parts of a product.",
+  "fields": [
+    {
+      "key": "image",
+      "type": "image",
+      "label": "Image",
+      "required": true
+    },
+    {
+      "key": "alt",
+      "type": "text",
+      "label": "Image description",
+      "translatable": true
+    },
+    {
+      "key": "points",
+      "type": "repeater",
+      "label": "Points",
+      "max_items": 20,
+      "fields": [
+        {
+          "key": "x",
+          "type": "number",
+          "label": "From the left (%)",
+          "min": 0,
+          "max": 100,
+          "default": 50
+        },
+        {
+          "key": "y",
+          "type": "number",
+          "label": "From the top (%)",
+          "min": 0,
+          "max": 100,
+          "default": 50
+        },
+        {
+          "key": "title",
+          "type": "text",
+          "label": "Title",
+          "translatable": true,
+          "required": true
+        },
+        {
+          "key": "text",
+          "type": "textarea",
+          "label": "Text",
+          "translatable": true
+        },
+        {
+          "key": "url",
+          "type": "url",
+          "label": "Link",
+          "translatable": true
+        }
+      ]
+    },
+    {
+      "key": "marker",
+      "type": "select",
+      "label": "Marker",
+      "options": [
+        "number",
+        "plus",
+        "dot"
+      ],
+      "default": "plus"
+    }
+  ]
+}

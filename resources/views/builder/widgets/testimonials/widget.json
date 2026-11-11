@@ -1,0 +1,15 @@
+{
+  "label": "Testimonials",
+  "icon": "comment",
+  "group": "content",
+  "description": "Quotes from customers, with their name, role and photo.",
+  "fields": [
+    { "key": "columns", "type": "select", "label": "Per row", "options": ["1", "2", "3"], "default": "3", "responsive": true },
+    { "key": "items", "type": "repeater", "label": "Quotes", "min_items": 1, "max_items": 12, "fields": [
+      { "key": "quote", "type": "textarea", "label": "Quote", "translatable": true, "required": true },
+      { "key": "name", "type": "text", "label": "Name", "required": true },
+      { "key": "role", "type": "text", "label": "Role or company", "translatable": true },
+      { "key": "image", "type": "image", "label": "Photo" }
+    ] }
+  ]
+}

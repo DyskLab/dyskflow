@@ -27,6 +27,11 @@ class Breadcrumbs
             $prefix = 'admin.settings.';
         }
 
+        if (($parts[0] ?? '') === 'design') {
+            array_shift($parts);
+            $prefix = 'admin.design.';
+        }
+
         // A screen below a list links back to that list.
         $section = $parts[0] ?? '';
         $label = self::sections()[$section] ?? null;
@@ -46,6 +51,7 @@ class Breadcrumbs
             'pages' => __('Pages'),
             'media' => __('Media'),
             'comments' => __('Comments'),
+            'forms' => __('Forms'),
             'categories' => __('Categories'),
             'tags' => __('Tags'),
             'users' => __('Users'),
@@ -58,6 +64,12 @@ class Breadcrumbs
             'notifications' => __('Notifications'),
             'privacy' => __('Privacy guide'),
             'health' => __('Site health'),
+            'landing' => __('Landing pages'),
+            'theme' => __('Theme'),
+            'files' => __('Explorer'),
+            'templates' => __('Templates'),
+            'blocks' => __('Blocks'),
+            'conditions' => __('Conditions'),
         ];
     }
 }

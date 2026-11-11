@@ -1,0 +1,42 @@
+{
+  "label": "Site title",
+  "icon": "heading",
+  "group": "site",
+  "description": "The site title and tagline from Settings > General.",
+  "fields": [
+    {
+      "key": "tag",
+      "type": "select",
+      "label": "Element",
+      "options": [
+        "p",
+        "h1",
+        "div"
+      ],
+      "default": "p"
+    },
+    {
+      "key": "tagline",
+      "type": "toggle",
+      "label": "Show the tagline",
+      "default": false
+    },
+    {
+      "key": "link",
+      "type": "toggle",
+      "label": "Link to the homepage",
+      "default": true
+    },
+    {
+      "key": "size",
+      "type": "select",
+      "label": "Size",
+      "options": [
+        "sm",
+        "md",
+        "lg"
+      ],
+      "default": "sm"
+    }
+  ]
+}

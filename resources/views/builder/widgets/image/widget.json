@@ -1,0 +1,17 @@
+{
+  "label": "Image",
+  "icon": "image",
+  "group": "basic",
+  "description": "An image from the media library (uploads/) or from an https address.",
+  "fields": [
+    { "key": "src", "type": "image", "label": "Image", "required": true },
+    { "key": "alt", "type": "text", "label": "Description for screen readers", "translatable": true },
+    { "key": "caption", "type": "text", "label": "Caption", "translatable": true },
+    { "key": "url", "type": "url", "label": "Link", "translatable": true },
+    { "key": "ratio", "type": "select", "label": "Shape", "options": ["auto", "1:1", "4:3", "16:9", "3:4"], "default": "auto" },
+    { "key": "rounded", "type": "toggle", "label": "Rounded corners", "default": true },
+    { "key": "width", "type": "number", "label": "Width in pixels", "min": 0, "max": 4000, "default": 0 },
+    { "key": "height", "type": "number", "label": "Height in pixels", "min": 0, "max": 4000, "default": 0 },
+    { "key": "lazy", "type": "toggle", "label": "Load when scrolled into view", "default": true }
+  ]
+}

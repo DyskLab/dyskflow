@@ -1,0 +1,396 @@
+{
+  "$schema": "../../docs/builder.schema.json",
+  "template": {
+    "title": "Freelancer portfolio",
+    "description": "For a designer, developer or photographer: what you do, your skills, your work and a way to hire you."
+  },
+  "version": 1,
+  "layout": "site",
+  "sections": [
+    {
+      "id": "sx082",
+      "type": "section",
+      "style": {
+        "padding": {
+          "base": "xl",
+          "mobile": "lg"
+        },
+        "text": "center",
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "cx083",
+          "widgets": [
+            {
+              "id": "wa079",
+              "type": "animated-headline",
+              "tag": "h1",
+              "size": "2xl",
+              "before": {
+                "id": "Halo, saya membantu Anda",
+                "en": "Hi, I help you"
+              },
+              "words": {
+                "id": "merancang\nmembangun\nmengembangkan",
+                "en": "design\nbuild\ngrow"
+              },
+              "after": {
+                "id": "produk digital.",
+                "en": "digital products."
+              }
+            },
+            {
+              "id": "wt080",
+              "type": "text",
+              "html": {
+                "id": "<p>Perkenalkan diri Anda dalam satu atau dua kalimat: keahlian, pengalaman, dan klien yang biasa Anda bantu.</p>",
+                "en": "<p>Introduce yourself in one or two lines: your skills, experience and the clients you usually help.</p>"
+              },
+              "size": "lg"
+            },
+            {
+              "id": "wb081",
+              "type": "button",
+              "buttons": [
+                {
+                  "label": {
+                    "id": "Lihat karya",
+                    "en": "See my work"
+                  },
+                  "url": "#karya"
+                },
+                {
+                  "label": {
+                    "id": "Ajak kerja sama",
+                    "en": "Hire me"
+                  },
+                  "url": "#kontak",
+                  "variant": "outline"
+                }
+              ],
+              "size": "lg"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx086",
+      "type": "section",
+      "style": {
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "cx087",
+          "widgets": [
+            {
+              "id": "wh084",
+              "type": "heading",
+              "text": {
+                "id": "Yang saya kerjakan",
+                "en": "What I do"
+              }
+            },
+            {
+              "id": "wi085",
+              "type": "icon-box",
+              "columns": "3",
+              "variant": "outline",
+              "items": [
+                {
+                  "icon": "target",
+                  "title": {
+                    "id": "Desain UI/UX",
+                    "en": "UI/UX design"
+                  },
+                  "text": {
+                    "id": "Tampilan yang mudah dipakai dan enak dilihat.",
+                    "en": "Interfaces that are easy to use and pleasant to look at."
+                  }
+                },
+                {
+                  "icon": "code",
+                  "title": {
+                    "id": "Pengembangan web",
+                    "en": "Web development"
+                  },
+                  "text": {
+                    "id": "Situs cepat yang mudah Anda kelola sendiri.",
+                    "en": "Fast sites you can manage yourself."
+                  }
+                },
+                {
+                  "icon": "rocket",
+                  "title": {
+                    "id": "Strategi digital",
+                    "en": "Digital strategy"
+                  },
+                  "text": {
+                    "id": "Rencana yang jelas untuk tumbuh secara online.",
+                    "en": "A clear plan to grow online."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx091",
+      "type": "section",
+      "style": {
+        "background": "muted",
+        "valign": "center"
+      },
+      "columns": [
+        {
+          "id": "cx092",
+          "width": {
+            "base": 6,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wh088",
+              "type": "heading",
+              "text": {
+                "id": "Keahlian",
+                "en": "Skills"
+              }
+            },
+            {
+              "id": "wt089",
+              "type": "text",
+              "html": {
+                "id": "<p>Sesuaikan daftar ini dengan keahlian Anda.</p>",
+                "en": "<p>Adjust this list to your own skills.</p>"
+              }
+            }
+          ]
+        },
+        {
+          "id": "cx093",
+          "width": {
+            "base": 6,
+            "tablet": 12
+          },
+          "widgets": [
+            {
+              "id": "wp090",
+              "type": "progress",
+              "items": [
+                {
+                  "label": {
+                    "id": "Desain",
+                    "en": "Design"
+                  },
+                  "percent": 90
+                },
+                {
+                  "label": {
+                    "id": "HTML & CSS",
+                    "en": "HTML & CSS"
+                  },
+                  "percent": 85
+                },
+                {
+                  "label": {
+                    "id": "JavaScript",
+                    "en": "JavaScript"
+                  },
+                  "percent": 75,
+                  "color": "brand-secondary"
+                },
+                {
+                  "label": {
+                    "id": "Fotografi",
+                    "en": "Photography"
+                  },
+                  "percent": 60,
+                  "color": "brand-accent"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx097",
+      "type": "section",
+      "anchor": "karya",
+      "style": {
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "cx098",
+          "widgets": [
+            {
+              "id": "wh094",
+              "type": "heading",
+              "text": {
+                "id": "Karya terbaru",
+                "en": "Recent work"
+              },
+              "kicker": {
+                "id": "Portofolio",
+                "en": "Portfolio"
+              }
+            },
+            {
+              "id": "wt095",
+              "type": "text",
+              "html": {
+                "id": "<p>Karya diambil dari artikel yang punya gambar utama. Tulis satu artikel untuk setiap proyek.</p>",
+                "en": "<p>Work comes from articles with a featured image. Write one article for each project.</p>"
+              }
+            },
+            {
+              "id": "wp096",
+              "type": "portfolio",
+              "count": 6,
+              "columns": "3"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx101",
+      "type": "section",
+      "style": {
+        "background": "muted",
+        "text": "center"
+      },
+      "columns": [
+        {
+          "id": "cx102",
+          "widgets": [
+            {
+              "id": "wh099",
+              "type": "heading",
+              "text": {
+                "id": "Kata klien",
+                "en": "What clients say"
+              }
+            },
+            {
+              "id": "wr100",
+              "type": "reviews",
+              "per_view": "2",
+              "items": [
+                {
+                  "text": {
+                    "id": "Hasilnya melebihi harapan, komunikasinya lancar.",
+                    "en": "Better than we hoped, and easy to work with."
+                  },
+                  "name": "Andi",
+                  "role": {
+                    "id": "Pemilik usaha",
+                    "en": "Business owner"
+                  },
+                  "rating": "5"
+                },
+                {
+                  "text": {
+                    "id": "Cepat tanggap dan detail.",
+                    "en": "Responsive and thorough."
+                  },
+                  "name": "Maya",
+                  "role": {
+                    "id": "Manajer pemasaran",
+                    "en": "Marketing manager"
+                  },
+                  "rating": "5"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sx106",
+      "type": "section",
+      "anchor": "kontak",
+      "style": {
+        "width": "narrow"
+      },
+      "columns": [
+        {
+          "id": "cx107",
+          "widgets": [
+            {
+              "id": "wh103",
+              "type": "heading",
+              "text": {
+                "id": "Punya proyek?",
+                "en": "Have a project?"
+              }
+            },
+            {
+              "id": "wt104",
+              "type": "text",
+              "html": {
+                "id": "<p>Ceritakan sedikit tentang proyek Anda, saya akan membalas secepatnya.</p>",
+                "en": "<p>Tell me a little about your project and I will reply soon.</p>"
+              }
+            },
+            {
+              "id": "wf105",
+              "type": "form",
+              "name": "Proyek",
+              "fields": [
+                {
+                  "label": {
+                    "id": "Nama",
+                    "en": "Name"
+                  },
+                  "kind": "text",
+                  "required": true,
+                  "width": "half"
+                },
+                {
+                  "label": {
+                    "id": "Email",
+                    "en": "Email"
+                  },
+                  "kind": "email",
+                  "required": true,
+                  "width": "half"
+                },
+                {
+                  "label": {
+                    "id": "Anggaran",
+                    "en": "Budget"
+                  },
+                  "kind": "radio",
+                  "options": {
+                    "id": "< Rp 5 juta\nRp 5 - 15 juta\n> Rp 15 juta",
+                    "en": "< $500\n$500 - $1,500\n> $1,500"
+                  }
+                },
+                {
+                  "label": {
+                    "id": "Ceritakan proyek Anda",
+                    "en": "About your project"
+                  },
+                  "kind": "textarea",
+                  "required": true
+                }
+              ],
+              "submit": {
+                "id": "Kirim",
+                "en": "Send"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

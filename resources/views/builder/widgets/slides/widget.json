@@ -1,0 +1,113 @@
+{
+  "label": "Slides",
+  "icon": "image",
+  "group": "content",
+  "description": "A full-width slider, each slide with a background image, a title, text and a button.",
+  "fields": [
+    {
+      "key": "items",
+      "type": "repeater",
+      "label": "Slides",
+      "min_items": 1,
+      "max_items": 10,
+      "fields": [
+        {
+          "key": "image",
+          "type": "image",
+          "label": "Background image"
+        },
+        {
+          "key": "kicker",
+          "type": "text",
+          "label": "Small text above",
+          "translatable": true
+        },
+        {
+          "key": "title",
+          "type": "text",
+          "label": "Title",
+          "translatable": true,
+          "required": true
+        },
+        {
+          "key": "text",
+          "type": "textarea",
+          "label": "Text",
+          "translatable": true
+        },
+        {
+          "key": "button_label",
+          "type": "text",
+          "label": "Button label",
+          "translatable": true
+        },
+        {
+          "key": "url",
+          "type": "url",
+          "label": "Button link",
+          "translatable": true
+        }
+      ]
+    },
+    {
+      "key": "height",
+      "type": "select",
+      "label": "Height",
+      "options": [
+        "sm",
+        "md",
+        "lg",
+        "screen"
+      ],
+      "default": "md"
+    },
+    {
+      "key": "align",
+      "type": "select",
+      "label": "Text alignment",
+      "options": [
+        "start",
+        "center"
+      ],
+      "default": "center"
+    },
+    {
+      "key": "overlay",
+      "type": "select",
+      "label": "Darken the image",
+      "options": [
+        "none",
+        "light",
+        "medium",
+        "strong"
+      ],
+      "default": "medium"
+    },
+    {
+      "key": "first_heading",
+      "type": "toggle",
+      "label": "The first slide's title is the page's h1",
+      "default": false
+    },
+    {
+      "key": "autoplay",
+      "type": "number",
+      "label": "Autoplay every (seconds)",
+      "min": 0,
+      "max": 30,
+      "default": 6
+    },
+    {
+      "key": "arrows",
+      "type": "toggle",
+      "label": "Arrows",
+      "default": true
+    },
+    {
+      "key": "dots",
+      "type": "toggle",
+      "label": "Dots",
+      "default": true
+    }
+  ]
+}
