@@ -10,6 +10,12 @@ plugins/my-plugin/
   migrations/       optional: runs when the plugin is turned on
 ```
 
+A plugin that keeps data in its own tables lists them in `plugin.json`, so backups keep them:
+
+```json
+"tables": ["my_plugin_items"]
+```
+
 A plugin that throws an error while loading is turned off automatically, and the error goes to `storage/logs`.
 
 ## Settings

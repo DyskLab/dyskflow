@@ -56,7 +56,8 @@ The admin is available in English and Indonesian. These screenshots show Indones
 
 **Admin**
 - A dashboard with what needs attention, key numbers, recent comments, scheduled posts, and site status, based on each user's permissions
-- Users and roles, an activity log, backups, and import and export
+- Users and roles, an activity log, backups (with the tables plugins list), and import and export of articles, pages, Theme Builder templates and settings
+- The www and bare forms of the domain move to the one in the site address, with a permanent redirect
 - Global search (`⌘K` or `Ctrl+K`) and notifications for new comments, new versions, and errors
 - Two-step verification (TOTP) with recovery codes
 - A Privacy Guide and Site Health

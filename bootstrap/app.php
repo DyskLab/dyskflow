@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CacheablePublicPages;
+use App\Http\Middleware\CanonicalHost;
 use App\Http\Middleware\EnsureActiveUser;
 use App\Http\Middleware\EnsureInstalled;
 use App\Http\Middleware\SecurityHeaders;
@@ -20,6 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // example.com and www.example.com: one of them, the one in the site address, is the real one.
+        $middleware->prepend(CanonicalHost::class);
         // Prepended so they run after the session and CSRF cookies are added.
         $middleware->web(
             append: [EnsureInstalled::class, EnsureActiveUser::class, SetLocale::class],

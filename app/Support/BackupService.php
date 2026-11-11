@@ -55,7 +55,8 @@ class BackupService
         }
 
         $data = ['version' => config('cms.version'), 'created_at' => now()->toIso8601String(), 'tables' => []];
-        foreach (config('cms.backup_tables') as $table) {
+        $pluginTables = array_keys(array_filter(Plugins::backupTables(), fn ($slug, $table) => Schema::hasTable($table), ARRAY_FILTER_USE_BOTH));
+        foreach ([...config('cms.backup_tables'), ...$pluginTables] as $table) {
             $data['tables'][$table] = DB::table($table)->get()->map(fn ($row) => (array) $row)->all();
         }
         $zip->addFromString('database.json', json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -90,7 +91,12 @@ class BackupService
             throw new RuntimeException(__('The backup has no valid database.json.'));
         }
 
-        $tables = config('cms.backup_tables');
+        // Plugin tables come back only for plugins installed here, after their migrations have made them.
+        $pluginTables = array_intersect_key(Plugins::backupTables(), $data['tables']);
+        foreach (array_unique($pluginTables) as $slug) {
+            Plugins::migrate($slug);
+        }
+        $tables = [...config('cms.backup_tables'), ...array_keys(array_filter($pluginTables, fn ($slug, $table) => Schema::hasTable($table), ARRAY_FILTER_USE_BOTH))];
         Schema::withoutForeignKeyConstraints(function () use ($data, $tables) {
             DB::transaction(function () use ($data, $tables) {
                 foreach (array_reverse($tables) as $table) {

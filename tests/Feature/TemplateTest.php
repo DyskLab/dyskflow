@@ -11,6 +11,7 @@ use App\Support\Builder\Builder;
 use App\Support\Builder\Templates;
 use App\Support\Builder\Widgets;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
@@ -232,5 +233,21 @@ class TemplateTest extends TestCase
 
         $this->post(route('admin.design.templates.delete', $template))->assertRedirect();
         $this->assertNull(Templates::find('single'));
+    }
+
+    public function test_templates_survive_export_and_import(): void
+    {
+        $footer = $this->activate('footer', ['version' => 1, 'sections' => [['type' => 'container', 'children' => [['type' => 'text', 'html' => '<p>Footer kustom</p>']]]]]);
+
+        $json = $this->post(route('admin.settings.tools.export'), ['include' => ['templates']])->assertOk()->streamedContent();
+        $this->assertSame('footer', collect(json_decode($json, true)['posts'])->firstWhere('type', 'template')['slug']);
+
+        $footer->forceDelete();
+        Templates::flush();
+        $this->get('/')->assertDontSee('Footer kustom');
+
+        $this->post(route('admin.settings.tools.import'), ['file' => UploadedFile::fake()->createWithContent('export.json', $json)])->assertSessionHas('success');
+        Templates::flush();
+        $this->get('/')->assertSee('Footer kustom');
     }
 }

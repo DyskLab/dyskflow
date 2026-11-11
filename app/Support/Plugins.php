@@ -83,14 +83,44 @@ class Plugins
         }
     }
 
+    /**
+     * Tables that plugins list under "tables" in plugin.json, by table name => plugin slug.
+     * Backups keep them next to the core tables. Core table names cannot be claimed.
+     *
+     * @return array<string, string>
+     */
+    public static function backupTables(): array
+    {
+        $tables = [];
+        foreach (glob(base_path('plugins/*'), GLOB_ONLYDIR) ?: [] as $path) {
+            $manifest = self::manifest(basename($path));
+            foreach ((array) ($manifest['tables'] ?? []) as $table) {
+                if (is_string($table) && preg_match('/^[a-z][a-z0-9_]{0,63}$/', $table) && ! in_array($table, config('cms.backup_tables'), true)) {
+                    $tables[$table] ??= $manifest['slug'];
+                }
+            }
+        }
+
+        return $tables;
+    }
+
+    /** Runs a plugin's migrations without changing whether it is on. */
+    public static function migrate(string $slug): void
+    {
+        $directory = self::directory($slug);
+        if ($directory && is_dir($directory.'/migrations')) {
+            Artisan::call('migrate', ['--path' => $directory.'/migrations', '--realpath' => true, '--force' => true]);
+        }
+    }
+
     public static function setActive(string $slug, bool $active): void
     {
         $directory = self::directory($slug);
         if (! $directory) {
             return;
         }
-        if ($active && is_dir($directory.'/migrations')) {
-            Artisan::call('migrate', ['--path' => $directory.'/migrations', '--realpath' => true, '--force' => true]);
+        if ($active) {
+            self::migrate($slug);
         }
         Plugin::query()->updateOrCreate(['slug' => $slug], ['active' => $active]);
         self::$states = null;

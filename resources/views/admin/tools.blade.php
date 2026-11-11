@@ -14,7 +14,7 @@
             <p class="muted">{{ __('Download content as a JSON file. Passwords are never included.') }}</p>
         </div>
         <div class="card-content check-grid">
-            @foreach (['articles' => __('Articles'), 'pages' => __('Pages'), 'comments' => __('Comments'), 'settings' => __('Settings')] as $key => $label)
+            @foreach (['articles' => __('Articles'), 'pages' => __('Pages'), 'templates' => __('Templates'), 'comments' => __('Comments'), 'settings' => __('Settings')] as $key => $label)
                 <label class="check-row"><input class="checkbox" type="checkbox" name="include[]" value="{{ $key }}" @checked($key !== 'settings')> {{ $label }}</label>
             @endforeach
         </div>

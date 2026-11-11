@@ -628,4 +628,65 @@ class CmsTest extends TestCase
         $this->artisan('route:cache')->assertSuccessful();
         $this->assertFileDoesNotExist($cache);
     }
+
+    public function test_export_carries_the_homepage_and_privacy_page_by_slug(): void
+    {
+        $home = Post::create(['type' => 'page', 'title' => 'Beranda', 'slug' => 'beranda', 'content' => '<p>Halo</p>', 'status' => 'published', 'published_at' => now()]);
+        $privacy = Post::create(['type' => 'page', 'title' => 'Privasi', 'slug' => 'privasi', 'content' => '<p>Data</p>', 'status' => 'published', 'published_at' => now()]);
+        Setting::write(['home_type' => 'page', 'home_page_id' => (string) $home->id, 'privacy_page_id' => (string) $privacy->id]);
+        $this->actingAs($this->admin);
+
+        $json = $this->post('/admin/settings/tools/export', ['include' => ['pages', 'settings']])->streamedContent();
+        $data = json_decode($json, true);
+        $this->assertSame(['home_page_id' => 'beranda', 'privacy_page_id' => 'privasi'], $data['page_settings']);
+        $this->assertArrayNotHasKey('privacy_page_id', $data['settings']);
+
+        // On another site the same pages get other ids.
+        $home->forceDelete();
+        $privacy->forceDelete();
+        Post::create(['type' => 'page', 'title' => 'Other', 'slug' => 'other', 'content' => '', 'status' => 'published']);
+        Setting::write(['home_page_id' => '', 'privacy_page_id' => '']);
+        $this->post('/admin/settings/tools/import', ['file' => UploadedFile::fake()->createWithContent('export.json', $json)])->assertSessionHas('success');
+
+        $this->assertSame((string) Post::where('slug', 'beranda')->value('id'), setting('home_page_id'));
+        $this->assertSame((string) Post::where('slug', 'privasi')->value('id'), setting('privacy_page_id'));
+    }
+
+    public function test_backups_keep_the_tables_a_plugin_lists(): void
+    {
+        $plugin = base_path('plugins/backup-test-'.bin2hex(random_bytes(3)));
+        File::ensureDirectoryExists($plugin.'/migrations');
+        file_put_contents($plugin.'/plugin.json', json_encode(['name' => 'Backup test', 'description' => '', 'version' => '1', 'author' => 'Test', 'settings' => [], 'tables' => ['backup_test_rows', 'users']]));
+        file_put_contents($plugin.'/migrations/2026_01_01_000000_backup_test_rows.php', "<?php\nuse Illuminate\\Database\\Migrations\\Migration;\nuse Illuminate\\Database\\Schema\\Blueprint;\nuse Illuminate\\Support\\Facades\\Schema;\nreturn new class extends Migration { public function up(): void { Schema::create('backup_test_rows', function (Blueprint \$t) { \$t->id(); \$t->string('name'); }); } };\n");
+
+        try {
+            // A core table cannot be claimed by a plugin.
+            $this->assertSame(['backup_test_rows' => basename($plugin)], array_intersect_key(\App\Support\Plugins::backupTables(), ['backup_test_rows' => 1, 'users' => 1]));
+
+            \App\Support\Plugins::setActive(basename($plugin), true);
+            \Illuminate\Support\Facades\DB::table('backup_test_rows')->insert(['name' => 'Kept']);
+            $name = BackupService::create(false);
+
+            \Illuminate\Support\Facades\DB::table('backup_test_rows')->delete();
+            \Illuminate\Support\Facades\DB::table('backup_test_rows')->insert(['name' => 'Added later']);
+            BackupService::restore(BackupService::path($name));
+
+            $this->assertSame(['Kept'], \Illuminate\Support\Facades\DB::table('backup_test_rows')->pluck('name')->all());
+        } finally {
+            File::deleteDirectory($plugin);
+        }
+    }
+
+    public function test_the_www_and_bare_domain_move_to_the_site_address(): void
+    {
+        config(['app.url' => 'https://www.example.test']);
+        $this->get('http://example.test/blog?page=2')->assertStatus(301)->assertRedirect('https://www.example.test/blog?page=2');
+        $this->get('http://www.example.test/blog')->assertOk();
+        $this->get('http://shop.example.test/blog')->assertOk();
+        // A form post is not redirected: the browser would drop what was typed.
+        $this->assertNotSame(301, $this->post('http://example.test/form')->status());
+
+        config(['app.url' => 'https://example.test']);
+        $this->get('http://www.example.test/kontak')->assertStatus(301)->assertRedirect('https://example.test/kontak');
+    }
 }

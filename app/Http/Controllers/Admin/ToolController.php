@@ -10,6 +10,7 @@ use App\Models\Setting;
 use App\Models\Term;
 use App\Models\TermTranslation;
 use App\Support\Builder\Builder;
+use App\Support\Builder\Templates;
 use App\Support\Builder\Validator;
 use App\Support\HtmlSanitizer;
 use App\Support\Locales;
@@ -23,7 +24,13 @@ use Throwable;
 /** Import and export of content as portable JSON. Records match by slug. */
 class ToolController extends Controller
 {
-    private const POST_FIELDS = ['type', 'title', 'slug', 'excerpt', 'content', 'status', 'featured_image', 'meta_title', 'meta_description', 'focus_keyword', 'canonical_url', 'og_image', 'noindex', 'allow_comments', 'show_in_menu', 'menu_order', 'published_at'];
+    private const POST_FIELDS = ['type', 'title', 'slug', 'excerpt', 'content', 'status', 'featured_image', 'meta_title', 'meta_description', 'focus_keyword', 'canonical_url', 'og_image', 'noindex', 'allow_comments', 'show_in_menu', 'menu_order', 'published_at', 'conditions'];
+
+    /** Settings that name a page by id. Exports carry the page slug, so they point at the right page on another site. */
+    private const PAGE_SETTINGS = ['home_page_id', 'privacy_page_id'];
+
+    /** Export choices and the post type each one carries. */
+    private const POST_TYPES = ['articles' => 'article', 'pages' => 'page', 'templates' => 'template'];
 
     public function index()
     {
@@ -35,9 +42,8 @@ class ToolController extends Controller
         $include = (array) $request->input('include', []);
         $data = ['generator' => 'template-cms', 'version' => config('cms.version'), 'exported_at' => now()->toIso8601String()];
 
-        if (array_intersect(['articles', 'pages'], $include)) {
-            $types = array_values(array_intersect(['article' => 'articles', 'page' => 'pages'], $include));
-            $types = array_map(fn ($t) => rtrim($t, 's'), $types);
+        $types = array_values(array_intersect_key(self::POST_TYPES, array_flip($include)));
+        if ($types) {
             $data['terms'] = Term::with('translations')->get()->map(fn ($term) => $term->only(['taxonomy', 'name', 'slug', 'description', 'meta_title', 'meta_description']) + [
                 'translations' => $term->translations->map(fn ($t) => $t->only(['locale', ...Term::TRANSLATED]))->all(),
             ])->all();
@@ -59,6 +65,9 @@ class ToolController extends Controller
         }
         if (in_array('settings', $include, true)) {
             $data['settings'] = Setting::whereIn('key', $this->portableSettings())->pluck('value', 'key')->all();
+            $data['page_settings'] = collect(self::PAGE_SETTINGS)
+                ->mapWithKeys(fn ($key) => [$key => Post::where('type', 'page')->whereKey((int) setting($key))->value('slug')])
+                ->filter()->all();
         }
 
         activity('content.exported', implode(', ', $include));
@@ -118,7 +127,11 @@ class ToolController extends Controller
         }
 
         foreach ($data['posts'] ?? [] as $item) {
-            if (! in_array($item['type'] ?? '', ['article', 'page'], true) || empty($item['title']) || empty($item['slug'])) {
+            if (! in_array($item['type'] ?? '', ['article', 'page', 'template'], true) || empty($item['title']) || empty($item['slug'])) {
+                continue;
+            }
+            // A template's slug is its kind, and templates belong to whoever may change the design.
+            if ($item['type'] === 'template' && (! isset(Templates::KINDS[$item['slug']]) || ! auth()->user()?->can('appearance.manage'))) {
                 continue;
             }
             $values = array_intersect_key($item, array_flip(self::POST_FIELDS));
@@ -126,10 +139,11 @@ class ToolController extends Controller
             $values['content'] = HtmlSanitizer::clean($item['content'] ?? '');
             $values['status'] = ($item['status'] ?? '') === 'published' ? 'published' : 'draft';
             $values['published_at'] = ! empty($item['published_at']) ? Carbon::parse($item['published_at'])->utc() : null;
+            $values['conditions'] = $item['type'] === 'template' && is_array($item['conditions'] ?? null) ? $item['conditions'] : null;
             // Trashed posts still hold their slug. Importing one brings it back.
             $post = Post::withTrashed()->firstOrNew(['type' => $item['type'], 'slug' => $values['slug']]);
             $post->fill($values);
-            $post->builder = $item['type'] === 'page' ? self::importLayout($item['builder'] ?? null) : null;
+            $post->builder = $item['type'] !== 'article' ? self::importLayout($item['builder'] ?? null) : null;
             $post->builder_draft = null;
             $post->deleted_at = null;
             $post->user_id ??= auth()->id();
@@ -169,6 +183,11 @@ class ToolController extends Controller
         }
 
         $settings = array_intersect_key((array) ($data['settings'] ?? []), array_flip($this->portableSettings()));
+        foreach (array_intersect_key((array) ($data['page_settings'] ?? []), array_flip(self::PAGE_SETTINGS)) as $key => $slug) {
+            if (is_string($slug) && ($id = Post::where('type', 'page')->where('slug', $slug)->value('id'))) {
+                $settings[$key] = (string) $id;
+            }
+        }
         Setting::write($settings);
         $counts['settings'] = count($settings);
 
@@ -180,7 +199,7 @@ class ToolController extends Controller
     {
         return collect(SettingsSchema::sections())
             ->flatMap(fn ($section) => collect($section['fields'])->pluck('name'))
-            ->reject(fn ($name) => in_array($name, ['mail_password', 'site_url', 'update_repo', 'home_page_id'], true))
+            ->reject(fn ($name) => in_array($name, ['mail_password', 'site_url', 'update_repo', ...self::PAGE_SETTINGS], true))
             ->values()->all();
     }
 
