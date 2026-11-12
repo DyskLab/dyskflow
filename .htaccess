@@ -4,6 +4,12 @@ Options -Indexes
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Drop a trailing slash before the rewrite into public/. Left to public/.htaccess, some servers
+    # (LiteSpeed) would send the visitor to /public/... instead.
+    RewriteCond %{DOCUMENT_ROOT}/public/$1 !-d
+    RewriteRule ^(.+)/$ /$1 [L,R=301]
+
     RewriteRule ^public/ - [L]
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
