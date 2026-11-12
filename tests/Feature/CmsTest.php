@@ -629,6 +629,16 @@ class CmsTest extends TestCase
         $this->assertFileDoesNotExist($cache);
     }
 
+    public function test_a_plugin_field_saved_empty_stays_empty(): void
+    {
+        $this->actingAs($this->admin);
+        $this->assertSame('Welcome to our site', plugin_setting('hello-bar', 'message', 'Welcome to our site'));
+
+        $this->post('/admin/settings/plugins/hello-bar/settings', ['message' => '', 'link' => ''])->assertSessionHasNoErrors();
+        $this->assertSame('', plugin_setting('hello-bar', 'message', 'Welcome to our site'));
+        $this->get('/admin/settings/plugins/hello-bar/settings')->assertOk()->assertDontSee('value="Welcome to our site"', false);
+    }
+
     public function test_export_carries_the_homepage_and_privacy_page_by_slug(): void
     {
         $home = Post::create(['type' => 'page', 'title' => 'Beranda', 'slug' => 'beranda', 'content' => '<p>Halo</p>', 'status' => 'published', 'published_at' => now()]);

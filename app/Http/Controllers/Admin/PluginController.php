@@ -92,7 +92,8 @@ class PluginController extends Controller
                 default => ['nullable', 'string', 'max:10000'],
             };
         }
-        Plugins::saveSettings($slug, $request->validate($rules));
+        // A field emptied on purpose is saved as '' rather than null, so it does not fall back to its default.
+        Plugins::saveSettings($slug, array_map(fn ($value) => $value ?? '', $request->validate($rules)));
         activity('plugin.settings', $slug);
 
         return back()->with('success', __('Saved.'));
